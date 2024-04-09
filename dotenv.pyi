@@ -1,0 +1,16 @@
+from typing import Any, Dict, Optional, Text
+
+def get(key: str, default: Optional[Any] = None) -> str: ...
+def set_key(file_path: str, key: str, value: str) -> None: ...
+def find_dotenv(
+    filename: str = ".env", raise_error_if_not_found: bool = False
+) -> str: ...
+def load_dotenv(
+    dotenv_path: Optional[str] = None,
+    stream: Optional[Text] = None,
+    verbose: bool = False,
+    override: bool = True,
+) -> Dict[str, str]: ...
+def dotenv_values(
+    dotenv_path: Optional[str] = None, stream: Optional[Text] = None
+) -> Dict[str, str]: ...
