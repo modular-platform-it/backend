@@ -37,8 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "apps.bot_management",
-    "apps.bot_server",
-    "apps.testing_app",
+    "api",
 ]
 
 MIDDLEWARE = [
