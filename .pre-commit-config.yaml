@@ -7,7 +7,6 @@ repos:
       - id: detect-private-key
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
-      - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
       - id: check-merge-conflict
@@ -30,3 +29,15 @@ repos:
       - id: mypy
         exclude: migrations?
         args: [--python-version, '3.12']
+        additional_dependencies: [django-stubs]
+    exclude: migrations?
+    additional_dependencies: [django-stubs]
+    types: [python]
+    default_language_version:
+      python: [3.12]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        args: [--ignore-missing-imports]

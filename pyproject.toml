@@ -11,6 +11,8 @@ django = "^5.0.4"
 djangorestframework = "^3.15.1"
 python-dotenv = "^1.0.1"
 djoser = "^2.2.2"
+django-stubs = "^4.2.7"
+mypy = "^1.9.0"
 
 
 [tool.poetry.group.dev.dependencies]
