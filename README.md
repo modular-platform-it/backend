@@ -137,7 +137,11 @@ Django приложение, которое принимает запросы о
 
 ### Билдим проект и запускаем:
 ```bash
-    sudo docker compose -f docker-compose.production.yml up --build
+    cd bot_controler
+    sudo docker compose -f docker-compose.production.yml pull
+    sudo docker compose -f docker-compose.production.yml down
+    sudo docker compose -f docker-compose.production.yml up -d
+    sudo docker system prune -af
 ```
 
 ### Выполнить миграции:
@@ -154,12 +158,6 @@ Django приложение, которое принимает запросы о
 ```bash
     sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
     sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /app/static/
-```
-
-### Выполнить миграции:
-```bash
-    sudo docker compose -f docker-compose.production.yml exec backend python manage.py init_field_types
-    sudo docker compose -f docker-compose.production.yml exec backend python manage.py init_templates
 ```
 
 ### Настройки nginx:
