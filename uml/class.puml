@@ -1,0 +1,79 @@
+@startuml
+
+class User {
+    id: integer
+    email: string
+    name: string
+    password: string
+    --
+    +login()
+    +logout()
+}
+
+class TestAPP{
+    purchase: dict
+    --
+    get_list_purchases()
+    get_purchase()
+    post_buy(id)
+    get_state_delivery()
+}
+
+class Bot {
+    id: integer
+    owner: pk User
+    name: string
+    telegram_key: string
+    API_key: string
+    API_point: Адрес API
+    describe: string
+    --
+    active: bool
+    state: choose [черновик, запущен, остановлен, ошибка]
+    date_create: date Дата создания
+    date_run: date Дата Запуска
+    actions: list[ActionBot()]
+    --
+    +create(id)
+    +delete(id)
+    +edit(id, *args, **kwargs)
+    +run(id)
+    +stop(id)
+}
+
+abstract class ActionBot{
+    id: integer
+    bot: pk
+    name: string
+    describe: string описание действия
+    massege: string
+    file: list[path_file]
+}
+
+class SendMessege {
+    id: integer
+    --
+    +active()
+}
+
+class GetList {
+    id: integer
+    API_point: string адрес запроса
+    token: string если нужен
+    --
+    +active()
+}
+
+class GetItem {
+    id: integer
+    API_point: string адрес запроса
+    token: string если нужен
+    --
+    +active()
+}
+
+ActionBot <|-- SendMessege
+ActionBot <|-- GetList
+ActionBot <|-- GetItem
+
+@enduml
