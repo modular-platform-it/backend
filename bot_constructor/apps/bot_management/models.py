@@ -1,3 +1,4 @@
+# type:ignore
 from django.db import models
 
 
@@ -10,27 +11,25 @@ class TelegramBot(models.Model):
         STOPPED = "STOPPED", "Остановлен"
         ERROR = "ERROR", "Ошибка"
 
-    name = models.CharField(verbose_name="Название бота", max_length=255)
-    telegram_token = models.CharField(
+    name: str = models.CharField(verbose_name="Название бота", max_length=255)
+    telegram_token: str = models.CharField(
         verbose_name="Токен авторизации телеграм бота",
         max_length=255,
         unique=True,
     )
-    api_key = models.CharField(verbose_name="Ключ API", max_length=255)
-    api_url = models.CharField(verbose_name="Адрес API", max_length=255)
-    api_availablility = models.BooleanField(
+    api_key: str = models.CharField(verbose_name="Ключ API", max_length=255)
+    api_url: str = models.CharField(verbose_name="Адрес API", max_length=255)
+    api_availablility: bool = models.BooleanField(
         verbose_name="Доступность API", blank=True, default=False
     )
-    is_started = models.BooleanField(verbose_name="Запущен", default=False)
-    bot_state = models.CharField(
+    is_started: bool = models.BooleanField(verbose_name="Запущен", default=False)
+    bot_state: str = models.CharField(
         verbose_name="Статус бота",
         max_length=7,
         choices=BotState,
         default=BotState.DRAFT,
     )
-    created_at = models.DateTimeField(
-        verbose_name="Дата создания", auto_now_add=True
-    )
+    created_at = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
     started_at = models.DateTimeField(
         verbose_name="Дата последнего запуска бота", blank=True, null=True
     )
