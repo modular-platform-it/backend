@@ -1,0 +1,48 @@
+@startuml
+actor "Front" as front
+autonumber
+
+box "Django" #LightBlue
+    participant "Обработка запросов от пользователя" as dj
+    database "База данных Джанги" as db
+end box
+
+box "Сервер очередей" #LightYellow
+    participant "Сервер очередей" as quire
+    participant "Боты" as bots
+    database "База данных сервера очередей" as dbq
+end box
+
+box "Тестовое приложение" #LightGreen
+    participant "Тестовое приложение Django" as test
+    database "База данных тестовое приложение" as dbt
+end box
+
+group Запуск/выключение/редактирование бота
+    front -> dj++: Запрос на изменение состояния бота
+    dj -> quire: Запрос на изменение состояния бота
+    quire -> bots: Изменение  состояния бота
+    bots -> bots: Проверка изменение бота\nи его состояния
+    bots -> quire: Результат изменение бота
+    quire -> dbq: Результат изменение бота
+    quire -> dj: Результат изменение бота
+    dj ->  front--:  Результат изменение бота
+end
+
+group Получение списка ботов
+    front -> dj++: Запрос на получение списка ботов
+    dj -> db: Запрос на получение списка ботов
+    db -> db: Получение данных
+    db -> dj: Cписок ботов
+    dj -> front: Cписок ботов
+end
+
+group Тестирование бота
+    bots -> test: Запрос данных или отправка данных
+    test -> dbt: Запрос данных или отправка данных
+    dbt -> dbt: Получение данных
+    dbt -> test: Отправка данных
+    test -> bots: Отправка данных
+    bots -> front: Отправка данных пользователю
+end
+@enduml
