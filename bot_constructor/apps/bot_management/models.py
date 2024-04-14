@@ -19,7 +19,7 @@ class TelegramBot(models.Model):
     )
     api_key: str = models.CharField(verbose_name="Ключ API", max_length=255)
     api_url: str = models.CharField(verbose_name="Адрес API", max_length=255)
-    api_availablility: bool = models.BooleanField(
+    api_availability: bool = models.BooleanField(
         verbose_name="Доступность API", blank=True, default=False
     )
     is_started: bool = models.BooleanField(verbose_name="Запущен", default=False)
