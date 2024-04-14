@@ -113,6 +113,8 @@ class TelegramBotActionSerializer(serializers.ModelSerializer):
             "description",
             "command_keyword",
             "message",
+            "api_key",
+            "api_url",
             "files",
             "position",
             "is_active",
