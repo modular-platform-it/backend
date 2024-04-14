@@ -1,25 +1,20 @@
-from django_filters import rest_framework as df_filters
-
-from django.shortcuts import get_object_or_404
-from rest_framework import status, viewsets
-from rest_framework.filters import OrderingFilter
-from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.response import Response
-from rest_framework.request import Request
-
-from apps.bot_management.models import (
-    TelegramBot,
-    TelegramBotAction,
-    TelegramBotFile,
-)
+# type:ignore
 from api.filters import TelegramBotFilter
 from api.serializers import (
-    TelegramBotSerializer,
-    TelegramBotCreateSerializer,
-    TelegramBotShortSerializer,
     TelegramBotActionSerializer,
+    TelegramBotCreateSerializer,
+    TelegramBotSerializer,
+    TelegramBotShortSerializer,
     TelegramFileSerializer,
 )
+from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
+from django.shortcuts import get_object_or_404
+from django_filters import rest_framework as df_filters
+from rest_framework import status, viewsets
+from rest_framework.filters import OrderingFilter
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 
 class TelegramBotViewSet(viewsets.ModelViewSet):
@@ -63,24 +58,18 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         ).prefetch_related("files")
 
     def list(self, request: Request, telegram_bot_pk: int):
-        queryset = TelegramBotAction.objects.filter(
-            telegram_bot=telegram_bot_pk
-        )
+        queryset = TelegramBotAction.objects.filter(telegram_bot=telegram_bot_pk)
         serializer = TelegramBotActionSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request: Request, pk: int, telegram_bot_pk: int):
-        queryset = TelegramBotAction.objects.filter(
-            pk=pk, telegram_bot=telegram_bot_pk
-        )
+        queryset = TelegramBotAction.objects.filter(pk=pk, telegram_bot=telegram_bot_pk)
         telegram_action = get_object_or_404(queryset, pk=pk)
         serializer = TelegramBotActionSerializer(telegram_action)
         return Response(serializer.data)
 
     def get_serializer_context(self):
-        context = super(
-            TelegramBotActionViewSet, self
-        ).get_serializer_context()
+        context = super(TelegramBotActionViewSet, self).get_serializer_context()
         if len(self.request.FILES) > 0:
             context.update({"files": self.request.FILES.getlist("files")})
         return context

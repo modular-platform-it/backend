@@ -1,10 +1,6 @@
+# type:ignore
+from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from rest_framework import serializers, validators
-
-from apps.bot_management.models import (
-    TelegramBot,
-    TelegramBotAction,
-    TelegramBotFile,
-)
 
 
 class TelegramBotCreateSerializer(serializers.ModelSerializer):
@@ -35,9 +31,7 @@ class TelegramBotShortSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=255)
     telegram_token = serializers.CharField(max_length=255, write_only=True)
     is_started = serializers.BooleanField(read_only=True)
-    bot_state = serializers.ChoiceField(
-        TelegramBot.BotState.choices, read_only=True
-    )
+    bot_state = serializers.ChoiceField(TelegramBot.BotState.choices, read_only=True)
 
     class Meta:
         model = TelegramBot
