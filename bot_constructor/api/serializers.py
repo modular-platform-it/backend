@@ -41,6 +41,7 @@ class TelegramBotShortSerializer(serializers.ModelSerializer):
 class TelegramBotSerializer(TelegramBotShortSerializer):
     """Сериализатор для детального отображения телеграм бота."""
 
+    description = serializers.CharField(max_length=1000, required=False)
     api_key = serializers.CharField(max_length=255)
     api_url = serializers.URLField()
     api_availability = serializers.BooleanField(read_only=True)
@@ -52,6 +53,7 @@ class TelegramBotSerializer(TelegramBotShortSerializer):
         fields = (
             "name",
             "telegram_token",
+            "description",
             "bot_state",
             "api_key",
             "api_url",
@@ -82,8 +84,11 @@ class TelegramBotActionSerializer(serializers.ModelSerializer):
         queryset=TelegramBot.objects.all()
     )
     name = serializers.CharField(max_length=255)
+    description = serializers.CharField(max_length=1000, required=False)
     command_keyword = serializers.RegexField(r"^/[a-zA-Z0-9_]{1,32}$")
     message = serializers.CharField(max_length=1000, required=False)
+    api_key = serializers.CharField(max_length=255, required=False)
+    api_url = serializers.URLField(required=False)
     position = serializers.IntegerField(min_value=1, max_value=30)
     is_active = serializers.BooleanField()
     files = TelegramFileSerializer(many=True, required=False)
@@ -105,6 +110,7 @@ class TelegramBotActionSerializer(serializers.ModelSerializer):
             "id",
             "telegram_bot",
             "name",
+            "description",
             "command_keyword",
             "message",
             "files",

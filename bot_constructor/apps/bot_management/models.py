@@ -17,6 +17,9 @@ class TelegramBot(models.Model):
         max_length=255,
         unique=True,
     )
+    description = models.CharField(
+        verbose_name="Описание бота", max_length=1000, blank=True
+    )
     api_key: str = models.CharField(verbose_name="Ключ API", max_length=255)
     api_url: str = models.CharField(verbose_name="Адрес API", max_length=255)
     api_availability: bool = models.BooleanField(
@@ -69,15 +72,20 @@ class TelegramBotAction(models.Model):
         max_length=20,
         help_text="только латинские буквы и цифры, от 3 до 20 символов.",
     )
+    description = models.CharField(
+        verbose_name="Описание действия", max_length=1000, blank=True
+    )
     command_keyword = models.CharField(
         verbose_name="Текст команды",
         max_length=33,
         help_text="команда должна начинаться с / и содержать только латинские "
         "буквы, цифры и нижнее подчеркивание _, макс. длина 32 символа",
     )
-    message = models.TextField(
+    message = models.CharField(
         verbose_name="Текст сообщения", max_length=1000, blank=True
     )
+    api_url = models.CharField(verbose_name="Адрес API", max_length=255, blank=True)
+    api_key = models.CharField(verbose_name="Ключ API", max_length=255, blank=True)
     position = models.SmallIntegerField("Номер действия")
     is_active = models.BooleanField(verbose_name="Вкл/выкл")
 
