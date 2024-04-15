@@ -1,9 +1,15 @@
 # type:ignore
 from datetime import timedelta
 
-from apps.bot_management.models import TelegramBot, TelegramBotAction
+from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
+from django.conf import settings
 from django.utils import timezone
 from factory import Faker, Sequence, SubFactory, django, fuzzy
+from faker_file.providers.txt_file import TxtFileProvider
+from faker_file.storages.filesystem import FileSystemStorage
+
+FS_STORAGE = FileSystemStorage(root_path=settings.MEDIA_ROOT, rel_path="tmp")
+Faker.add_provider(TxtFileProvider)
 
 
 class TelegramBotFactory(django.DjangoModelFactory):
@@ -35,10 +41,9 @@ class TelegramBotActionFactory(django.DjangoModelFactory):
     is_active = Faker("pybool", truth_probability=70)
 
 
-## TODO
-# class TelegramBotFileFactory(django.DjangoModelFactory):
-#     class Meta:
-#         model = TelegramBotFile
+class TelegramBotFileFactory(django.DjangoModelFactory):
+    class Meta:
+        model = TelegramBotFile
 
-#     telegram_action = SubFactory(TelegramBotActionFactory)
-#     file = SimpleUploadedFile("test.txt", content=b"Test")
+    telegram_action = SubFactory(TelegramBotActionFactory)
+    file = Faker("txt_file", storage=FS_STORAGE)

@@ -1,6 +1,14 @@
-from apps.bot_management.models import TelegramBot, TelegramBotAction
+import os
+import shutil
+
+from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from django.urls import reverse
-from factory_data.factories import TelegramBotActionFactory, TelegramBotFactory
+from factory_data.factories import (
+    FS_STORAGE,
+    TelegramBotActionFactory,
+    TelegramBotFactory,
+    TelegramBotFileFactory,
+)
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -179,70 +187,74 @@ class TestTelegramBotActionView(APITestCase):
         self.assertEqual(new_telegram_action.is_active, updated_action.is_active)
 
 
-# TODO
-# class TestTelegramBotFileView(APITestCase):
-#     def setUp(self) -> None:
-#         self.telegram_bot = TelegramBotFactory.create()
-#         self.telegram_action = TelegramBotActionFactory.create(
-#             telegram_bot=self.telegram_bot
-#         )
-#         self.telegram_file = TelegramBotFileFactory(
-#             telegram_action=self.telegram_action
-#         )
-#         self.url_list = "telegram_bot_action-files-list"
-#         self.url_detail = "telegram_bot_action-files-detail"
-#         return super().setUp()
+class TestTelegramBotFileView(APITestCase):
+    def setUp(self) -> None:
+        self.telegram_bot = TelegramBotFactory.create()
+        self.telegram_action = TelegramBotActionFactory.create(
+            telegram_bot=self.telegram_bot
+        )
+        self.telegram_file = TelegramBotFileFactory(
+            telegram_action=self.telegram_action
+        )
+        self.url_list = "telegram_bot_action-files-list"
+        self.url_detail = "telegram_bot_action-files-detail"
+        return super().setUp()
 
-#     def test_telegram_bot_file_list_view(self):
-#         telegram_files = TelegramBotFileFactory.create_batch(
-#             5, telegram_action=self.telegram_action
-#         )
-#         response = self.client.get(
-#             reverse(
-#                 self.url_list,
-#                 kwargs={
-#                     "telegram_bot_pk": self.telegram_bot.id,
-#                     "telegram_action_pk": self.telegram_action.id,
-#                 },
-#             )
-#         )
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertIsInstance(response.data, list)
-#         for telegram_file in telegram_files:
-#             self.assertContains(response, telegram_file.file)
+    def test_telegram_bot_file_list_view(self):
+        telegram_files = TelegramBotFileFactory.create_batch(
+            5, telegram_action=self.telegram_action
+        )
+        response = self.client.get(
+            reverse(
+                self.url_list,
+                kwargs={
+                    "telegram_bot_pk": self.telegram_bot.id,
+                    "telegram_action_pk": self.telegram_action.id,
+                },
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response.data, list)
+        for telegram_file in telegram_files:
+            self.assertContains(response, telegram_file.id)
 
-#     def test_telegram_bot_file_create_view(self):
-#         count = TelegramBotFile.objects.count()
-#         telegram_file: TelegramBotFile = TelegramBotFileFactory.build(
-#             telegram_action=self.telegram_action
-#         )
-#         response = self.client.post(
-#             reverse(
-#                 self.url_list,
-#                 kwargs={
-#                     "telegram_bot_pk": self.telegram_bot.id,
-#                     "telegram_action_pk": self.telegram_action.id,
-#                 },
-#             ),
-#             data={
-#                 "telegram_action": telegram_file.telegram_action.id,
-#                 "file": telegram_file.file,
-#             },
-#         )
-#         print(response.content)
-#         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-#         self.assertIn(telegram_file.file, response.data.get("file"))
-#         self.assertEqual(count + 1, TelegramBotFile.objects.count())
+    def test_telegram_bot_file_create_view(self):
+        count = TelegramBotFile.objects.count()
+        telegram_file: TelegramBotFile = TelegramBotFileFactory.build(
+            telegram_action=self.telegram_action
+        )
+        response = self.client.post(
+            reverse(
+                self.url_list,
+                kwargs={
+                    "telegram_bot_pk": self.telegram_bot.id,
+                    "telegram_action_pk": self.telegram_action.id,
+                },
+            ),
+            data={
+                "telegram_action": telegram_file.telegram_action.id,
+                "file": telegram_file.file,
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(count + 1, TelegramBotFile.objects.count())
 
-#     def test_telegram_bot_action_detail_view(self):
-#         response = self.client.get(
-#             reverse(
-#                 self.url_detail,
-#                 kwargs={
-#                     "pk": self.telegram_file.id,
-#                     "telegram_bot_pk": self.telegram_bot.id,
-#                     "telegram_action_pk": self.telegram_action.id,
-#                 },
-#             )
-#         )
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def test_telegram_bot_action_detail_view(self):
+        response = self.client.get(
+            reverse(
+                self.url_detail,
+                kwargs={
+                    "pk": self.telegram_file.id,
+                    "telegram_bot_pk": self.telegram_bot.id,
+                    "telegram_action_pk": self.telegram_action.id,
+                },
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get("id"), self.telegram_file.id)
+
+    @classmethod
+    def tearDownClass(cls):
+        if os.path.exists(FS_STORAGE.root_path):
+            shutil.rmtree(FS_STORAGE.root_path, ignore_errors=True)
+        super().tearDownClass()
