@@ -15,7 +15,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1").split(",")
-#
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -28,10 +28,10 @@ INSTALLED_APPS = [
     "allauth.account",
     "apps.bot_management",
     "api",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
-    "allauth.account.middleware.AccountMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -39,9 +39,27 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
 
 ROOT_URLCONF = "bot_constructor.urls"
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "bot-controller",
+    "DESCRIPTION": "Платформа для создания и управления ботами.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {
+        "filter": True,
+        "deepLinking": True,
+        "persistAuthorization": True,
+        "displayOperationId": True,
+    },
+    "COMPONENT_SPLIT_REQUEST": True,
+}
 
 TEMPLATES = [
     {
@@ -103,6 +121,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 ACCOUNT_ADAPTER = "bot_constructor.allauth.adapters.SignupAdapter"
+
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_MAX_LENGTH = 64
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
