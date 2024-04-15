@@ -11,7 +11,6 @@ env:
   BACKEND_CONTAINER_NAME: modular_back
   MODULAR_HOSTNAME: xwick.ru
   MODULAR_NETWORK_NAME: traefik
-  TELEGRAM_TO: 228559330
 
 jobs:
 
@@ -25,7 +24,7 @@ jobs:
       with:
         python-version: 3.12
     - uses: Gr1N/setup-poetry@v8
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       with:
         path: ~/.cache/pypoetry/virtualenvs
         key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
