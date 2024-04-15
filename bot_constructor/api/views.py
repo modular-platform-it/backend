@@ -1,4 +1,5 @@
 # type:ignore
+import requests
 from api.filters import TelegramBotFilter
 from api.serializers import (
     TelegramBotActionSerializer,
@@ -6,11 +7,13 @@ from api.serializers import (
     TelegramBotSerializer,
     TelegramBotShortSerializer,
     TelegramFileSerializer,
+    TokenSerializer,
 )
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as df_filters
 from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.request import Request
@@ -18,6 +21,8 @@ from rest_framework.response import Response
 
 
 class TelegramBotViewSet(viewsets.ModelViewSet):
+    """Набор представлений для телеграм ботов."""
+
     queryset = TelegramBot.objects.all()
     filter_backends = (
         df_filters.DjangoFilterBackend,
@@ -45,10 +50,31 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             return TelegramBotShortSerializer
         if self.action == "retrieve":
             return TelegramBotSerializer
+        if self.action == "check_telegram_token":
+            return TokenSerializer
         return TelegramBotCreateSerializer
+
+    @action(
+        methods=["POST"],
+        detail=False,
+        url_path="check_telegram_token",
+        url_name="check_telegram_token",
+        serializer_class=TokenSerializer,
+    )
+    def check_telegram_token(self, request: Request):
+        telegram_token = request.data.get("telegram_token")
+        response = requests.get(f"https://api.telegram.org/bot{telegram_token}/getMe")
+        print(response.text)
+        if response.ok:
+            return Response(
+                data={"success": "Проверка пройдена успешно"}, status=status.HTTP_200_OK
+            )
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class TelegramBotActionViewSet(viewsets.ModelViewSet):
+    """Набор представлений для действий телеграм бота."""
+
     serializer_class = TelegramBotActionSerializer
     parser_classes = (FormParser, MultiPartParser)
 
@@ -58,7 +84,7 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         ).prefetch_related("files")
 
     def list(self, request: Request, telegram_bot_pk: int):
-        queryset = TelegramBotAction.objects.filter(telegram_bot=telegram_bot_pk)
+        queryset = TelegramBotAction.objects.filter(telegram_bot_id=telegram_bot_pk)
         serializer = TelegramBotActionSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -87,6 +113,8 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
 
 
 class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
+    """Набор представлений для файлов действий телеграм ботов."""
+
     serializer_class = TelegramFileSerializer
 
     def get_queryset(self):
@@ -94,6 +122,11 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
             telegram_action__telegram_bot=self.kwargs["telegram_bot_pk"],
             telegram_action=self.kwargs["telegram_action_pk"],
         )
+
+    def get_serializer_context(self):
+        context = super(TelegramBotActionFileViewSet, self).get_serializer_context()
+        context.update({"telegram_bot_pk": self.kwargs["telegram_bot_pk"]})
+        return context
 
     def list(self, request, telegram_bot_pk: int, telegram_action_pk: int):
         queryset = TelegramBotFile.objects.filter(
@@ -112,8 +145,3 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
         file = get_object_or_404(queryset, pk=pk)
         serializer = TelegramFileSerializer(file)
         return Response(serializer.data)
-
-    def create(self, request: Request, *args, **kwargs):
-        print(args)
-        print(kwargs)
-        return super().create(request, *args, **kwargs)
