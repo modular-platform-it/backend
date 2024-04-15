@@ -2,14 +2,15 @@ name: modular backend
 
 on:
   push:
-    branches: [ "main", "develop", "feature/CICD" ]
+    branches: [ "main", "develop", "fix/CICD" ]
   pull_request:
     branches: [ "main", "develop" ]
 
 env:
   MODULAR_BACK_VERSION: dev.1.0.0
-  BACKEND_CONTAINER_NAME: modular_back
-  MODULAR_HOSTNAME: xwick.ru
+  BACKEND_CONTAINER_NAME: backend
+  BACKEND_IMAGE_NAME: modular_back
+  MODULAR_HOST: xwick.ru
   MODULAR_NETWORK_NAME: traefik
 
 jobs:
@@ -34,6 +35,8 @@ jobs:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     needs: test
+    # if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
+    # if: github.ref == 'refs/heads/develop'
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -50,8 +53,8 @@ jobs:
           file: bot_constructor/Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_CONTAINER_NAME}}:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_CONTAINER_NAME}}:${{ env.MODULAR_BACK_VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE_NAME}}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE_NAME}}:${{ env.MODULAR_BACK_VERSION }}
 
   deploy:
     name: Deployment on server
@@ -61,22 +64,23 @@ jobs:
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ env.MODULAR_HOSTNAME }}
+          host: ${{ env.MODULAR_HOST }}
           username: ${{ secrets.HOST_USER }}
-          password: ${{ secrets.HOST_USER_PWD }}
+          # password: ${{ secrets.HOST_USER_PWD }}
+          key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
           script: |
             docker stop ${{ env.BACKEND_CONTAINER_NAME }}
             docker rm ${{ env.BACKEND_CONTAINER_NAME }}
-            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_CONTAINER_NAME }}:latest
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_CONTAINER_NAME }}:latest
+            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE_NAME }}:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE_NAME }}:latest
             docker run -d \
               --name=${{ env.BACKEND_CONTAINER_NAME }} \
-              --hostname=${{ env.MODULAR_HOSTNAME }} \
+              --hostname=${{ env.BACKEND_CONTAINER_NAME }} \
               --net=${{ env.MODULAR_NETWORK_NAME }} \
               --restart=unless-stopped \
               -v static_value:/app/static/ \
               -v media_value:/app/media/ \
-              ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_CONTAINER_NAME }}:latest
+              ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE_NAME }}:latest
 
   inform:
     name: Send message to Telegram account
