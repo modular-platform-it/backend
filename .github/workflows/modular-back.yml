@@ -11,6 +11,7 @@ env:
   BACKEND_CONTAINER_NAME: modular_back
   MODULAR_HOSTNAME: xwick.ru
   MODULAR_NETWORK_NAME: traefik
+  TELEGRAM_TO: 228559330
 
 jobs:
 
@@ -84,7 +85,7 @@ jobs:
       - name: send message
         uses: appleboy/telegram-action@master
         with:
-          to: ${{ secrets.TELEGRAM_TO }}
+          to: ${{ env.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
             Hey there!
