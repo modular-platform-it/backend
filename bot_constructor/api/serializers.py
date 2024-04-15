@@ -64,15 +64,24 @@ class TelegramBotSerializer(TelegramBotShortSerializer):
         )
 
 
+class TelegramBotActionsPKField(serializers.PrimaryKeyRelatedField):
+    def get_queryset(self):
+        telegram_bot_pk = self.context["telegram_bot_pk"]
+        telegram_bot = TelegramBot.objects.get(id=telegram_bot_pk)
+        return telegram_bot.actions.all()
+
+
 class TelegramFileSerializer(serializers.ModelSerializer):
     """Сериализатор файлов для команд телеграм бота."""
 
+    telegram_action = TelegramBotActionsPKField()
     file = serializers.FileField()
 
     class Meta:
         model = TelegramBotFile
         fields = (
             "id",
+            "telegram_action",
             "file",
         )
 
@@ -125,3 +134,12 @@ class TelegramBotActionSerializer(serializers.ModelSerializer):
                 fields=("telegram_bot", "position"),
             ),
         )
+
+
+class TokenSerializer(serializers.Serializer):
+    """Сериализатор для телеграм токена."""
+
+    telegram_token = serializers.RegexField(regex=r"^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$")
+
+    class Meta:
+        fields = ("telegram_token",)
