@@ -561,6 +561,44 @@ files = [
 python-dateutil = ">=2.4"
 
 [[package]]
+name = "faker-file"
+version = "0.17.11"
+description = "Generate files with fake data."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "faker-file-0.17.11.tar.gz", hash = "sha256:6ea67b5083b29edbe4f3d808d6aa13fea58bde5e01d306ec44af6f4aeff367cb"},
+    {file = "faker_file-0.17.11-py2.py3-none-any.whl", hash = "sha256:8a805d1731f98ae9cab580da4c5899e3669a531065534c2ca1d7edd51d434193"},
+]
+
+[package.dependencies]
+Faker = "*"
+
+[package.extras]
+all = ["Faker", "WeasyPrint", "edge-tts", "gtts", "imgkit", "nlpaug", "nltk", "odfpy", "openpyxl", "paramiko", "pathy[all]", "pdf2image", "pdfkit", "python-docx", "python-pptx", "reportlab", "tablib", "textaugment", "tika", "torch", "transformers", "xml2epub"]
+azure = ["pathy[azure]"]
+bmp = ["WeasyPrint", "pdf2image"]
+common = ["Faker", "WeasyPrint", "edge-tts", "gtts", "imgkit", "odfpy", "openpyxl", "paramiko", "pathy[all]", "pdf2image", "pdfkit", "python-docx", "python-pptx", "reportlab", "tablib", "xml2epub"]
+data-augmentation = ["nlpaug", "nltk", "textaugment", "tika", "torch", "transformers"]
+django = ["Django (>=2.2)"]
+docx = ["python-docx"]
+epub = ["xml2epub"]
+gcs = ["pathy[gcs]"]
+gif = ["WeasyPrint", "pdf2image"]
+images = ["imgkit"]
+mp3 = ["edge-tts", "gtts"]
+odp = ["odfpy"]
+ods = ["odfpy", "tablib"]
+odt = ["odfpy"]
+pdf = ["pdfkit", "reportlab"]
+pptx = ["python-pptx"]
+s3 = ["pathy[s3]"]
+sftp = ["paramiko"]
+sqlalchemy = ["SQLAlchemy (>=1.0)", "SQLAlchemy-Utils (>=0.37.0)"]
+tiff = ["WeasyPrint", "pdf2image"]
+xlsx = ["openpyxl", "tablib"]
+
+[[package]]
 name = "filelock"
 version = "3.13.3"
 description = "A platform independent file lock."
@@ -1049,4 +1087,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "b2cac0c083b9df9103019cb2129476915f1d2c2a43262f120f2e002d52a087d5"
+content-hash = "5a5d40daa74f0bae3079a25f007c1883f47841563728dc3d2e3488edd6d153cd"
