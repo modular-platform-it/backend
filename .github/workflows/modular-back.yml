@@ -8,33 +8,43 @@ on:
 
 env:
   MODULAR_BACK_VERSION: dev.1.0.0
-  BACKEND_CONTAINER_NAME: backend
-  BACKEND_IMAGE_NAME: modular_back
-  MODULAR_HOST: xwick.ru
-  MODULAR_NETWORK_NAME: traefik
 
 jobs:
 
-  test:
+  lint:
     name: Testing
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.12]
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python
+    -
+      name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.12
-    - uses: Gr1N/setup-poetry@v8
-    - uses: actions/cache@v4
+        python-version: ${{ matrix.python-version }}
+    -
+      name: Sort with isort
+      uses: isort/isort-action@v1
+    -
+      name: Insatall Poetry
+      uses: Gr1N/setup-poetry@v8
+    -
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pypoetry/virtualenvs
         key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
-    - run: poetry --version
+    -
+      name: Format with black
+      run: |
+        poetry add black
+        poetry run black --check .
 
   build:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
-    needs: test
+    needs: lint
     # if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
     # if: github.ref == 'refs/heads/develop'
     steps:
@@ -53,8 +63,8 @@ jobs:
           file: bot_constructor/Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE_NAME}}:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE_NAME}}:${{ env.MODULAR_BACK_VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.BACKEND_IMAGE_NAME}}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.BACKEND_IMAGE_NAME}}:${{ env.MODULAR_BACK_VERSION }}
 
   deploy:
     name: Deployment on remote server
@@ -64,23 +74,23 @@ jobs:
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ env.MODULAR_HOST }}
+          host: ${{ secrets.MODULAR_HOST }}
           username: ${{ secrets.HOST_USER }}
           # password: ${{ secrets.HOST_USER_PWD }}
           key: ${{ secrets.HOST_SSH_KEY }}
           script: |
-            docker stop ${{ env.BACKEND_CONTAINER_NAME }}
-            docker rm ${{ env.BACKEND_CONTAINER_NAME }}
-            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE_NAME }}:latest
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE_NAME }}:latest
+            docker stop ${{ vars.BACKEND_CONTAINER_NAME }}
+            docker rm ${{ vars.BACKEND_CONTAINER_NAME }}
+            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.BACKEND_IMAGE_NAME }}:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.BACKEND_IMAGE_NAME }}:latest
             docker run -d \
-              --name=${{ env.BACKEND_CONTAINER_NAME }} \
-              --hostname=${{ env.BACKEND_CONTAINER_NAME }} \
-              --net=${{ env.MODULAR_NETWORK_NAME }} \
+              --name=${{ vars.BACKEND_CONTAINER_NAME }} \
+              --hostname=${{ vars.BACKEND_CONTAINER_NAME }} \
+              --net=${{ secrets.MODULAR_NETWORK_NAME }} \
               --restart=unless-stopped \
               -v static_value:/app/static/ \
               -v media_value:/app/media/ \
-              ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE_NAME }}:latest
+              ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.BACKEND_IMAGE_NAME }}:latest
 
   inform:
     name: Send message to Telegram account
