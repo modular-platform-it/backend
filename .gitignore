@@ -162,4 +162,4 @@ cython_debug/
 
 # Static
 static/
-.github/workflows/*.json
+.github/workflows/temp*.*

@@ -32,12 +32,14 @@ jobs:
         path: ~/.cache/pypoetry/virtualenvs
         key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
     -
+      name: Install dependencies
+      run: poetry --version
+    -
       name: Format with black
       run: |
-        poetry add black
+        # poetry add black --dev
         poetry run black --check .
-        cd bot_constructor/
-        python manage.py test
+        python bot_constructor/manage.py test
 
   build:
     name: Push Docker image to Docker Hub
@@ -92,6 +94,7 @@ jobs:
 
   inform:
     name: Send message to Telegram account
+    if: github.ref == 'refs/heads/fix/CICD'
     runs-on: ubuntu-latest
     needs: deploy
     steps:
@@ -103,5 +106,9 @@ jobs:
           message: |
             Hey there!
             Рабочий поток ${{ github.workflow }} успешно выполнен!
-            Репозиторий: ${{ github.repository }}
-            Sincerely yours, ✨ Xwick Bot ✨
+            🖥️ ${{ runner.os }} server hosted by GitHub
+            💡 ${{ github.event_name }} event
+            Репозиторий: 🐧 ${{ github.repository }}
+            Ветка: 🔎 ${{ github.ref }}
+            🍏 This job's status is ${{ job.status }}.
+            Sincerely yours, 🎉 Xwick Bot ✨
