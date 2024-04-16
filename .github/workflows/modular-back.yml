@@ -109,8 +109,6 @@ jobs:
           message: |
             ✨ Hey there! ✨
             Рабочий поток ${{ github.workflow }} успешно выполнен!
-            Репозиторий:
-            🐧 ${{ github.repository }}
-            Ветка:
-            🔎 ${{ github.ref_name }}
+            Репозиторий: 🐧 ${{ github.repository }}
+            Ветка: 🔎 ${{ github.ref_name }}
             Sincerely yours, ✨ Xwick Bot ✨
