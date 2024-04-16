@@ -33,9 +33,7 @@ jobs:
         key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
     -
       name: Install dependencies
-      run: |
-        poetry install
-        poetry shell
+      run: poetry install
     -
       name: Format with black
       run: |
