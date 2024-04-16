@@ -4,9 +4,9 @@ from django_filters import rest_framework as filters
 
 
 class TelegramBotFilter(filters.FilterSet):
+    """Фильтр для представления телеграм ботов."""
 
     name = filters.CharFilter(field_name="name", lookup_expr="istartswith")
-    # is_started = filters.BooleanFilter(field_name='is_started')
 
     class Meta:
         model = TelegramBot

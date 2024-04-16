@@ -65,6 +65,11 @@ class TelegramBotSerializer(TelegramBotShortSerializer):
 
 
 class TelegramBotActionsPKField(serializers.PrimaryKeyRelatedField):
+    """
+    Поле сериализатора для действий телеграм бота.
+    выводит только действия, принадлежащие конкретному боту.
+    """
+
     def get_queryset(self):
         telegram_bot_pk = self.context["telegram_bot_pk"]
         telegram_bot = TelegramBot.objects.get(id=telegram_bot_pk)

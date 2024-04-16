@@ -62,6 +62,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         serializer_class=TokenSerializer,
     )
     def check_telegram_token(self, request: Request):
+        """Эндпоинт для проверки введенного телеграм токена на валидность."""
         telegram_token = request.data.get("telegram_token")
         response = requests.get(f"https://api.telegram.org/bot{telegram_token}/getMe")
         print(response.text)

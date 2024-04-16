@@ -99,10 +99,12 @@ class TelegramBotAction(models.Model):
 
 
 def bot_directory_path(instance, filename: str) -> str:
-    return f"bots/files/{filename}"
+    """Создаёт путь для сохраняемого файла в зависимости от id телеграм бота."""
+    return f"bots/{instance.telegram_action.telegram_bot.id}/files/{filename}"
 
 
 class TelegramBotFile(models.Model):
+    """Модель для хранения файла для действия телеграм бота."""
 
     telegram_action = models.ForeignKey(
         to="TelegramBotAction",
