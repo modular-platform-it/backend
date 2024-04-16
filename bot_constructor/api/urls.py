@@ -1,10 +1,12 @@
-# type:ignore
+# type: ignore
+from allauth.account.views import LoginView, LogoutView
 from api.views import (
     TelegramBotActionFileViewSet,
     TelegramBotActionViewSet,
     TelegramBotViewSet,
 )
 from django.urls import include, path
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework_nested import routers
 
 router_v1 = routers.DefaultRouter()
@@ -21,7 +23,15 @@ files_router.register(
 )
 
 urlpatterns = [
-    path("api/", include(router_v1.urls)),
-    path("api/", include(actions_router.urls)),
-    path("api/", include(files_router.urls)),
+    path("login/", LoginView.as_view(), name="account_login"),
+    path("logout/", LogoutView.as_view(), name="account_logout"),
+    path("schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "schema/swagger-ui/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+    path("", include(router_v1.urls)),
+    path("", include(actions_router.urls)),
+    path("", include(files_router.urls)),
 ]

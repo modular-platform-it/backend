@@ -9,9 +9,9 @@ URL = typing.Union[URLPattern, URLResolver]
 URLList = typing.List[URL]
 
 urlpatterns: URLList = [
-    path("admin/", admin.site.urls),
+    path("api/", include("api.urls")),
     path("accounts/", include("allauth.urls")),
-    path("", include("api.urls")),
+    path("admin/", admin.site.urls),
 ]
 
 if settings.DEBUG:
