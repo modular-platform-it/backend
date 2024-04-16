@@ -33,11 +33,12 @@ jobs:
         key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
     -
       name: Install dependencies
-      run: poetry --version
+      run: |
+        poetry install
+        poetry shell
     -
       name: Format with black
       run: |
-        # poetry add black --dev
         poetry run black --check .
         python bot_constructor/manage.py test
 
