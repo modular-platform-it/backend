@@ -107,10 +107,10 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           to: ${{ secrets.TELEGRAM_TO }}
           message: |
-            🍏 Hey there! 🍏
+            Hey there!
             Рабочий поток ${{ github.workflow }} успешно выполнен!
             GitHub-cервер: 🖥️ ${{ runner.os }}
-            Event: 💡 ${{ github.event_name }}
+            Event: ${{ github.event_name }}
             Репозиторий:
               🐧 ${{ github.repository }}
             Ветка: 🔎 ${{ github.ref }}
