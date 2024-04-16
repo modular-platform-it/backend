@@ -112,5 +112,5 @@ jobs:
             Репозиторий:
             🐧 ${{ github.repository }}
             Ветка:
-            🔎 ${{ github.ref }}
+            🔎 ${{ github.ref_name }}
             Sincerely yours, ✨ Xwick Bot ✨
