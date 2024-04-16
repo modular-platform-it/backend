@@ -107,11 +107,11 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           to: ${{ secrets.TELEGRAM_TO }}
           message: |
-            Hey there!
+            🍏 Hey there! 🍏
             Рабочий поток ${{ github.workflow }} успешно выполнен!
-            🖥️ ${{ runner.os }} server hosted by GitHub
-            💡 ${{ github.event_name }} event
-            Репозиторий: 🐧 ${{ github.repository }}
+            GitHub-cервер: 🖥️ ${{ runner.os }}
+            Event: 💡 ${{ github.event_name }}
+            Репозиторий:
+              🐧 ${{ github.repository }}
             Ветка: 🔎 ${{ github.ref }}
-            🍏 This job's status is ${{ job.status }}.
-            Sincerely yours, 🎉 Xwick Bot ✨
+            Sincerely yours, ✨ Xwick Bot ✨
