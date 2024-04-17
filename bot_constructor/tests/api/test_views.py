@@ -10,27 +10,32 @@ from factory_data.factories import (
     TelegramBotFileFactory,
 )
 from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.test import APITestCase
 
 
 class TestTelegramBotView(APITestCase):
+    """Набор тестов для набора представлений телеграм бота."""
+
     def setUp(self) -> None:
-        self.telegram_bot = TelegramBotFactory.build()
-        self.url_list = reverse("telegrambot-list")
-        self.url_detail = "telegrambot-detail"
+        self.telegram_bot: TelegramBot = TelegramBotFactory.build()
+        self.url_list: str = reverse("telegrambot-list")
+        self.url_detail: str = "telegrambot-detail"
         return super().setUp()
 
     def test_telegram_bot_list_view(self):
-        telegram_bots = TelegramBotFactory.create_batch(5)
-        response = self.client.get(self.url_list)
+        """Проверка представления телеграм бота в виде списка."""
+        telegram_bots: list[TelegramBot] = TelegramBotFactory.create_batch(5)
+        response: Response = self.client.get(self.url_list)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsInstance(response.data, list)
         for telegram_bot in telegram_bots:
             self.assertContains(response, telegram_bot.name)
 
     def test_telegram_bot_create_view(self):
-        count = TelegramBot.objects.count()
-        response = self.client.post(
+        """Проверка представления создания телеграм бота."""
+        count: int = TelegramBot.objects.count()
+        response: Response = self.client.post(
             self.url_list,
             {
                 "name": self.telegram_bot.name,
@@ -43,25 +48,28 @@ class TestTelegramBotView(APITestCase):
         self.assertEqual(count + 1, TelegramBot.objects.count())
 
     def test_telegram_bot_detail_view(self):
-        telegram_bot = TelegramBotFactory.create()
-        response = self.client.get(
+        """Проверка представления детального отображения телеграм бота."""
+        telegram_bot: TelegramBot = TelegramBotFactory.create()
+        response: Response = self.client.get(
             reverse("telegrambot-detail", kwargs={"pk": telegram_bot.id})
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_telegram_bot_delete_view(self):
+        """Проверка отображения удаления телеграм бота."""
         telegram_bot: TelegramBot = TelegramBotFactory.create()
-        count = TelegramBot.objects.count()
-        response = self.client.delete(
+        count: int = TelegramBot.objects.count()
+        response: Response = self.client.delete(
             reverse("telegrambot-detail", kwargs={"pk": telegram_bot.id})
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(count - 1, TelegramBot.objects.count())
 
     def test_telegram_bot_update_view(self):
+        """Проверка представления обновления телеграм бота."""
         telegram_bot: TelegramBot = TelegramBotFactory.create()
         new_telegram_bot: TelegramBot = TelegramBotFactory.build()
-        response = self.client.put(
+        response: Response = self.client.put(
             reverse(self.url_detail, kwargs={"pk": telegram_bot.id}),
             data={
                 "name": new_telegram_bot.name,
@@ -70,7 +78,7 @@ class TestTelegramBotView(APITestCase):
                 "api_url": new_telegram_bot.api_url,
             },
         )
-        updated_bot = TelegramBot.objects.get(id=telegram_bot.id)
+        updated_bot: TelegramBot = TelegramBot.objects.get(id=telegram_bot.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(new_telegram_bot.name, updated_bot.name)
         self.assertEqual(new_telegram_bot.telegram_token, updated_bot.telegram_token)
@@ -79,20 +87,23 @@ class TestTelegramBotView(APITestCase):
 
 
 class TestTelegramBotActionView(APITestCase):
+    """Набор тестов для набора представлений действий телеграм бота."""
+
     def setUp(self) -> None:
-        self.telegram_bot = TelegramBotFactory.create()
-        self.telegram_action = TelegramBotActionFactory.create(
+        self.telegram_bot: TelegramBot = TelegramBotFactory.create()
+        self.telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
             telegram_bot=self.telegram_bot
         )
-        self.url_list = "telegram_bot-actions-list"
-        self.url_detail = "telegram_bot-actions-detail"
+        self.url_list: str = "telegram_bot-actions-list"
+        self.url_detail: str = "telegram_bot-actions-detail"
         return super().setUp()
 
     def test_telegram_bot_action_list_view(self):
-        telegram_actions = TelegramBotActionFactory.create_batch(
-            5, telegram_bot=self.telegram_bot
+        """Проверка представления действий телеграм бота в виде списка."""
+        telegram_actions: list[TelegramBotAction] = (
+            TelegramBotActionFactory.create_batch(5, telegram_bot=self.telegram_bot)
         )
-        response = self.client.get(
+        response: Response = self.client.get(
             reverse(self.url_list, kwargs={"telegram_bot_pk": self.telegram_bot.id})
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -101,11 +112,12 @@ class TestTelegramBotActionView(APITestCase):
             self.assertContains(response, telegram_action.name)
 
     def test_telegram_bot_action_create_view(self):
-        count = TelegramBotAction.objects.count()
+        """Проверка представления создания действия телеграм бота."""
+        count: int = TelegramBotAction.objects.count()
         telegram_action: TelegramBotAction = TelegramBotActionFactory.build(
             telegram_bot=self.telegram_bot
         )
-        response = self.client.post(
+        response: Response = self.client.post(
             reverse(self.url_list, kwargs={"telegram_bot_pk": self.telegram_bot.id}),
             data={
                 "name": telegram_action.name,
@@ -121,7 +133,8 @@ class TestTelegramBotActionView(APITestCase):
         self.assertEqual(count + 1, TelegramBotAction.objects.count())
 
     def test_telegram_bot_action_detail_view(self):
-        response = self.client.get(
+        """Проверка представления детального отображения действия телеграм бота."""
+        response: Response = self.client.get(
             reverse(
                 self.url_detail,
                 kwargs={
@@ -133,11 +146,12 @@ class TestTelegramBotActionView(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_telegram_bot_action_delete_view(self):
+        """Проверка отображения удаления действия телеграм бота."""
         telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
             telegram_bot=self.telegram_bot
         )
-        count = TelegramBotAction.objects.count()
-        response = self.client.delete(
+        count: int = TelegramBotAction.objects.count()
+        response: Response = self.client.delete(
             reverse(
                 self.url_detail,
                 kwargs={
@@ -150,6 +164,7 @@ class TestTelegramBotActionView(APITestCase):
         self.assertEqual(count - 1, TelegramBotAction.objects.count())
 
     def test_telegram_bot_action_update_view(self):
+        """Проверка представления обновления телеграм бота."""
         telegram_bot: TelegramBot = TelegramBotFactory.create()
         telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
             telegram_bot=telegram_bot
@@ -157,7 +172,7 @@ class TestTelegramBotActionView(APITestCase):
         new_telegram_action: TelegramBotAction = TelegramBotActionFactory.build(
             telegram_bot=telegram_bot
         )
-        response = self.client.put(
+        response: Response = self.client.put(
             reverse(
                 self.url_detail,
                 kwargs={
@@ -174,7 +189,7 @@ class TestTelegramBotActionView(APITestCase):
                 "is_active": new_telegram_action.is_active,
             },
         )
-        updated_action = TelegramBotAction.objects.get(
+        updated_action: TelegramBotAction = TelegramBotAction.objects.get(
             id=telegram_action.id, telegram_bot=telegram_bot.id
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -188,23 +203,26 @@ class TestTelegramBotActionView(APITestCase):
 
 
 class TestTelegramBotFileView(APITestCase):
+    """Набор тестов для набора представлений файлов действий телеграм бота."""
+
     def setUp(self) -> None:
-        self.telegram_bot = TelegramBotFactory.create()
-        self.telegram_action = TelegramBotActionFactory.create(
+        self.telegram_bot: TelegramBot = TelegramBotFactory.create()
+        self.telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
             telegram_bot=self.telegram_bot
         )
-        self.telegram_file = TelegramBotFileFactory(
+        self.telegram_file: TelegramBotFile = TelegramBotFileFactory(
             telegram_action=self.telegram_action
         )
-        self.url_list = "telegram_bot_action-files-list"
-        self.url_detail = "telegram_bot_action-files-detail"
+        self.url_list: str = "telegram_bot_action-files-list"
+        self.url_detail: str = "telegram_bot_action-files-detail"
         return super().setUp()
 
     def test_telegram_bot_file_list_view(self):
-        telegram_files = TelegramBotFileFactory.create_batch(
+        """Проверка представления файлов действий телеграм бота в виде списка."""
+        telegram_files: list[TelegramBotFile] = TelegramBotFileFactory.create_batch(
             5, telegram_action=self.telegram_action
         )
-        response = self.client.get(
+        response: Response = self.client.get(
             reverse(
                 self.url_list,
                 kwargs={
@@ -219,11 +237,12 @@ class TestTelegramBotFileView(APITestCase):
             self.assertContains(response, telegram_file.id)
 
     def test_telegram_bot_file_create_view(self):
-        count = TelegramBotFile.objects.count()
+        """Проверка представления создания файла действия телеграм бота."""
+        count: int = TelegramBotFile.objects.count()
         telegram_file: TelegramBotFile = TelegramBotFileFactory.build(
             telegram_action=self.telegram_action
         )
-        response = self.client.post(
+        response: Response = self.client.post(
             reverse(
                 self.url_list,
                 kwargs={
@@ -239,8 +258,9 @@ class TestTelegramBotFileView(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(count + 1, TelegramBotFile.objects.count())
 
-    def test_telegram_bot_action_detail_view(self):
-        response = self.client.get(
+    def test_telegram_bot_action_file_detail_view(self):
+        """Проверка представления детального отображения файла действия бота."""
+        response: Response = self.client.get(
             reverse(
                 self.url_detail,
                 kwargs={
@@ -253,8 +273,66 @@ class TestTelegramBotFileView(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get("id"), self.telegram_file.id)
 
+    def test_telegram_bot_action_delete_view(self):
+        """Проверка отображения удаления файла действия телеграм бота."""
+        telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
+            telegram_bot=self.telegram_bot
+        )
+        telegram_file: TelegramBotFile = TelegramBotFileFactory.create(
+            telegram_action__telegram_bot=self.telegram_bot,
+            telegram_action=telegram_action,
+        )
+        count: int = TelegramBotFile.objects.count()
+        response: Response = self.client.delete(
+            reverse(
+                self.url_detail,
+                kwargs={
+                    "pk": telegram_file.id,
+                    "telegram_bot_pk": self.telegram_bot.id,
+                    "telegram_action_pk": telegram_action.id,
+                },
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(count - 1, TelegramBotFile.objects.count())
+
+    def test_telegram_bot_action_update_view(self):
+        """Проверка представления обновления файла телеграм бота."""
+        telegram_bot: TelegramBot = TelegramBotFactory.create()
+        telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
+            telegram_bot=telegram_bot
+        )
+        telegram_file: TelegramBotFile = TelegramBotFileFactory.create(
+            telegram_action__telegram_bot=telegram_bot, telegram_action=telegram_action
+        )
+        new_telegram_file: TelegramBotFile = TelegramBotFileFactory.build(
+            telegram_action__telegram_bot=telegram_bot, telegram_action=telegram_action
+        )
+        response: Response = self.client.put(
+            reverse(
+                self.url_detail,
+                kwargs={
+                    "pk": telegram_file.id,
+                    "telegram_bot_pk": telegram_bot.id,
+                    "telegram_action_pk": telegram_action.id,
+                },
+            ),
+            data={
+                "telegram_action": telegram_action.id,
+                "file": new_telegram_file.file,
+            },
+        )
+        updated_file: TelegramBotFile = TelegramBotFile.objects.get(
+            id=telegram_file.id,
+            telegram_action__telegram_bot=telegram_bot.id,
+            telegram_action=telegram_action.id,
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(new_telegram_file.file.size, updated_file.file.size)
+
     @classmethod
     def tearDownClass(cls):
+        """Удаляет временную папку с созданными для тестов файлами после всех тестов."""
         if os.path.exists(FS_STORAGE.root_path):
             shutil.rmtree(FS_STORAGE.root_path, ignore_errors=True)
         super().tearDownClass()

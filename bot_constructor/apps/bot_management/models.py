@@ -1,4 +1,6 @@
 # type:ignore
+from typing import Literal
+
 from django.db import models
 
 
@@ -43,9 +45,15 @@ class TelegramBot(models.Model):
         verbose_name_plural = "Телеграм боты"
 
     def __str__(self):
+        """Строковое отображение объекта модели телеграм бота в виде его имени."""
         return str(self.name)
 
     def save(self, *args, **kwargs):
+        """
+        Модернизированный метод сохранения объекта телеграм бота.
+        Если модель создается, то к ней дополнительно создается действие /start.
+
+        """
         created = not self.pk
         super().save(*args, **kwargs)
         if created:
@@ -90,11 +98,15 @@ class TelegramBotAction(models.Model):
     is_active = models.BooleanField(verbose_name="Вкл/выкл")
 
     class Meta:
-        verbose_name = "Действие"
-        verbose_name_plural = "Действия"
-        unique_together = ("telegram_bot", "position")
+        verbose_name: str = "Действие"
+        verbose_name_plural: str = "Действия"
+        unique_together: tuple[Literal["telegram_bot"], Literal["position"]] = (
+            "telegram_bot",
+            "position",
+        )
 
     def __str__(self) -> str:
+        """Строковое отображение объекта модели действия бота в виде его имени."""
         return self.name
 
 
@@ -114,5 +126,9 @@ class TelegramBotFile(models.Model):
     file = models.FileField(verbose_name="Файл", upload_to=bot_directory_path)
 
     class Meta:
-        verbose_name = "Файл"
-        verbose_name_plural = "Файлы"
+        verbose_name: str = "Файл"
+        verbose_name_plural: str = "Файлы"
+
+    def __str__(self) -> str:
+        """Строковое отображение объекта модели файла действия в виде его имени."""
+        return self.file.name

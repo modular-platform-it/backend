@@ -71,7 +71,7 @@ class TelegramBotActionsPKField(serializers.PrimaryKeyRelatedField):
     """
 
     def get_queryset(self):
-        telegram_bot_pk = self.context["telegram_bot_pk"]
+        telegram_bot_pk = self.context.get("telegram_bot_pk", None)
         telegram_bot = TelegramBot.objects.get(id=telegram_bot_pk)
         return telegram_bot.actions.all()
 
