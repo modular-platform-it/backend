@@ -12,6 +12,7 @@ from api.serializers import (
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as df_filters
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
@@ -44,6 +45,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         "started_at",
     )
     ordering = ("-created_at",)
+    lookup_field = "pk"
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -65,19 +67,22 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         """Эндпоинт для проверки введенного телеграм токена на валидность."""
         telegram_token = request.data.get("telegram_token")
         response = requests.get(f"https://api.telegram.org/bot{telegram_token}/getMe")
-        print(response.text)
         if response.ok:
             return Response(
-                data={"success": "Проверка пройдена успешно"}, status=status.HTTP_200_OK
+                data={"detail": "Проверка пройдена успешно"}, status=status.HTTP_200_OK
             )
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {"detail": "Данный токен не действителен"}, status=status.HTTP_404_NOT_FOUND
+        )
 
 
 class TelegramBotActionViewSet(viewsets.ModelViewSet):
     """Набор представлений для действий телеграм бота."""
 
+    queryset = TelegramBotAction.objects.all()
     serializer_class = TelegramBotActionSerializer
     parser_classes = (FormParser, MultiPartParser)
+    lookup_field = "pk"
 
     def get_queryset(self):
         return TelegramBotAction.objects.filter(
@@ -113,9 +118,54 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         )
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ]
+    ),
+    retrieve=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ]
+    ),
+    destroy=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ]
+    ),
+    update=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ]
+    ),
+    create=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ]
+    ),
+    partial_update=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ]
+    ),
+)
 class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
     """Набор представлений для файлов действий телеграм ботов."""
 
+    queryset = TelegramBotFile.objects.all()
     serializer_class = TelegramFileSerializer
 
     def get_queryset(self):
@@ -137,7 +187,7 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
         serializer = TelegramFileSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def retrieve(self, request, pk, telegram_bot_pk, telegram_action_pk):
+    def retrieve(self, request, pk: int, telegram_bot_pk: int, telegram_action_pk: int):
         queryset = TelegramBotFile.objects.filter(
             pk=pk,
             telegram_action=telegram_action_pk,
