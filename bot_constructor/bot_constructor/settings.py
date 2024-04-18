@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "allauth",
     "allauth.account",
+    "rest_framework",
+    "django_filters",
     "apps.bot_management",
     "api",
     "drf_spectacular",
