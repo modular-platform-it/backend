@@ -105,7 +105,7 @@ jobs:
         run: |
           team=${{vars.GH_BACK_TEAM}}
           author=${{github.actor}}
-          author=echo ${team}[${author}]
+          echo ${team}[${author}]
           message='✨ Hey there! ✨
             Рабочий поток ${{ github.workflow }} успешно выполнен!
             Событие: 🚀 ${{ github.event_name }}
