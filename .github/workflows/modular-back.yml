@@ -14,7 +14,6 @@ env:
   POETRY_VERSION: "1.8.2"
   PYTHON_VERSION: "3.12"
   REGISTRY: ghcr.io
-  TG_TO: [{'sihuannewrise': 228559330},{'olees-orlenko':''}]
 
 jobs:
 
