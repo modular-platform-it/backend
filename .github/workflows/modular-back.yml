@@ -104,7 +104,7 @@ jobs:
       - name: Send Telegram Message
         run: |
           team=${{vars.GH_BACK_TEAM}}
-          author=team[${{github.actor}}]
+          author=${team}[${{github.actor}}]
           message='✨ Hey there! ✨
             Рабочий поток ${{ github.workflow }} успешно выполнен!
             Событие: 🚀 ${{ github.event_name }}
