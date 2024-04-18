@@ -13,8 +13,8 @@ class TelegramBot(models.Model):
         STOPPED = "STOPPED", "Остановлен"
         ERROR = "ERROR", "Ошибка"
 
-    name: str = models.CharField(verbose_name="Название бота", max_length=255)
-    telegram_token: str = models.CharField(
+    name = models.CharField(verbose_name="Название бота", max_length=255)
+    telegram_token = models.CharField(
         verbose_name="Токен авторизации телеграм бота",
         max_length=255,
         unique=True,
@@ -22,13 +22,13 @@ class TelegramBot(models.Model):
     description = models.CharField(
         verbose_name="Описание бота", max_length=1000, blank=True
     )
-    api_key: str = models.CharField(verbose_name="Ключ API", max_length=255)
-    api_url: str = models.CharField(verbose_name="Адрес API", max_length=255)
-    api_availability: bool = models.BooleanField(
+    api_key = models.CharField(verbose_name="Ключ API", max_length=255)
+    api_url = models.CharField(verbose_name="Адрес API", max_length=255)
+    api_availability = models.BooleanField(
         verbose_name="Доступность API", blank=True, default=False
     )
-    is_started: bool = models.BooleanField(verbose_name="Запущен", default=False)
-    bot_state: str = models.CharField(
+    is_started = models.BooleanField(verbose_name="Запущен", default=False)
+    bot_state = models.CharField(
         verbose_name="Статус бота",
         max_length=7,
         choices=BotState,
@@ -44,17 +44,17 @@ class TelegramBot(models.Model):
         verbose_name = "Телеграм бот"
         verbose_name_plural = "Телеграм боты"
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Строковое отображение объекта модели телеграм бота в виде его имени."""
-        return str(self.name)
+        return self.name
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
         """
         Модернизированный метод сохранения объекта телеграм бота.
-        Если модель создается, то к ней дополнительно создается действие /start.
+        Если объект модели создается, то к ней дополнительно создается действие /start.
 
         """
-        created = not self.pk
+        created: bool = not self.pk
         super().save(*args, **kwargs)
         if created:
             TelegramBotAction.objects.create(
@@ -98,8 +98,8 @@ class TelegramBotAction(models.Model):
     is_active = models.BooleanField(verbose_name="Вкл/выкл")
 
     class Meta:
-        verbose_name: str = "Действие"
-        verbose_name_plural: str = "Действия"
+        verbose_name = "Действие"
+        verbose_name_plural = "Действия"
         unique_together: tuple[Literal["telegram_bot"], Literal["position"]] = (
             "telegram_bot",
             "position",
@@ -126,8 +126,8 @@ class TelegramBotFile(models.Model):
     file = models.FileField(verbose_name="Файл", upload_to=bot_directory_path)
 
     class Meta:
-        verbose_name: str = "Файл"
-        verbose_name_plural: str = "Файлы"
+        verbose_name = "Файл"
+        verbose_name_plural = "Файлы"
 
     def __str__(self) -> str:
         """Строковое отображение объекта модели файла действия в виде его имени."""
