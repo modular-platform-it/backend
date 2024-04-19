@@ -104,8 +104,8 @@ jobs:
       - name: Send Telegram Message
         run: |
           declare -A tg_nicks=(${{ vars.TG_BACK_TEAM_NICKS }})
-          if [ ${tg_nicks[$author]+_} ]; then tg_nick=(@${tg_nicks[$author]}); else tg_nick=""; fi
           author=${{ github.actor }}
+          if [ ${tg_nicks[$author]+_} ]; then tg_nick=(@${tg_nicks[$author]}); else tg_nick=""; fi
           tg_chat_id=${{ secrets.TG_CHAT_ID }}
           declare -A tg_ids=(${{ vars.TG_BACK_TEAM_IDS }})
           message='✨ Hey there! ✨
