@@ -103,18 +103,17 @@ jobs:
     steps:
       - name: Set author and author_tg_nick values to env
         run: |
-          tg_chat_id=${{ secrets.TG_CHAT_ID }}
           author=${{ github.actor }}
-          echo "AUTHOR=${author}" >> "$GITHUB_ENV"
           declare -A tg_nicks=(${{ vars.TG_BACK_TEAM_NICKS }})
           if [ ${tg_nicks[$author]+_} ]; then tg_nick="(@${tg_nicks[$author]})"; else tg_nick=""; fi
           echo "AUTHOR_TG_NICK=${tg_nick}" >> "$GITHUB_ENV"
       - name: Send message to Telegram
         run: |
+          tg_chat_id=${{ secrets.TG_CHAT_ID }}
           declare -A tg_ids=(${{ vars.TG_BACK_TEAM_IDS }})
-          if [ ${tg_ids[$AUTHOR]+_} ]; then tg_to=${tg_ids[$AUTHOR]}; else tg_to=-$tg_chat_id; fi
+          if [ ${tg_ids[$author]+_} ]; then tg_to=${tg_ids[$author]}; else tg_to=-$tg_chat_id; fi
 
-          message='✨ Hey there! ✨
+          message='Hey there!
             Рабочий поток ${{ github.workflow }} успешно выполнен!
             Событие: 🚀 ${{ github.event_name }}
             Автор: 🐧 ${{ github.actor }} ${{ env.AUTHOR_TG_NICK }}
