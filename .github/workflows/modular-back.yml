@@ -111,6 +111,7 @@ jobs:
       - name: Send message to Telegram
         run: |
           declare -A tg_ids=(${{ vars.TG_BACK_TEAM_IDS }})
+          author=${{ github.actor }}
           if [ ${tg_ids[$author]+_} ]; then tg_to=${tg_ids[$author]}; else tg_to=-$tg_chat_id; fi
           message='✨ Hey there! ✨
             Рабочий поток ${{ github.workflow }} успешно выполнен!
