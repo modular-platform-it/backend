@@ -112,7 +112,7 @@ jobs:
         run: |
           tg_chat_id=${{ secrets.TG_CHAT_ID }}
           declare -A tg_ids=(${{ vars.TG_BACK_TEAM_IDS }})
-          if [ ${tg_ids[$AUTHOR]+_} ]; then tg_to="${tg_ids[$AUTHOR]}"; else tg_to="-$tg_chat_id"; fi
+          if [ ${tg_ids[$AUTHOR]+_} ]; then tg_to="${tg_ids[$AUTHOR]}" group=0; else tg_to="-$tg_chat_id" group=1; fi
 
           message='Hey there!
             Рабочий поток ${{ github.workflow }} успешно выполнен!
@@ -124,4 +124,5 @@ jobs:
 
           curl -s -X POST 'https://api.telegram.org/bot${{secrets.TG_BOT_TOKEN}}/sendMessage' \
             -d "chat_id=${tg_to}&text=${message}" \
-            -d "message_thread_id=${{vars.TG_BACK_THREAD_ID}}"
+        # if [send_to_group -eq 1]; then
+        # -d "message_thread_id=${{vars.TG_BACK_THREAD_ID}}"
