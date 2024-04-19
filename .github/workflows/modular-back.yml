@@ -109,6 +109,7 @@ jobs:
           declare -A tg_nicks=(${{ vars.TG_BACK_TEAM_NICKS }})
           if [ ${tg_nicks[$author]+_} ]; then tg_nick=${tg_nicks[$author]}; else tg_nick=""; fi
           echo "TG_NICK=${tg_nick}" >> $GITHUB_ENV
+          echo $TG_NICK
 
           declare -A tg_ids=(${{ vars.TG_BACK_TEAM_IDS }})
           if [ ${tg_ids[$author]+_} ]; then tg_to=${tg_ids[$author]}; else tg_to=-$tg_chat_id; fi
