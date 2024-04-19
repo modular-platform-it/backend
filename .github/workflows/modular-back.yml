@@ -101,7 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     # needs: deploy
     steps:
-      - name: Set author and TG_nick values to env
+      - name: Set author and author_tg_nick values to env
         run: |
           tg_chat_id=${{ secrets.TG_CHAT_ID }}
           author=${{ github.actor }}
@@ -113,6 +113,7 @@ jobs:
         run: |
           declare -A tg_ids=(${{ vars.TG_BACK_TEAM_IDS }})
           if [ ${tg_ids[$AUTHOR]+_} ]; then tg_to=${tg_ids[$AUTHOR]}; else tg_to=-$tg_chat_id; fi
+
           message='✨ Hey there! ✨
             Рабочий поток ${{ github.workflow }} успешно выполнен!
             Событие: 🚀 ${{ github.event_name }}
