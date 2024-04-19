@@ -107,7 +107,7 @@ jobs:
           author=${{ github.actor }}
           echo "AUTHOR=${author}" >> "$GITHUB_ENV"
           declare -A tg_nicks=(${{ vars.TG_BACK_TEAM_NICKS }})
-          if [ ${tg_nicks[$author]+_} ]; then tg_nick=(@${tg_nicks[$author]}); else tg_nick=""; fi
+          if [ ${tg_nicks[$author]+_} ]; then tg_nick="(@${tg_nicks[$author]})""; else tg_nick=""; fi
           echo "AUTHOR_TG_NICK=${tg_nick}" >> "$GITHUB_ENV"
       - name: Send message to Telegram
         run: |
