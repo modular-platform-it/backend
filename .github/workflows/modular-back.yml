@@ -108,7 +108,7 @@ jobs:
 
           declare -A tg_nicks=(${{ vars.TG_BACK_TEAM_NICKS }})
           if [ ${tg_nicks[$author]+_} ]; then tg_nick=${tg_nicks[$author]}; else tg_nick=""; fi
-          echo "TG_NICK=${tg_nick}" >> $GITHub_ENV
+          echo "TG_NICK=${tg_nick}" >> $GITHUB_ENV
 
           declare -A tg_ids=(${{ vars.TG_BACK_TEAM_IDS }})
           if [ ${tg_ids[$author]+_} ]; then tg_to=${tg_ids[$author]}; else tg_to=-$tg_chat_id; fi
@@ -116,7 +116,7 @@ jobs:
           message='✨ Hey there! ✨
             Рабочий поток ${{ github.workflow }} успешно выполнен!
             Событие: 🚀 ${{ github.event_name }}
-            Автор: 🐧 ${{ github.actor }} ${{ env.TG_NICK }}
+            Автор: 🐧 ${{ github.actor }} ${TG_NICK}
             Репозиторий: 🎉 ${{ github.repository }}
             Ветка: 🔎 ${{ github.ref_name }}
             Sincerely yours, ✨ Xwick Bot ✨'
