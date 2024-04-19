@@ -100,8 +100,6 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     # needs: deploy
-    env:
-      AUTHOR_TG_NICK: ""
     steps:
       - name: Send Telegram Message
         run: |
