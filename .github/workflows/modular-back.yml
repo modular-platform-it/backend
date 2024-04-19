@@ -106,7 +106,7 @@ jobs:
           declare -A team=(${{ vars.GH_BACK_TEAM }})
           author=${{ github.actor }}
           tg_chat_id=${{ secrets.TG_CHAT_ID }}
-          token=${{secrets.TG_BOT_TOKEN}}
+          token=${{ secrets.TG_BOT_TOKEN }}
           message='✨ Hey there! ✨
             Рабочий поток ${{ github.workflow }} успешно выполнен!
             Событие: 🚀 ${{ github.event_name }}
@@ -114,6 +114,6 @@ jobs:
             Репозиторий: 🎉 ${{ github.repository }}
             Ветка: 🔎 ${{ github.ref_name }}
             Sincerely yours, ✨ Xwick Bot ✨'
-          if [${team[$author]+_}]; then tg_to=${team[$author]}; else tg_to=-$tg_chat_id; fi
+          if [ ${team[$author]+_} ]; then tg_to=${team[$author]}; else tg_to=-$tg_chat_id; fi
           curl -s -X POST 'https://api.telegram.org/bot${token}/sendMessage' \
             -d "chat_id=${tg_to}&text=${message}"
