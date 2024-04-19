@@ -1,7 +1,7 @@
-team=([geroy4ik]=1525888085 [olees-orlenko]=423285129 [sihuannewrise]=228559330)
 author=sihuannewrise
 echo ${team[$author]}
-declare -A team=([geroy4ik]=1525888085 [olees-orlenko]=423285129 [sihuannewrise]=228559330)
+declare -A ids=([geroy4ik]=1525888085 [olees-orlenko]=423285129 [sihuannewrise]=228559330)
+declare -A nicks=([geroy4ik]=geroy4ik [olees-orlenko]=olees [sihuannewrise]=sihuan)
 
 # возврат ключей на разных строках
 for key in "${!team[@]}"; do echo $key; done
