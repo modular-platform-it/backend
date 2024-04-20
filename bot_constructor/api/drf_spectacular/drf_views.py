@@ -1,4 +1,3 @@
-# type: ignore
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -12,7 +11,7 @@ from .drf_serializers import LoginSerializer
     responses={
         200: LoginSerializer,
     },
-    tags=["Authorization"],
+    tags=["Авторизация"],
     summary="Авторизация пользователя (GET)",
     methods=["GET"],
 )
@@ -24,7 +23,7 @@ from .drf_serializers import LoginSerializer
             "description": "Указанные вами адрес электронной почты и/или пароль неверны"
         },
     },
-    tags=["Authorization"],
+    tags=["Авторизация"],
     summary="Авторизация пользователя (POST)",
     methods=["POST"],
 )
@@ -51,7 +50,7 @@ def swagger_login(request):
     responses={
         200: {"description": "Выйти"},
     },
-    tags=["Authorization"],
+    tags=["Авторизация"],
     summary="Выход пользователя из системы (GET)",
     methods=["GET"],
 )
@@ -59,7 +58,7 @@ def swagger_login(request):
     responses={
         302: {"description": "Вы вышли."},
     },
-    tags=["Authorization"],
+    tags=["Авторизация"],
     summary="Выход пользователя из системы (POST)",
     methods=["POST"],
 )
