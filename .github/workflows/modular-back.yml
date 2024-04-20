@@ -115,13 +115,13 @@ jobs:
           if [ ${tg_ids[$AUTHOR]+_} ]; then tg_to="${tg_ids[$AUTHOR]}" extra="/";
             else tg_to="-$tg_chat_id" extra="&message_thread_id=${{vars.TG_BACK_THREAD_ID}}"; fi
 
-          message='Hey there!
+          message="✨ Hey there!
             Рабочий поток ${{ github.workflow }} успешно выполнен!
             Событие: 🚀 ${{ github.event_name }}
             Автор: 🐧 ${{ github.actor }} ${{ env.AUTHOR_TG_NICK }}
             Репозиторий: 🎉 ${{ github.repository }}
             Ветка: 🔎 ${{ github.ref_name }}
-            Sincerely yours, ✨ Xwick Bot ✨'
+            Sincerely yours, Xwick Bot ✨"
 
           curl -s -X POST 'https://api.telegram.org/bot${{secrets.TG_BOT_TOKEN}}/sendMessage' \
             -d "chat_id=${tg_to}&text=${message}$extra";
