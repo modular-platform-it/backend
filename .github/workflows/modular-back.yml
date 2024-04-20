@@ -1,126 +1,118 @@
-name: modular backend
+name: modular backend CICD
 run-name: ${{ github.actor }} started GitHub Actions 🚀
 on:
   push:
-    branches: [ "main", "develop", "fix/CICD" ]
+    branches: [ "production", "develop", "fix/CICD" ]
     paths-ignore:
       - 'pyproject.toml'
-  pull_request:
-    branches: [ "main", "develop" ]
   workflow_dispatch:
 
 env:
-  MODULAR_BACK_VERSION: 1.0.1
+  MODULAR_BACK_VERSION: "1.0.1"
   POETRY_VERSION: "1.8.2"
   PYTHON_VERSION: "3.12"
-  REGISTRY: ghcr.io
 
 jobs:
 
-  # test:
-  #   name: Linters and Pytests
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       python-version: [3.12]
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   -
-  #     name: Set up Python
-  #     uses: actions/setup-python@v5
-  #     with:
-  #       python-version: ${{ matrix.python-version }}
-  #   - uses: isort/isort-action@v1
-  #   - uses: Gr1N/setup-poetry@v8
-  #   -
-  #     uses: actions/cache@v4
-  #     with:
-  #       path: ~/.cache/pypoetry/virtualenvs
-  #       key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
-  #   -
-  #     name: Install dependencies
-  #     run: poetry install
-  #   -
-  #     name: Format with black
-  #     run: |
-  #       poetry run black --check .
-  #       python bot_constructor/manage.py test
+  test:
+    name: Linters and Pytests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{env.PYTHON_VERSION}}
+    - uses: Gr1N/setup-poetry@v8
+      with:
+        poetry-version: ${{env.POETRY_VERSION}}
+    - uses: actions/cache@v4
+      with:
+        path: ~/.cache/pypoetry/virtualenvs
+        key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+    - uses: isort/isort-action@v1
+    - name: Install dependencies
+      run: poetry install
+    - name: Format with black
+      run: |
+        poetry run black --check .
+        python bot_constructor/manage.py test
 
-  # build:
-  #   name: Push Docker image to Docker Hub
-  #   runs-on: ubuntu-latest
-  #   # needs: test
-  #   # if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
-  #   # if: github.ref == 'refs/heads/develop'
-  #   steps:
-  #     - name: Check out the repo
-  #       uses: actions/checkout@v4
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
-  #     - name: Login to Docker
-  #       uses: docker/login-action@v3
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
-  #     - name: Push to Docker Hub
-  #       uses: docker/build-push-action@v5
-  #       with:
-  #         file: bot_constructor/Dockerfile
-  #         push: true
-  #         tags: |
-  #           ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.BACKEND_IMAGE_NAME}}:latest
-  #           ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.BACKEND_IMAGE_NAME}}:${{ env.MODULAR_BACK_VERSION }}
+  build:
+    name: Push Docker image to Docker Hub
+    if: github.ref_name == 'develop' || github.ref_name == 'fix/CICD'
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker
+        uses: docker/login-action@v3
+        with:
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_TOKEN}}
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: bot_constructor/Dockerfile
+          push: true
+          tags: |
+            ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
+            ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:${{env.MODULAR_BACK_VERSION}}
 
-  # deploy:
-  #   name: Deployment on remote server
-  #   runs-on: ubuntu-latest
-  #   needs: build
-  #   steps:
-  #     - name: executing remote ssh commands using password
-  #       uses: appleboy/ssh-action@v1.0.0
-  #       with:
-  #         host: ${{ secrets.MODULAR_HOST }}
-  #         username: ${{ secrets.HOST_USER }}
-  #         # password: ${{ secrets.HOST_USER_PWD }}
-  #         key: ${{ secrets.HOST_SSH_KEY }}
-  #         script: |
-  #           docker stop ${{ vars.BACKEND_CONTAINER_NAME }}
-  #           docker rm ${{ vars.BACKEND_CONTAINER_NAME }}
-  #           docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.BACKEND_IMAGE_NAME }}:latest
-  #           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.BACKEND_IMAGE_NAME }}:latest
-  #           docker run -d \
-  #             --name=${{ vars.BACKEND_CONTAINER_NAME }} \
-  #             --hostname=${{ vars.BACKEND_CONTAINER_NAME }} \
-  #             --net=${{ secrets.MODULAR_NETWORK_NAME }} \
-  #             --restart=unless-stopped \
-  #             -v static_value:/app/static/ \
-  #             -v media_value:/app/media/ \
-  #             ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.BACKEND_IMAGE_NAME }}:latest
+  deploy:
+    name: Deployment on remote server
+    if: github.ref_name == 'develop' || github.ref_name == 'fix/CICD'
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: executing remote ssh commands
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{secrets.MODULAR_HOST}}
+          username: ${{secrets.HOST_USER}}
+          key: ${{secrets.HOST_SSH_KEY}}
+          script: |
+            docker stop ${{vars.BACKEND_CONTAINER_NAME}}
+            docker rm ${{vars.BACKEND_CONTAINER_NAME}}
+            docker rmi ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
+            docker pull ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
+            docker run -d \
+              --name=${{vars.BACKEND_CONTAINER_NAME}} \
+              --hostname=${{vars.BACKEND_CONTAINER_NAME}} \
+              --net=${{secrets.MODULAR_NETWORK_NAME}} \
+              --restart=unless-stopped \
+              -v static_value:/app/static/ \
+              -v media_value:/app/media/ \
+              ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
 
   notify:
     runs-on: ubuntu-latest
-    # needs: deploy
+    needs: deploy
     steps:
       - name: Set author and author_tg_nick values to env
         run: |
-          author=${{ github.actor }}
-          declare -A tg_nicks=(${{ vars.TG_BACK_TEAM_NICKS }})
+          author=${{github.actor}}
+          declare -A tg_nicks=(${{vars.TG_BACK_TEAM_NICKS}})
           if [ ${tg_nicks[$author]+_} ]; then tg_nick="(@${tg_nicks[$author]})"; else tg_nick=""; fi
           echo "AUTHOR=${author}" >> "$GITHUB_ENV"
           echo "AUTHOR_TG_NICK=${tg_nick}" >> "$GITHUB_ENV"
       - name: Send message to Telegram
         run: |
-          tg_chat_id=${{ secrets.TG_CHAT_ID }}
-          declare -A tg_ids=(${{ vars.TG_BACK_TEAM_IDS }})
+          tg_chat_id=${{secrets.TG_CHAT_ID}}
+          declare -A tg_ids=(${{vars.TG_BACK_TEAM_IDS}})
           if [ ${tg_ids[$AUTHOR]+_} ]; then tg_to="${tg_ids[$AUTHOR]}" extra="";
             else tg_to="-$tg_chat_id" extra="&message_thread_id=${{vars.TG_BACK_THREAD_ID}}"; fi
 
           message="✨ Hey there!
-            Рабочий поток ${{ github.workflow }} успешно выполнен!
-            Событие: 🚀 ${{ github.event_name }}
-            Автор: 🐧 ${{ github.actor }} ${{ env.AUTHOR_TG_NICK }}
-            Репозиторий: 🎉 ${{ github.repository }}
-            Ветка: 🔎 ${{ github.ref_name }}
+            Рабочий поток ${{github.workflow}} успешно выполнен!
+            Событие: 🚀 ${{github.event_name}}
+            GitHub автор: 🐧 ${{github.actor}} ${{env.AUTHOR_TG_NICK}}
+            Репозиторий: 🎉 ${{github.repository}}
+            Ветка: 🔎 ${{github.ref_name}}
             Sincerely yours, Xwick Bot ✨"
 
           curl -s -X POST 'https://api.telegram.org/bot${{secrets.TG_BOT_TOKEN}}/sendMessage' \
