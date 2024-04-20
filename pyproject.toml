@@ -18,6 +18,8 @@ drf-nested-routers = "^0.93.5"
 django-filter = "^24.2"
 factory-boy = "^3.3.0"
 faker-file = "^0.17.11"
+sqlparse = "^0.5.0"
+idna = "^3.7"
 
 
 [tool.poetry.group.dev.dependencies]
