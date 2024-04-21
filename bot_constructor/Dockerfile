@@ -13,8 +13,9 @@ ENV PATH="${PATH}:${POETRY_VENV}/bin"
 
 WORKDIR /app
 
-COPY poetry.lock pyproject.toml ./
+COPY ../poetry.lock ./
+COPY ../pyproject.toml ./
 RUN poetry install
 
-COPY . /app
+COPY ../. /app
 CMD [ "poetry", "run", "python", "-c", "print('Hello, World!')" ]
