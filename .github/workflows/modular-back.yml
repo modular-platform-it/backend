@@ -54,7 +54,7 @@ jobs:
     - name: Run tests
       run: |
         source .venv/bin/activate
-        python bot_constructor/manage.py tests
+        python3 bot_constructor/manage.py test
 
   build:
     name: Push Docker image to Docker Hub
