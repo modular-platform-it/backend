@@ -51,10 +51,15 @@ jobs:
     -
       name: Install project
       run: poetry install --no-interaction
-    - name: Run tests
+    -
+      name: Run black
       run: |
         source .venv/bin/activate
-        python3 bot_constructor/manage.py test
+        poetry run black .
+    - name: Run tests
+      run: |
+        python3 bot_constructor/manage.py bot_constructor/tests.py
+# source .venv/bin/activate
 
   build:
     name: Push Docker image to Docker Hub
@@ -126,9 +131,9 @@ jobs:
             else tg_to="-$tg_chat_id" extra="&message_thread_id=${{vars.TG_BACK_THREAD_ID}}"; fi
 
           message="✨ Hey there!
-            Рабочий поток ${{github.workflow}} успешно выполнен! 🍰
+            Рабочий поток 🐧 ${{github.workflow}} успешно выполнен!
             Событие: 🚀 ${{github.event_name}}
-            GitHub автор: 🐧 ${{github.actor}} ${{env.AUTHOR_TG_NICK}}
+            GitHub автор: 👷 ${{github.actor}} ${{env.AUTHOR_TG_NICK}}
             Репозиторий: 🎉 ${{github.repository}}
             Ветка: 🔎 ${{github.ref_name}}
             Sincerely yours, Xwick Bot ✨"

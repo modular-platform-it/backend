@@ -1,6 +1,6 @@
 author=sihuannewrise
+declare -A team=([geroy4ik]=1525888085 [olees-orlenko]=423285129 [sihuannewrise]=228559330 [paymir121]=462624293)
 echo ${team[$author]}
-declare -A ids=([geroy4ik]=1525888085 [olees-orlenko]=423285129 [sihuannewrise]=228559330 [paymir121]=462624293)
 declare -A nicks=([geroy4ik]=geroy4ik [olees-orlenko]=olees [sihuannewrise]=sihuan [paymir121]=nikiromanov)
 
 # возврат ключей на разных строках
