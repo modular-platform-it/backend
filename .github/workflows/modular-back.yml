@@ -15,28 +15,46 @@ env:
 jobs:
 
   test:
-    name: Linters and Pytests
+    name: Linters and Pytest
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python
+    -
+      name: Check out repository
+      uses: actions/checkout@v4
+    -
+      name: Set up Python
+      id: setup-python
       uses: actions/setup-python@v5
       with:
         python-version: ${{env.PYTHON_VERSION}}
-    - uses: Gr1N/setup-poetry@v8
+    -
+      name: Isort
+      uses: isort/isort-action@v1
+    -
+      name: Install and configure Poetry
+      uses: snok/install-poetry@v1
       with:
-        poetry-version: ${{env.POETRY_VERSION}}
-    - uses: actions/cache@v4
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        version: ${{env.POETRY_VERSION}}
+    -
+      name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v4
       with:
-        path: ~/.cache/pypoetry/virtualenvs
-        key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
-    - uses: isort/isort-action@v1
-    - name: Install dependencies
-      run: poetry install
-    - name: Format with black
+        path: .venv
+        key: venv-${{runner.os}}-${{steps.setup-python.outputs.python-version}}-${{hashFiles('poetry.lock')}}
+    -
+      name: Install dependencies
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      run: poetry install --no-interaction --no-root
+    -
+      name: Install project
+      run: poetry install --no-interaction
+    - name: Run tests
       run: |
-        poetry run black --check .
-        python bot_constructor/manage.py test
+        source .venv/bin/activate
+        pytest tests/
 
   build:
     name: Push Docker image to Docker Hub
@@ -108,7 +126,7 @@ jobs:
             else tg_to="-$tg_chat_id" extra="&message_thread_id=${{vars.TG_BACK_THREAD_ID}}"; fi
 
           message="✨ Hey there!
-            Рабочий поток ${{github.workflow}} успешно выполнен!
+            Рабочий поток ${{github.workflow}} успешно выполнен! 🍰
             Событие: 🚀 ${{github.event_name}}
             GitHub автор: 🐧 ${{github.actor}} ${{env.AUTHOR_TG_NICK}}
             Репозиторий: 🎉 ${{github.repository}}

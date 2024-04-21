@@ -1,8 +1,20 @@
-FROM ubuntu:22.04
+FROM python:3.12
 
-RUN apt-get -y update
-RUN apt-get install -y nginx
+ENV POETRY_VERSION=1.8.2
+ENV POETRY_HOME=/opt/poetry
+ENV POETRY_VENV=/opt/poetry-venv
+ENV POETRY_CACHE_DIR=/opt/.cache
 
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf
-RUN sed -i "0,/nginx/s/nginx/docker-nginx/i" /usr/share/nginx/html/index.html
-CMD [ "nginx" ]
+RUN python3 -m venv $POETRY_VENV \
+	&& $POETRY_VENV/bin/pip install -U pip setuptools \
+	&& $POETRY_VENV/bin/pip install poetry==${POETRY_VERSION}
+
+ENV PATH="${PATH}:${POETRY_VENV}/bin"
+
+WORKDIR /app
+
+COPY poetry.lock pyproject.toml ./
+RUN poetry install
+
+COPY . /app
+CMD [ "poetry", "run", "python", "-c", "print('Hello, World!')" ]
