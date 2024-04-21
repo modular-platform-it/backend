@@ -53,9 +53,9 @@ jobs:
       run: poetry install --no-interaction
     -
       name: Run black
-      run: |
-        source .venv/bin/activate
-        poetry run black .
+      run: poetry run black .
+# source .venv/bin/activate
+
     - name: Run tests
       run: |
         poetry run python bot_constructor/manage.py test
