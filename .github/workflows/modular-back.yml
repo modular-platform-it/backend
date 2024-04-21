@@ -56,8 +56,7 @@ jobs:
       run: poetry run black .
     -
       name: Run tests
-      run: |
-        poetry run python manage.py test
+      run: poetry run python bot_constructor/manage.py test
 
   build:
     name: Push Docker image to Docker Hub
