@@ -58,7 +58,7 @@ jobs:
         poetry run black .
     - name: Run tests
       run: |
-        python3 bot_constructor/manage.py bot_constructor/tests.py
+        poetry run python bot_constructor/manage.py bot_constructor/tests.py
 # source .venv/bin/activate
 
   build:
