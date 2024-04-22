@@ -13,7 +13,8 @@ WORKDIR /app
 COPY ../pyproject.toml ../poetry.lock ./
 RUN poetry install --no-root --only main
 
-COPY */ /
+COPY . .
 RUN poetry install --only main
 
-ENTRYPOINT ["mycli"]
+RUN chmod +x entrypoint.sh
+ENTRYPOINT ["sh", "/app/entrypoint.sh"]
