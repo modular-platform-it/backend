@@ -1,11 +1,8 @@
 ## STATIC configuration
 ## path to place the file
-## scp MODULAR/config/traefik.yml sihuan@xwick.ru:/home/sihuan/modular/dockume/traefik/config
-## scp MODULAR/config/traefik.yml sihuan@80.87.105.197:/home/sihuan/modular/dockume/traefik/config
+## scp infra/traefik/config/traefik.yml sihuan@xwick.ru:/home/sihuan/modular/dockume/traefik/config
 
 entryPoints:
-  # ssh:
-  #   address: ":22"
   web:
     address: ":80"
     http:
@@ -16,8 +13,6 @@ entryPoints:
     address: ":443"
   # postgresql:
   #   address: ":5432"
-  # fief:
-  #   address: ":8000"
 
 api:
   dashboard: true
