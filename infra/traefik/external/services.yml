@@ -1,0 +1,57 @@
+## DYNAMIC configuration
+## path to place the file
+## scp infra/traefik/external/services.yml sihuan@xwick.ru:/home/sihuan/modular/dockume/traefik/external
+
+http:
+  routers:
+    to-nginx:
+      entryPoints:
+        - "web"
+        - "websecure"
+      rule: "Host(`xwick.ru`)"
+      # middlewares:
+      #   - traefik-auth
+      tls:
+        certResolver: letsencrypt
+        # domains:
+        #   - main: "xwick.ru"
+        #     sans:
+        #       - "*.xwick.ru"
+      service: nginx
+
+    to-backend:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`api.xwick.ru`)"
+      tls:
+        certResolver: letsencrypt
+      service: backend
+
+    to-traefik:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`traefik.xwick.ru`)"
+      tls:
+        certResolver: letsencrypt
+      service: traefik
+
+  middlewares:
+    traefik-auth:
+      ipWhiteList:
+        sourceRange: 172.18.0.0/16
+
+  services:
+    nginx:
+      loadBalancer:
+        servers:
+        - url: "http://nginx:80"
+
+    backend:
+      loadBalancer:
+        servers:
+        - url: "http://backend:8080"
+
+    traefik:
+      loadBalancer:
+        servers:
+        - url: "http://proxy-server:8080"
