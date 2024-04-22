@@ -20,6 +20,9 @@ factory-boy = "^3.3.0"
 faker-file = "^0.17.11"
 sqlparse = "^0.5.0"
 idna = "^3.7"
+celery = "^5.4.0"
+redis = "^5.0.3"
+aiogram = "^3.4.1"
 
 
 [tool.poetry.group.dev.dependencies]
