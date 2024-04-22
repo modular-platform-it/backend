@@ -22,8 +22,8 @@ class TelegramBot(models.Model):
     description = models.CharField(
         verbose_name="Описание бота", max_length=1000, blank=True
     )
-    api_key = models.CharField(verbose_name="Ключ API", max_length=255)
-    api_url = models.CharField(verbose_name="Адрес API", max_length=255)
+    api_key = models.CharField(verbose_name="Ключ API", max_length=255, blank=True)
+    api_url = models.CharField(verbose_name="Адрес API", max_length=255, blank=True)
     api_availability = models.BooleanField(
         verbose_name="Доступность API", blank=True, default=False
     )
