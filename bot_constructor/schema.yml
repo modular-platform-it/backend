@@ -3,5 +3,120 @@ info:
   title: bot-controller
   version: 1.0.0
   description: Платформа для создания и управления ботами.
-paths: {}
-components: {}
+paths:
+  /api/login/:
+    get:
+      operationId: login_retrieve
+      summary: Авторизация пользователя (GET)
+      tags:
+      - Authorization
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+          description: ''
+    post:
+      operationId: login_create
+      summary: Авторизация пользователя (POST)
+      tags:
+      - Authorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '302':
+          content:
+            application/json:
+              schema:
+                description: Успешный вход
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Указанные вами адрес электронной почты и/или пароль неверны
+          description: ''
+  /api/logout/:
+    get:
+      operationId: logout_retrieve
+      summary: Выход пользователя из системы (GET)
+      tags:
+      - Authorization
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Выйти
+          description: ''
+    post:
+      operationId: logout_create
+      summary: Выход пользователя из системы (POST)
+      tags:
+      - Authorization
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '302':
+          content:
+            application/json:
+              schema:
+                description: Вы вышли.
+          description: ''
+components:
+  schemas:
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+      - email
+      - password
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          minLength: 1
+      required:
+      - email
+      - password
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
