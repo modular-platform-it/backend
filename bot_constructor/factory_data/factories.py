@@ -1,6 +1,5 @@
 # type:ignore
 from datetime import datetime, timedelta
-from typing import IO
 
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from django.conf import settings
