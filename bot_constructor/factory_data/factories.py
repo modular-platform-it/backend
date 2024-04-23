@@ -21,7 +21,6 @@ class TelegramBotFactory(django.DjangoModelFactory):
 
     name: str = Faker("company", locale="ru_RU")
     telegram_token: str = Faker("bothify", text=10 * "#" + ":" + 35 * "?")
-    is_started: bool = Faker("pybool", truth_probability=70)
     created_at: datetime = Faker("date_time_between", start_date=timedelta(days=30))
     started_at: datetime = Faker(
         "date_time_this_month", after_now=False, tzinfo=timezone.get_current_timezone()
