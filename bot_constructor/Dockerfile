@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y curl \
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
+COPY ../pyproject.toml ../poetry.lock ./
 
 RUN apt-get update && apt-get install --no-install-recommends -y build-essential  \
 	&& poetry install --no-root --only main \
@@ -27,7 +27,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y build-essential
 	&& rm -rf /var/lib/apt/lists/*
 
 COPY . .
-RUN poetry install --only main
 
 RUN chmod +x entrypoint.sh
 ENTRYPOINT ["sh", "/app/entrypoint.sh"]
