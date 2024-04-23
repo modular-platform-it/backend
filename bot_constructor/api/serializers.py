@@ -3,6 +3,7 @@ from typing import IO
 
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from rest_framework import serializers, validators
+from rest_framework.request import Request
 
 
 class TelegramBotCreateSerializer(serializers.ModelSerializer):
@@ -28,6 +29,8 @@ class TelegramBotCreateSerializer(serializers.ModelSerializer):
 class TelegramBotShortSerializer(serializers.ModelSerializer):
     """Сериализатор для отображения телеграм бота в списке."""
 
+    is_started = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = TelegramBot
         fields = ("id", "name", "is_started", "bot_state")
@@ -36,7 +39,7 @@ class TelegramBotShortSerializer(serializers.ModelSerializer):
 class TelegramBotSerializer(TelegramBotShortSerializer):
     """Сериализатор для детального отображения телеграм бота."""
 
-    api_url = serializers.URLField()
+    api_url = serializers.URLField(required=False)
 
     class Meta:
         model = TelegramBot
@@ -60,8 +63,11 @@ class TelegramBotActionsPKField(serializers.PrimaryKeyRelatedField):
     """
 
     def get_queryset(self):
-        telegram_bot_pk = self.context.get("telegram_bot_pk", None)
+        view = self.context.get("view")
+        telegram_bot_pk = view.kwargs.get("telegram_bot_pk")
         telegram_bot = TelegramBot.objects.get(id=telegram_bot_pk)
+        if view.kwargs.get("pk"):
+            return telegram_bot.actions.exclude(pk=view.kwargs.get("pk")).all()
         return telegram_bot.actions.all()
 
 
@@ -90,6 +96,7 @@ class TelegramBotActionSerializer(serializers.ModelSerializer):
     api_url = serializers.URLField(required=False)
     position = serializers.IntegerField(min_value=1, max_value=30)
     files = TelegramFileSerializer(many=True, required=False)
+    next_action = TelegramBotActionsPKField(required=False)
 
     def create(self, validated_data):
         """
@@ -122,6 +129,7 @@ class TelegramBotActionSerializer(serializers.ModelSerializer):
             "api_url",
             "files",
             "position",
+            "next_action",
             "is_active",
         )
         validators = (
