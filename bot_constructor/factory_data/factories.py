@@ -1,6 +1,5 @@
 # type:ignore
 from datetime import datetime, timedelta
-from typing import IO
 
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from django.conf import settings
@@ -25,10 +24,10 @@ class TelegramBotFactory(django.DjangoModelFactory):
     started_at: datetime = Faker(
         "date_time_this_month", after_now=False, tzinfo=timezone.get_current_timezone()
     )
-    api_key: str = Faker("bothify", text="???##?###???")
-    api_url: str = Faker("uri")
-    api_availability: bool = Faker("pybool", truth_probability=70)
-    bot_state: tuple[str] = fuzzy.FuzzyChoice(TelegramBot.BotState.values)
+    api_key = Faker("bothify", text="???##?###???")
+    api_url = Faker("uri")
+    api_availability = Faker("pybool", truth_probability=70)
+    bot_state = fuzzy.FuzzyChoice(TelegramBot.BotState.values)
 
 
 class TelegramBotActionFactory(django.DjangoModelFactory):
@@ -37,12 +36,16 @@ class TelegramBotActionFactory(django.DjangoModelFactory):
     class Meta:
         model = TelegramBotAction
 
-    telegram_bot: TelegramBot = SubFactory(TelegramBotFactory)
-    name: str = Faker("company", locale="ru_RU")
-    command_keyword: str = Faker("bothify", text="/#####")
-    message: str = Faker("sentence")
-    position: int = Sequence(lambda n: n + 2)
-    is_active: bool = Faker("pybool", truth_probability=70)
+    telegram_bot = SubFactory(TelegramBotFactory)
+    name = Faker(
+        "text",
+        max_nb_chars=TelegramBotAction._meta.get_field("name").max_length,
+        locale="ru_RU",
+    )
+    command_keyword = Faker("bothify", text="/#####")
+    message = Faker("sentence")
+    position = Sequence(lambda n: n + 2)
+    is_active = Faker("pybool", truth_probability=70)
 
 
 class TelegramBotFileFactory(django.DjangoModelFactory):
@@ -51,5 +54,5 @@ class TelegramBotFileFactory(django.DjangoModelFactory):
     class Meta:
         model = TelegramBotFile
 
-    telegram_action: TelegramBotAction = SubFactory(TelegramBotActionFactory)
-    file: IO = Faker("txt_file", storage=FS_STORAGE)
+    telegram_action = SubFactory(TelegramBotActionFactory)
+    file = Faker("txt_file", storage=FS_STORAGE)
