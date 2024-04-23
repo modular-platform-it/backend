@@ -67,7 +67,9 @@ class TestTelegramBotView(APITestCase):
 
     def test_telegram_bot_update_view(self) -> None:
         """Проверка представления обновления телеграм бота."""
-        telegram_bot: TelegramBot = TelegramBotFactory.create()
+        telegram_bot: TelegramBot = TelegramBotFactory.create(
+            bot_state=TelegramBot.BotState.DRAFT
+        )
         new_telegram_bot: TelegramBot = TelegramBotFactory.build()
         response: Response = self.client.put(
             reverse(self.url_detail, kwargs={"pk": telegram_bot.id}),
@@ -165,7 +167,9 @@ class TestTelegramBotActionView(APITestCase):
 
     def test_telegram_bot_action_update_view(self) -> None:
         """Проверка представления обновления телеграм бота."""
-        telegram_bot: TelegramBot = TelegramBotFactory.create()
+        telegram_bot: TelegramBot = TelegramBotFactory.create(
+            bot_state=TelegramBot.BotState.DRAFT
+        )
         telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
             telegram_bot=telegram_bot,
         )
@@ -301,7 +305,9 @@ class TestTelegramBotFileView(APITestCase):
 
     def test_telegram_bot_action_update_view(self) -> None:
         """Проверка представления обновления файла телеграм бота."""
-        telegram_bot: TelegramBot = TelegramBotFactory.create()
+        telegram_bot: TelegramBot = TelegramBotFactory.create(
+            bot_state=TelegramBot.BotState.DRAFT
+        )
         telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
             telegram_bot=telegram_bot,
         )
