@@ -27,7 +27,6 @@ class TelegramBot(models.Model):
     api_availability = models.BooleanField(
         verbose_name="Доступность API", blank=True, default=False
     )
-    is_started = models.BooleanField(verbose_name="Запущен", default=False)
     bot_state = models.CharField(
         verbose_name="Статус бота",
         max_length=7,
@@ -65,6 +64,13 @@ class TelegramBot(models.Model):
                 is_active=True,
             )
 
+    @property
+    def is_started(self):
+        return (
+            self.bot_state == self.BotState.RUNNING
+            or self.bot_state == self.BotState.ERROR
+        )
+
 
 class TelegramBotAction(models.Model):
     """Модель действия для телеграм бота."""
@@ -96,6 +102,13 @@ class TelegramBotAction(models.Model):
     api_key = models.CharField(verbose_name="Ключ API", max_length=255, blank=True)
     position = models.SmallIntegerField("Номер действия")
     is_active = models.BooleanField(verbose_name="Вкл/выкл")
+    next_action = models.OneToOneField(
+        to="self",
+        on_delete=models.SET_NULL,
+        related_name="next_actions",
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         verbose_name = "Действие"
