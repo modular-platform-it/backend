@@ -1,14 +1,18 @@
 # type:ignore
-from typing import IO
+from typing import IO, Any
 
+from apps.bot_management import constants
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
-from rest_framework import serializers, validators
-from rest_framework.request import Request
+from rest_framework import serializers, status, validators
 
 
 class TelegramBotCreateSerializer(serializers.ModelSerializer):
     """Сериализатор телеграм бота при создании и обновлении."""
 
+    name = serializers.RegexField(
+        regex=rf"^[a-zA-Zа-яёА-ЯЁ]{{{constants.MIN_LETTERS}}}[\w\W]"
+        rf"{{{0},{constants.BOT_NAME_LENGTH - constants.MIN_LETTERS - 1}}}\S$"
+    )
     telegram_token = serializers.RegexField(
         regex=r"^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$",
         validators=(
@@ -19,27 +23,28 @@ class TelegramBotCreateSerializer(serializers.ModelSerializer):
         ),
         write_only=True,
     )
-    api_url = serializers.URLField(required=False)
 
     class Meta:
         model = TelegramBot
-        fields = ("id", "name", "telegram_token", "api_key", "api_url")
+        fields = ("id", "name", "telegram_token", "description", "api_key", "api_url")
 
 
 class TelegramBotShortSerializer(serializers.ModelSerializer):
     """Сериализатор для отображения телеграм бота в списке."""
 
+    name = serializers.RegexField(
+        regex=rf"^[a-zA-Zа-яёА-ЯЁ]{{{constants.MIN_LETTERS}}}[\w\W]"
+        rf"{{{0},{constants.BOT_NAME_LENGTH - constants.MIN_LETTERS - 1}}}\S$"
+    )
     is_started = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = TelegramBot
-        fields = ("id", "name", "is_started", "bot_state")
+        fields = ("id", "name", "description", "is_started", "bot_state")
 
 
 class TelegramBotSerializer(TelegramBotShortSerializer):
     """Сериализатор для детального отображения телеграм бота."""
-
-    api_url = serializers.URLField(required=False)
 
     class Meta:
         model = TelegramBot
@@ -71,6 +76,18 @@ class TelegramBotActionsPKField(serializers.PrimaryKeyRelatedField):
         return telegram_bot.actions.all()
 
 
+class TelegramBotPKField(serializers.PrimaryKeyRelatedField):
+    """
+    Поле сериализатора для телеграм бота.
+    выводит только бота, к которому принадлежит действие.
+    """
+
+    def get_queryset(self) -> TelegramBot:
+        view = self.context.get("view")
+        telegram_bot_pk = view.kwargs.get("telegram_bot_pk")
+        return TelegramBot.objects.filter(id=telegram_bot_pk)
+
+
 class TelegramFileSerializer(serializers.ModelSerializer):
     """Сериализатор файлов для команд телеграм бота."""
 
@@ -89,16 +106,17 @@ class TelegramFileSerializer(serializers.ModelSerializer):
 class TelegramBotActionSerializer(serializers.ModelSerializer):
     """Сериализатор команд телеграм бота."""
 
-    telegram_bot = serializers.PrimaryKeyRelatedField(
-        queryset=TelegramBot.objects.all()
+    telegram_bot = TelegramBotPKField()
+    name = serializers.RegexField(
+        regex=rf"^[a-zA-Zа-яёА-ЯЁ]{{{constants.MIN_LETTERS}}}[\w\W]"
+        rf"{{{0},{constants.ACTION_NAME_LENGTH - constants.MIN_LETTERS - 1}}}\S$"
     )
-    command_keyword = serializers.RegexField(r"^/[a-zA-Z0-9_]{1,32}$")
-    api_url = serializers.URLField(required=False)
-    position = serializers.IntegerField(min_value=1, max_value=30)
+    command_keyword = serializers.RegexField(regex=r"^/[a-zA-Z0-9_]{1,32}$")
+    position = serializers.IntegerField(min_value=1, max_value=constants.MAX_POSITIONS)
     files = TelegramFileSerializer(many=True, required=False)
     next_action = TelegramBotActionsPKField(required=False)
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, Any]):
         """
         Дополнительно модифицированый стандартный метод create().
         Добавлена возможность обработки сразу нескольких файлов одним пакетом.
