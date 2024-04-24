@@ -3,7 +3,7 @@ from typing import IO, Any
 
 from apps.bot_management import constants
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
-from rest_framework import serializers, status, validators
+from rest_framework import serializers, validators
 
 
 class TelegramBotCreateSerializer(serializers.ModelSerializer):
