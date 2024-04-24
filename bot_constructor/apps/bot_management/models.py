@@ -146,10 +146,10 @@ class TelegramBotAction(models.Model):
         ),
     )
     is_active = models.BooleanField(verbose_name="Вкл/выкл")
-    next_action = models.OneToOneField(
+    next_action = models.ForeignKey(
         to="self",
         on_delete=models.SET_NULL,
-        related_name="previous_action",
+        related_name="previous_actions",
         blank=True,
         null=True,
     )
