@@ -28,5 +28,5 @@ RUN apt-get update && apt-get install --no-install-recommends -y build-essential
 
 COPY . .
 
-RUN chmod +x entrypoint.sh
-ENTRYPOINT ["sh", "/app/entrypoint.sh"]
+# RUN chmod +x entrypoint.sh
+# ENTRYPOINT ["sh", "/app/entrypoint.sh"]

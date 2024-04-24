@@ -37,5 +37,5 @@ certificatesResolvers:
 
 accesslog: true
 
-# log:
-#   level: DEBUG
+log:
+  level: DEBUG
