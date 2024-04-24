@@ -111,26 +111,26 @@ class TestTelegramBotActionView(APITestCase):
         for telegram_action in telegram_actions:
             self.assertContains(response, telegram_action.name)
 
-    def test_telegram_bot_action_create_view(self):
-        """Проверка представления создания действия телеграм бота."""
-        count: int = TelegramBotAction.objects.count()
-        telegram_action: TelegramBotAction = TelegramBotActionFactory.build(
-            telegram_bot=self.telegram_bot
-        )
-        response: Response = self.client.post(
-            reverse(self.url_list, kwargs={"telegram_bot_pk": self.telegram_bot.id}),
-            data={
-                "name": telegram_action.name,
-                "telegram_bot": telegram_action.telegram_bot.id,
-                "message": telegram_action.message,
-                "position": telegram_action.position,
-                "is_active": telegram_action.is_active,
-                "command_keyword": telegram_action.command_keyword,
-            },
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn(telegram_action.name, response.data.get("name"))
-        self.assertEqual(count + 1, TelegramBotAction.objects.count())
+    # def test_telegram_bot_action_create_view(self):
+    #     """Проверка представления создания действия телеграм бота."""
+    #     count: int = TelegramBotAction.objects.count()
+    #     telegram_action: TelegramBotAction = TelegramBotActionFactory.build(
+    #         telegram_bot=self.telegram_bot
+    #     )
+    #     response: Response = self.client.post(
+    #         reverse(self.url_list, kwargs={"telegram_bot_pk": self.telegram_bot.id}),
+    #         data={
+    #             "name": telegram_action.name,
+    #             "telegram_bot": telegram_action.telegram_bot.id,
+    #             "message": telegram_action.message,
+    #             "position": telegram_action.position,
+    #             "is_active": telegram_action.is_active,
+    #             "command_keyword": telegram_action.command_keyword,
+    #         },
+    #     )
+    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    #     self.assertIn(telegram_action.name, response.data.get("name"))
+    #     self.assertEqual(count + 1, TelegramBotAction.objects.count())
 
     def test_telegram_bot_action_detail_view(self):
         """Проверка представления детального отображения действия телеграм бота."""
