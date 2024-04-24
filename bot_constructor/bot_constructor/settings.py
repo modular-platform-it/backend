@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -9,10 +10,10 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 
 
-DEBUG = os.getenv("DEBUG", "False") == "True"
+DEBUG = os.getenv("DEBUG")
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1").split(",")
 
@@ -26,6 +27,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "allauth",
     "allauth.account",
+    "rest_framework",
+    "django_filters",
     "apps.bot_management",
     "api",
     "drf_spectacular",
@@ -57,7 +60,6 @@ SPECTACULAR_SETTINGS = {
         "filter": True,
         "deepLinking": True,
         "persistAuthorization": True,
-        "displayOperationId": True,
     },
     "COMPONENT_SPLIT_REQUEST": True,
 }
@@ -130,6 +132,7 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 LANGUAGE_CODE = "ru"
 
