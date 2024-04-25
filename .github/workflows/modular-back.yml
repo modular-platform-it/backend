@@ -81,7 +81,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: bot_constructor/Dockerfile
+          file: Dockerfile
           push: true
           tags: |
             ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest

@@ -1,3 +1,5 @@
+cd bot_constructor/
+
 python manage.py migrate
 
 python manage.py collectstatic --clear --noinput
