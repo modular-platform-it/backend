@@ -26,7 +26,7 @@ class TelegramBot(models.Model):
     )
     telegram_token = models.CharField(
         verbose_name="Токен авторизации телеграм бота",
-        max_length=45,
+        max_length=constants.TELEGRAM_TOKEN_LENGTH,
         unique=True,
         validators=(
             validators.RegexValidator(regex=r"^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$"),
