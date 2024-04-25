@@ -15,7 +15,8 @@ DEBUG = os.getenv("DEBUG")
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1").split(",")
 
-DJANGO_SETTINGS_MODULE = "bot_constructor.settings"
+
+DJANGO_SETTINGS_MODULE = "bot_server.settings"
 
 
 INSTALLED_APPS = [
@@ -101,6 +102,7 @@ CACHES = {
         "LOCATION": "redis://localhost:6379",
     }
 }
+
 
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
