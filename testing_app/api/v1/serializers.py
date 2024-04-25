@@ -8,9 +8,17 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = ("id", "name", "measurement_unit", 'description')
 
-class ShoppingCartSerializer(serializers.ModelSerializer):
+class ShoppingCartReadSerializer(serializers.ModelSerializer):
+    cart = CartSerializer(required=True)
     class Meta:
         model = ShoppingCart
         fields = ("id", "user", "cart")
+
+class ShoppingCartWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShoppingCart
+        fields = ("id", "user", "cart")
+
+
 
 
