@@ -168,3 +168,4 @@ media/
 
 # Static
 static/
+.github/workflows/temp*.*
