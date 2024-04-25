@@ -1,6 +1,6 @@
 # type:ignore
-from typing import Literal
-
+from apps.bot_management import constants
+from django.core import validators
 from django.db import models
 
 
@@ -13,21 +13,39 @@ class TelegramBot(models.Model):
         STOPPED = "STOPPED", "Остановлен"
         ERROR = "ERROR", "Ошибка"
 
-    name = models.CharField(verbose_name="Название бота", max_length=255)
+    name = models.CharField(
+        verbose_name="Название бота",
+        max_length=constants.BOT_NAME_LENGTH,
+        validators=(
+            validators.RegexValidator(
+                regex=rf"^[a-zA-Zа-яёА-ЯЁ]{{{constants.MIN_LETTERS}}}[\w\W]"
+                rf"{{{0},{constants.BOT_NAME_LENGTH - constants.MIN_LETTERS - 1}}}"
+                r"\S$"
+            ),
+        ),
+    )
     telegram_token = models.CharField(
         verbose_name="Токен авторизации телеграм бота",
-        max_length=255,
+        max_length=constants.TELEGRAM_TOKEN_LENGTH,
         unique=True,
+        validators=(
+            validators.RegexValidator(regex=r"^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$"),
+        ),
     )
     description = models.CharField(
-        verbose_name="Описание бота", max_length=1000, blank=True
+        verbose_name="Описание бота",
+        max_length=constants.DESCRIPTION_LENGTH,
+        blank=True,
     )
-    api_key = models.CharField(verbose_name="Ключ API", max_length=255)
-    api_url = models.CharField(verbose_name="Адрес API", max_length=255)
+    api_key = models.CharField(
+        verbose_name="Ключ API", max_length=constants.API_KEY_LENGTH, blank=True
+    )
+    api_url = models.URLField(
+        verbose_name="Адрес API", max_length=constants.API_URL_LENGTH, blank=True
+    )
     api_availability = models.BooleanField(
         verbose_name="Доступность API", blank=True, default=False
     )
-    is_started = models.BooleanField(verbose_name="Запущен", default=False)
     bot_state = models.CharField(
         verbose_name="Статус бота",
         max_length=7,
@@ -65,6 +83,18 @@ class TelegramBot(models.Model):
                 is_active=True,
             )
 
+    @property
+    def is_started(self) -> bool:
+        """
+        Свойство телеграм бота.
+        Возвращает True если бот запущен,
+        возвращает False, если бот остановлен.
+        """
+        return (
+            self.bot_state == self.BotState.RUNNING
+            or self.bot_state == self.BotState.ERROR
+        )
+
 
 class TelegramBotAction(models.Model):
     """Модель действия для телеграм бота."""
@@ -77,30 +107,57 @@ class TelegramBotAction(models.Model):
     )
     name = models.CharField(
         verbose_name="Название действия",
-        max_length=20,
+        max_length=constants.ACTION_NAME_LENGTH,
         help_text="только латинские буквы и цифры, от 3 до 20 символов.",
+        validators=(
+            validators.RegexValidator(
+                regex=rf"^[a-zA-Zа-яёА-ЯЁ]{{{constants.MIN_LETTERS}}}[\w\W]"
+                rf"{{{0},{constants.ACTION_NAME_LENGTH - constants.MIN_LETTERS - 1}}}"
+                r"\S$"
+            ),
+        ),
     )
     description = models.CharField(
-        verbose_name="Описание действия", max_length=1000, blank=True
+        verbose_name="Описание действия",
+        max_length=constants.DESCRIPTION_LENGTH,
+        blank=True,
     )
     command_keyword = models.CharField(
         verbose_name="Текст команды",
         max_length=33,
         help_text="команда должна начинаться с / и содержать только латинские "
         "буквы, цифры и нижнее подчеркивание _, макс. длина 32 символа",
+        validators=(validators.RegexValidator(regex=r"^/[a-zA-Z0-9_]{1,32}$"),),
     )
     message = models.CharField(
-        verbose_name="Текст сообщения", max_length=1000, blank=True
+        verbose_name="Текст сообщения", max_length=constants.MESSAGE_LENGTH, blank=True
     )
-    api_url = models.CharField(verbose_name="Адрес API", max_length=255, blank=True)
-    api_key = models.CharField(verbose_name="Ключ API", max_length=255, blank=True)
-    position = models.SmallIntegerField("Номер действия")
+    api_url = models.URLField(
+        verbose_name="Адрес API", max_length=constants.API_URL_LENGTH, blank=True
+    )
+    api_key = models.CharField(
+        verbose_name="Ключ API", max_length=constants.API_KEY_LENGTH, blank=True
+    )
+    position = models.SmallIntegerField(
+        "Номер действия",
+        validators=(
+            validators.MinValueValidator(1),
+            validators.MaxValueValidator(constants.MAX_POSITIONS),
+        ),
+    )
     is_active = models.BooleanField(verbose_name="Вкл/выкл")
+    next_action = models.ForeignKey(
+        to="self",
+        on_delete=models.SET_NULL,
+        related_name="previous_actions",
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         verbose_name = "Действие"
         verbose_name_plural = "Действия"
-        unique_together: tuple[Literal["telegram_bot"], Literal["position"]] = (
+        unique_together = (
             "telegram_bot",
             "position",
         )
