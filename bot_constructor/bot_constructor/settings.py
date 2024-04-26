@@ -80,7 +80,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "wsgi.application"
+WSGI_APPLICATION = "bot_constructor.bot_constructor.wsgi.application"
 
 
 if os.getenv("USE_SQLITE", "True") == "True":
