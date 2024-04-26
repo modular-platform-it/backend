@@ -30,4 +30,4 @@ COPY bot_constructor bot_constructor/
 
 RUN chmod +x entrypoint.sh
 
-ENTRYPOINT ["sh", "/app/entrypoint.sh"]
+ENTRYPOINT ["sh", "bot_constructor/entrypoint.sh"]
