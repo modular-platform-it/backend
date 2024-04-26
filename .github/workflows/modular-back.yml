@@ -105,8 +105,8 @@ jobs:
             docker rmi ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
             docker pull ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
             echo "DJANGO_SUPERUSER_USERNAME=${{secrets.DJANGO_SUPERUSER_USERNAME}}" >> .env
-            echo "DJANGO_SUPERUSER_PASSWORD: ${{secrets.DJANGO_SUPERUSER_PASSWORD}}" >> .env
-            echo "DJANGO_SUPERUSER_EMAIL: ${{secrets.DJANGO_SUPERUSER_EMAIL}}" >> .env
+            echo "DJANGO_SUPERUSER_PASSWORD=${{secrets.DJANGO_SUPERUSER_PASSWORD}}" >> .env
+            echo "DJANGO_SUPERUSER_EMAIL=${{secrets.DJANGO_SUPERUSER_EMAIL}}" >> .env
             docker run -d \
               --name=${{vars.BACKEND_CONTAINER_NAME}} \
               --hostname=${{vars.BACKEND_CONTAINER_NAME}} \
