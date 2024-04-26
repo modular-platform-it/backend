@@ -1,5 +1,5 @@
 name: modular backend CICD
-run-name: ${{ github.actor }} started GitHub Actions 🚀
+run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
     branches: [ "production", "develop", "feat/docker" ]
