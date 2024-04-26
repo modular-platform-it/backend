@@ -1,4 +1,5 @@
 # type:ignore
+from datetime import datetime as dt
 from typing import Any
 
 import requests
@@ -82,6 +83,40 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             {"detail": "Данный токен не действителен"}, status=status.HTTP_404_NOT_FOUND
         )
 
+    def update(self, request, *args, **kwargs):
+        telegram_bot = get_object_or_404(TelegramBot, id=self.kwargs.get("pk"))
+        if telegram_bot.is_started:
+            return Response(
+                data={"detail": "Сначала остановите бота"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        telegram_bot = get_object_or_404(TelegramBot, id=self.kwargs.get("pk"))
+        if telegram_bot.is_started:
+            return Response(
+                data={"detail": "Сначала остановите бота"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return super().partial_update(request, *args, **kwargs)
+
+    @action(methods=["GET"], detail=True, url_name="start_stop_bot")
+    def start_stop_bot(self, request, *args, **kwargs) -> Response:
+        telegram_bot = get_object_or_404(TelegramBot, id=self.kwargs.get("pk"))
+        if telegram_bot.is_started:
+            telegram_bot.bot_state = TelegramBot.BotState.STOPPED
+            telegram_bot.save()
+            return Response(
+                data={"detail": "Бот успешно остановлен"}, status=status.HTTP_200_OK
+            )
+        telegram_bot.bot_state = TelegramBot.BotState.RUNNING
+        telegram_bot.started_at = dt.now()
+        telegram_bot.save()
+        return Response(
+            data={"detail": "Бот успешно запущен"}, status=status.HTTP_200_OK
+        )
+
 
 @extend_schema(tags=["Действия"])
 class TelegramBotActionViewSet(viewsets.ModelViewSet):
@@ -124,6 +159,28 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
+
+    def update(self, request, *args, **kwargs):
+        telegram_bot = get_object_or_404(
+            TelegramBot, id=self.kwargs.get("telegram_bot_pk")
+        )
+        if telegram_bot.is_started:
+            return Response(
+                data={"detail": "Сначала остановите бота"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        telegram_bot = get_object_or_404(
+            TelegramBot, id=self.kwargs.get("telegram_bot_pk")
+        )
+        if telegram_bot.is_started:
+            return Response(
+                data={"detail": "Сначала остановите бота"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return super().partial_update(request, *args, **kwargs)
 
 
 @extend_schema(tags=["Файлы"])
@@ -211,3 +268,25 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
         file: TelegramBotFile = get_object_or_404(queryset, pk=pk)
         serializer: TelegramFileSerializer = TelegramFileSerializer(file)
         return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        telegram_bot = get_object_or_404(
+            TelegramBot, id=self.kwargs.get("telegram_bot_pk")
+        )
+        if telegram_bot.is_started:
+            return Response(
+                data={"detail": "Сначала остановите бота"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        telegram_bot = get_object_or_404(
+            TelegramBot, id=self.kwargs.get("telegram_bot_pk")
+        )
+        if telegram_bot.is_started:
+            return Response(
+                data={"detail": "Сначала остановите бота"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return super().partial_update(request, *args, **kwargs)

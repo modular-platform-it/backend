@@ -1,6 +1,5 @@
 # type:ignore
-from datetime import datetime, timedelta
-from typing import IO
+from datetime import timedelta
 
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from django.conf import settings
@@ -12,6 +11,8 @@ from faker_file.storages.filesystem import FileSystemStorage
 FS_STORAGE: str = FileSystemStorage(root_path=settings.MEDIA_ROOT, rel_path="tmp")
 Faker.add_provider(TxtFileProvider)
 
+cyrillic_letters = "".join(map(chr, range(ord("А"), ord("я") + 1))) + "Ёё"
+
 
 class TelegramBotFactory(django.DjangoModelFactory):
     """Фабрика генерации объектов телеграм бота."""
@@ -19,17 +20,16 @@ class TelegramBotFactory(django.DjangoModelFactory):
     class Meta:
         model = TelegramBot
 
-    name: str = Faker("company", locale="ru_RU")
-    telegram_token: str = Faker("bothify", text=10 * "#" + ":" + 35 * "?")
-    is_started: bool = Faker("pybool", truth_probability=70)
-    created_at: datetime = Faker("date_time_between", start_date=timedelta(days=30))
-    started_at: datetime = Faker(
+    name = fuzzy.FuzzyText(prefix="тест_", length=15, chars=cyrillic_letters)
+    telegram_token = Faker("bothify", text=10 * "#" + ":" + 35 * "?")
+    created_at = Faker("date_time_between", start_date=timedelta(days=30))
+    started_at = Faker(
         "date_time_this_month", after_now=False, tzinfo=timezone.get_current_timezone()
     )
-    api_key: str = Faker("bothify", text="???##?###???")
-    api_url: str = Faker("uri")
-    api_availability: bool = Faker("pybool", truth_probability=70)
-    bot_state: tuple[str] = fuzzy.FuzzyChoice(TelegramBot.BotState.values)
+    api_key = Faker("bothify", text="???##?###???")
+    api_url = Faker("uri")
+    api_availability = Faker("pybool", truth_probability=70)
+    bot_state = fuzzy.FuzzyChoice(TelegramBot.BotState.values)
 
 
 class TelegramBotActionFactory(django.DjangoModelFactory):
@@ -38,12 +38,12 @@ class TelegramBotActionFactory(django.DjangoModelFactory):
     class Meta:
         model = TelegramBotAction
 
-    telegram_bot: TelegramBot = SubFactory(TelegramBotFactory)
-    name: str = Faker("company", locale="ru_RU")
-    command_keyword: str = Faker("bothify", text="/#####")
-    message: str = Faker("sentence")
-    position: int = Sequence(lambda n: n + 2)
-    is_active: bool = Faker("pybool", truth_probability=70)
+    telegram_bot = SubFactory(TelegramBotFactory)
+    name = fuzzy.FuzzyText(prefix="тест_", length=10, chars=cyrillic_letters)
+    command_keyword = Faker("bothify", text="/#####")
+    message = Faker("sentence")
+    position = Sequence(lambda n: n + 2)
+    is_active = Faker("pybool", truth_probability=70)
 
 
 class TelegramBotFileFactory(django.DjangoModelFactory):
@@ -52,5 +52,5 @@ class TelegramBotFileFactory(django.DjangoModelFactory):
     class Meta:
         model = TelegramBotFile
 
-    telegram_action: TelegramBotAction = SubFactory(TelegramBotActionFactory)
-    file: IO = Faker("txt_file", storage=FS_STORAGE)
+    telegram_action = SubFactory(TelegramBotActionFactory)
+    file = Faker("txt_file", storage=FS_STORAGE)
