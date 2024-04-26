@@ -29,9 +29,8 @@ INSTALLED_APPS = [
     "allauth.account",
     "rest_framework",
     "django_filters",
-    "apps",
-    "apps.bot_management",
     "api",
+    "apps.bot_management",
     "drf_spectacular",
 ]
 
