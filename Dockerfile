@@ -28,5 +28,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y build-essential
 
 COPY bot_constructor bot_constructor/
 
+RUN ls --recursive /app/
 RUN chmod +x entrypoint.sh
-ENTRYPOINT ["sh", "./entrypoint.sh"]
+ENTRYPOINT ["sh", "entrypoint.sh"]
