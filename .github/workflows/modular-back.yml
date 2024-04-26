@@ -107,15 +107,15 @@ jobs:
             echo "DJANGO_SUPERUSER_USERNAME=${{secrets.DJANGO_SUPERUSER_USERNAME}}" >> .env
             echo "DJANGO_SUPERUSER_PASSWORD=${{secrets.DJANGO_SUPERUSER_PASSWORD}}" >> .env
             echo "DJANGO_SUPERUSER_EMAIL=${{secrets.DJANGO_SUPERUSER_EMAIL}}" >> .env
-            echo "DEBUG=0" >> .env
+            echo "DEBUG=false" >> .env
             echo "ALLOWED_HOSTS=${{secrets.DJANGO_ALLOWED_HOSTS}}" >> .env
             echo "DB_ENGINE=${{secrets.DJANGO_DB_ENGINE}}" >> .env
             echo "POSTGRES_USER=${{secrets.DJANGO_POSTGRES_USER}}" >> .env
             echo "POSTGRES_PASSWORD=${{secrets.DJANGO_POSTGRES_PASSWORD}}" >> .env
             echo "DB_NAME=${{secrets.DJANGO_DB_NAME}}" >> .env
-            echo "DB_HOST=${{vars.BACKEND_CONTAINER_NAME}}" >> .env
+            echo "DB_HOST=postgres" >> .env
             echo "DB_PORT=5432" >> .env
-            echo "DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}" >> .env
+            echo "DATABASE_URL=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME" >> .env
             docker run -d \
               --name=${{vars.BACKEND_CONTAINER_NAME}} \
               --hostname=${{vars.BACKEND_CONTAINER_NAME}} \
