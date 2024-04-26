@@ -12,9 +12,6 @@ env:
   POETRY_VERSION: "1.8.2"
   PYTHON_VERSION: "3.12"
   SECRET_KEY: ${{secrets.DJANGO_SECRET_KEY}}
-  DJANGO_SUPERUSER_USERNAME: ${{secrets.DJANGO_SUPERUSER_USERNAME}}
-  DJANGO_SUPERUSER_PASSWORD: ${{secrets.DJANGO_SUPERUSER_PASSWORD}}
-  DJANGO_SUPERUSER_EMAIL: ${{secrets.DJANGO_SUPERUSER_EMAIL}}
 
 jobs:
 
@@ -107,13 +104,17 @@ jobs:
             docker rm ${{vars.BACKEND_CONTAINER_NAME}}
             docker rmi ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
             docker pull ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
+            echo "DJANGO_SUPERUSER_USERNAME=${{secrets.DJANGO_SUPERUSER_USERNAME}}" >> .env
+            echo "DJANGO_SUPERUSER_PASSWORD: ${{secrets.DJANGO_SUPERUSER_PASSWORD}}" >> .env
+            echo "DJANGO_SUPERUSER_EMAIL: ${{secrets.DJANGO_SUPERUSER_EMAIL}}" >> .env
             docker run -d \
               --name=${{vars.BACKEND_CONTAINER_NAME}} \
               --hostname=${{vars.BACKEND_CONTAINER_NAME}} \
               --net=${{secrets.MODULAR_NETWORK_NAME}} \
               --restart=unless-stopped \
-              -v static_value:/app/bot_constructor/static/ \
-              -v media_value:/app/bot_constructor/media/ \
+              --env-file .env \
+              -v bot_static:/app/bot_constructor/static/ \
+              -v bot_media:/app/bot_constructor/media/ \
               ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
 
   notify:
