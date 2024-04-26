@@ -112,8 +112,8 @@ jobs:
               --hostname=${{vars.BACKEND_CONTAINER_NAME}} \
               --net=${{secrets.MODULAR_NETWORK_NAME}} \
               --restart=unless-stopped \
-              -v static_value:/app/static/ \
-              -v media_value:/app/media/ \
+              -v static_value:/app/bot_constructor/static/ \
+              -v media_value:/app/bot_constructor/media/ \
               ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
 
   notify:
