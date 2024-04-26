@@ -1,9 +1,12 @@
-
-from rest_framework.viewsets import ModelViewSet
 from purchases.models import Cart, ShoppingCart
+from rest_framework.viewsets import ModelViewSet
 
 from .permissions import IsAdminOrReadOnly, IsAuthenticatednOrReadOnly
-from .serializers import CartSerializer, ShoppingCartReadSerializer, ShoppingCartWriteSerializer
+from .serializers import (
+    CartSerializer,
+    ShoppingCartReadSerializer,
+    ShoppingCartWriteSerializer,
+)
 
 
 class CartViewSet(ModelViewSet):
@@ -12,6 +15,7 @@ class CartViewSet(ModelViewSet):
     permission_classes = (IsAuthenticatednOrReadOnly,)
     serializer_class = CartSerializer
     queryset = Cart.objects.all()
+
 
 class ShoppingCartViewSet(ModelViewSet):
     lookup_field = "id"
@@ -34,8 +38,3 @@ class ShoppingCartViewSet(ModelViewSet):
         if self.action in ["list", "retrieve"]:
             return ShoppingCartReadSerializer
         return ShoppingCartWriteSerializer
-
-
-
-
-

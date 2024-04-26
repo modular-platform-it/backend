@@ -1,8 +1,9 @@
+# type:ignore
+from django.contrib.auth import get_user_model
 from django.db import models
 
-from django.contrib.auth import get_user_model
-
 User = get_user_model()
+
 
 class Cart(models.Model):
 
@@ -18,7 +19,7 @@ class Cart(models.Model):
         verbose_name = "Карточка"
         verbose_name_plural = "Карточки"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 

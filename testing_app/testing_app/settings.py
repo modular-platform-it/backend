@@ -1,4 +1,5 @@
 """Настройки проекта."""
+
 import os
 from pathlib import Path
 
@@ -27,7 +28,7 @@ INSTALLED_APPS = [
     "djoser",
     "rest_framework.authtoken",
     "api",
-    "purchases"
+    "purchases",
 ]
 
 MIDDLEWARE = [
