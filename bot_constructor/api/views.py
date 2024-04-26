@@ -140,7 +140,9 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
     def retrieve(self, request: Request, pk: int, telegram_bot_pk: int) -> Response:
         queryset = TelegramBotAction.objects.filter(pk=pk, telegram_bot=telegram_bot_pk)
         telegram_action = get_object_or_404(queryset, pk=pk)
-        serializer = TelegramBotActionSerializer(telegram_action)
+        serializer = TelegramBotActionSerializer(
+            telegram_action, context={"request": request}
+        )
         return Response(serializer.data)
 
     def get_serializer_context(self) -> dict[str, Any]:
