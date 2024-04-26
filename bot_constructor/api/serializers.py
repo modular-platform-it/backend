@@ -92,7 +92,7 @@ class TelegramFileSerializer(serializers.ModelSerializer):
     """Сериализатор файлов для команд телеграм бота."""
 
     telegram_action = TelegramBotActionsPKField()
-    file = serializers.FileField()
+    file = serializers.FileField(use_url=True)
 
     class Meta:
         model = TelegramBotFile
