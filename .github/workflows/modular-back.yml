@@ -107,7 +107,7 @@ jobs:
             echo "DJANGO_SUPERUSER_USERNAME=${{secrets.DJANGO_SUPERUSER_USERNAME}}" >> .env
             echo "DJANGO_SUPERUSER_PASSWORD=${{secrets.DJANGO_SUPERUSER_PASSWORD}}" >> .env
             echo "DJANGO_SUPERUSER_EMAIL=${{secrets.DJANGO_SUPERUSER_EMAIL}}" >> .env
-            echo "DEBUG=false" >> .env
+            echo "DEBUG=False" >> .env
             echo "ALLOWED_HOSTS=${{secrets.DJANGO_ALLOWED_HOSTS}}" >> .env
             echo "DB_ENGINE=${{secrets.DJANGO_DB_ENGINE}}" >> .env
             echo "POSTGRES_USER=${{secrets.DJANGO_POSTGRES_USER}}" >> .env
