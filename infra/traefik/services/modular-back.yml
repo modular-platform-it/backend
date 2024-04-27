@@ -70,3 +70,5 @@ volumes:
 networks:
   traefik:
     external: true
+
+# RUN apt-get install -y locales && sed -i '/ru_RU.UTF-8/s/^# //g' /etc/locale.gen && locale-gen

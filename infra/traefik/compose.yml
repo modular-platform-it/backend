@@ -11,10 +11,9 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - letsencrypt:/letsencrypt
       - config:/etc/traefik
       - external:/external
-      - usersfile:/usersfile
+      - letsencrypt:/letsencrypt
     networks:
       - traefik
 
@@ -36,12 +35,6 @@ volumes:
     driver_opts:
       type: none
       device: /home/sihuan/modular/dockume/traefik/external
-      o: bind
-  usersfile:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/sihuan/modular/dockume/traefik
       o: bind
 
 networks:

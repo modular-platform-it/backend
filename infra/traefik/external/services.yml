@@ -1,6 +1,9 @@
 ## DYNAMIC configuration
 ## path to place the file
 ## scp infra/traefik/external/services.yml sihuan@xwick.ru:/home/sihuan/modular/dockume/traefik/external
+## path to place usersfile
+## scp infra/traefik/external/usersfile sihuan@xwick.ru:/home/sihuan/modular/dockume/traefik/external
+## https://bcrypt-generator.com/
 
 http:
   routers:
@@ -48,7 +51,7 @@ http:
   middlewares:
     auth:
       basicAuth:
-        usersFile: "/usersfile/usersfile"
+        usersFile: "/external/usersfile"
 
   services:
     nginx:
