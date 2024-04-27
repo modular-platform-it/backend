@@ -58,6 +58,8 @@ services:
     env_file: stack.env
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - traefik
 
 volumes:
   postgres_data:
