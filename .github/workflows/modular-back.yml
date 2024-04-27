@@ -122,7 +122,6 @@ jobs:
               --hostname=${{vars.BACKEND_CONTAINER_NAME}} \
               --net=${{secrets.MODULAR_NETWORK_NAME}} \
               --restart=unless-stopped \
-              --env-file .env \
               -e DEBUG='False' \
               -v bot_static:/app/bot_constructor/static/ \
               -v bot_media:/app/bot_constructor/media/ \
