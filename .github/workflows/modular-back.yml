@@ -93,18 +93,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Creating ENV file
-        run: |
-          echo "DJANGO_SUPERUSER_USERNAME=${{secrets.DJANGO_SUPERUSER_USERNAME}}" >> .env
-          echo "DJANGO_SUPERUSER_PASSWORD=${{secrets.DJANGO_SUPERUSER_PASSWORD}}" >> .env
-          echo "DJANGO_SUPERUSER_EMAIL=${{secrets.DJANGO_SUPERUSER_EMAIL}}" >> .env
-          echo "ALLOWED_HOSTS=${{secrets.DJANGO_ALLOWED_HOSTS}}" >> .env
-          echo "DB_ENGINE=${{secrets.DJANGO_DB_ENGINE}}" >> .env
-          echo "POSTGRES_USER=${{secrets.DJANGO_POSTGRES_USER}}" >> .env
-          echo "POSTGRES_PASSWORD=${{secrets.DJANGO_POSTGRES_PASSWORD}}" >> .env
-          echo "DB_NAME=${{secrets.DJANGO_DB_NAME}}" >> .env
-          echo "DB_HOST=postgres" >> .env
-          echo "DB_PORT=5432" >> .env
       - name: executing remote ssh commands
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -123,6 +111,16 @@ jobs:
               --net=${{secrets.MODULAR_NETWORK_NAME}} \
               --restart=unless-stopped \
               -e DEBUG='False' \
+              -e DJANGO_SUPERUSER_USERNAME=${{secrets.DJANGO_SUPERUSER_USERNAME}} \
+              -e DJANGO_SUPERUSER_PASSWORD=${{secrets.DJANGO_SUPERUSER_PASSWORD}} \
+              -e DJANGO_SUPERUSER_EMAIL=${{secrets.DJANGO_SUPERUSER_EMAIL}} \
+              -e ALLOWED_HOSTS=${{secrets.DJANGO_ALLOWED_HOSTS}} \
+              -e DB_ENGINE=${{secrets.DJANGO_DB_ENGINE}} \
+              -e POSTGRES_USER=${{secrets.DJANGO_POSTGRES_USER}} \
+              -e POSTGRES_PASSWORD=${{secrets.DJANGO_POSTGRES_PASSWORD}} \
+              -e DB_NAME=${{secrets.DJANGO_DB_NAME}} \
+              -e DB_HOST='postgres' \
+              -e DB_PORT=5432 \
               -v bot_static:/app/bot_constructor/static/ \
               -v bot_media:/app/bot_constructor/media/ \
               ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
