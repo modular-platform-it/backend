@@ -14,6 +14,7 @@ services:
       - letsencrypt:/letsencrypt
       - config:/etc/traefik
       - external:/external
+      - usersfile:/usersfile
     networks:
       - traefik
 
@@ -35,6 +36,12 @@ volumes:
     driver_opts:
       type: none
       device: /home/sihuan/modular/dockume/traefik/external
+      o: bind
+  usersfile:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sihuan/modular/dockume/traefik
       o: bind
 
 networks:
