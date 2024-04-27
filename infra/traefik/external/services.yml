@@ -35,6 +35,14 @@ http:
         certResolver: letsencrypt
       service: traefik
 
+    to-pgadmin:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`pgadmin.xwick.ru`)"
+      tls:
+        certResolver: letsencrypt
+      service: pgadmin
+
   middlewares:
     traefik-auth:
       ipWhiteList:
@@ -50,6 +58,11 @@ http:
       loadBalancer:
         servers:
         - url: "http://backend:8000"
+
+    pgadmin:
+      loadBalancer:
+        servers:
+        - url: "http://pgadmin:80"
 
     traefik:
       loadBalancer:
