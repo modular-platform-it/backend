@@ -150,4 +150,5 @@ SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
         "Token": {"type": "apiKey", "name": "Authorization", "in": "header"}
     },
+    'DEFAULT_INFO': 'testing_app.urls.api_info',
 }
