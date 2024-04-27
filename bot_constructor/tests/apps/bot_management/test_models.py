@@ -13,12 +13,12 @@ class TestTelegramBotModel(TestCase):
     def setUp(self) -> None:
         self.telegram_bot = TelegramBotFactory.create()
 
-    def test_string_representation(self):
+    def test_string_representation(self) -> None:
         """Проверка строкового представления модели телеграм бота."""
         self.assertEqual(self.telegram_bot.name, str(self.telegram_bot))
 
-    def test_save_function(self):
-        """Проверка создания объекта действия бота при создании объекта телеграм бота."""
+    def test_save_function(self) -> None:
+        """Проверка создания действия бота при создании объекта телеграм бота."""
         self.assertTrue(
             TelegramBotAction.objects.filter(telegram_bot=self.telegram_bot).exists()
         )
@@ -39,7 +39,7 @@ class TestTelegramBotActionModel(TestCase):
         self.telegram_bot = TelegramBotFactory.create()
         self.telegram_action = TelegramBotActionFactory(telegram_bot=self.telegram_bot)
 
-    def test_string_representation(self):
+    def test_string_representation(self) -> None:
         """Проверка строкового представления модели действия телеграм бота."""
         self.assertEqual(self.telegram_action.name, str(self.telegram_action))
 
@@ -57,6 +57,6 @@ class TestTelegramBotActionFileModel(TestCase):
             telegram_action=self.telegram_action,
         )
 
-    def test_string_representation(self):
+    def test_string_representation(self) -> None:
         """Проверка строкового представления модели файла действия телеграм бота."""
         self.assertEqual(self.telegram_file.file.name, str(self.telegram_file))
