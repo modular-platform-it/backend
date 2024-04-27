@@ -11,8 +11,6 @@ entryPoints:
           to: websecure
   websecure:
     address: ":443"
-  # postgresql:
-  #   address: ":5432"
 
 api:
   dashboard: true
@@ -31,6 +29,7 @@ certificatesResolvers:
     acme:
       email: sihuannewrise@gmail.com
       storage: /letsencrypt/acme.json
+      # for use during development
       # caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
       httpChallenge:
         entryPoint: web

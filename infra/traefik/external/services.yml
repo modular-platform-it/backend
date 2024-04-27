@@ -49,7 +49,7 @@ http:
     backend:
       loadBalancer:
         servers:
-        - url: "http://backend:8080"
+        - url: "http://backend:8000"
 
     traefik:
       loadBalancer:

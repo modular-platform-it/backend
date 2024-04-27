@@ -1,4 +1,4 @@
-FROM python:3.12-slim-bullseye
+FROM python:3.12-slim
 
 ENV POETRY_VERSION=1.8.2
 
@@ -19,14 +19,17 @@ RUN apt-get update && apt-get install --no-install-recommends -y curl \
 
 WORKDIR /app
 
-COPY ../pyproject.toml ../poetry.lock ../entrypoint.sh ./
+COPY pyproject.toml poetry.lock ./
 
 RUN apt-get update && apt-get install --no-install-recommends -y build-essential  \
 	&& poetry install --no-root --only main \
 	&& apt-get purge --auto-remove -y build-essential \
 	&& rm -rf /var/lib/apt/lists/*
 
-COPY . .
+COPY bot_constructor bot_constructor/
+
+WORKDIR /app/bot_constructor
 
 RUN chmod +x entrypoint.sh
-ENTRYPOINT ["sh", "/app/entrypoint.sh"]
+
+ENTRYPOINT ["sh", "entrypoint.sh"]
