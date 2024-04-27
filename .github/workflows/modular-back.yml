@@ -15,83 +15,83 @@ env:
 
 jobs:
 
-  # test:
-  #   name: Linters and Pytest
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   -
-  #     name: Check out repository
-  #     uses: actions/checkout@v4
-  #   -
-  #     name: Set up Python
-  #     id: setup-python
-  #     uses: actions/setup-python@v5
-  #     with:
-  #       python-version: ${{env.PYTHON_VERSION}}
-  #   -
-  #     name: Isort
-  #     uses: isort/isort-action@v1
-  #   -
-  #     name: Install and configure Poetry
-  #     uses: snok/install-poetry@v1
-  #     with:
-  #       virtualenvs-create: true
-  #       virtualenvs-in-project: true
-  #       version: ${{env.POETRY_VERSION}}
-  #   -
-  #     name: Load cached venv
-  #     id: cached-poetry-dependencies
-  #     uses: actions/cache@v4
-  #     with:
-  #       path: .venv
-  #       key: venv-${{runner.os}}-${{steps.setup-python.outputs.python-version}}-${{hashFiles('poetry.lock')}}
-  #   -
-  #     name: Install dependencies
-  #     if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-  #     run: poetry install --no-interaction --no-root
-  #   -
-  #     name: Install project
-  #     run: poetry install --no-interaction
-  #   -
-  #     name: Run black
-  #     run: poetry run black .
-  #   -
-  #     name: Run tests
-  #     run: |
-  #       source .venv/bin/activate
-  #       cd bot_constructor/
-  #       python manage.py test
+  test:
+    name: Linters and Pytest
+    runs-on: ubuntu-latest
+    steps:
+    -
+      name: Check out repository
+      uses: actions/checkout@v4
+    -
+      name: Set up Python
+      id: setup-python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{env.PYTHON_VERSION}}
+    -
+      name: Isort
+      uses: isort/isort-action@v1
+    -
+      name: Install and configure Poetry
+      uses: snok/install-poetry@v1
+      with:
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        version: ${{env.POETRY_VERSION}}
+    -
+      name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v4
+      with:
+        path: .venv
+        key: venv-${{runner.os}}-${{steps.setup-python.outputs.python-version}}-${{hashFiles('poetry.lock')}}
+    -
+      name: Install dependencies
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      run: poetry install --no-interaction --no-root
+    -
+      name: Install project
+      run: poetry install --no-interaction
+    -
+      name: Run black
+      run: poetry run black .
+    -
+      name: Run tests
+      run: |
+        source .venv/bin/activate
+        cd bot_constructor/
+        python manage.py test
 
-  # build:
-  #   name: Push Docker image to Docker Hub
-  #   if: github.ref_name == 'develop' || github.ref_name == 'feat/docker'
-  #   runs-on: ubuntu-latest
-  #   # needs: test
-  #   steps:
-  #     - name: Check out the repo
-  #       uses: actions/checkout@v4
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
-  #     - name: Login to Docker
-  #       uses: docker/login-action@v3
-  #       with:
-  #         username: ${{secrets.DOCKERHUB_USERNAME}}
-  #         password: ${{secrets.DOCKERHUB_TOKEN}}
-  #     - name: Push to Docker Hub
-  #       uses: docker/build-push-action@v5
-  #       with:
-  #         context: .
-  #         file: Dockerfile
-  #         push: true
-  #         tags: |
-  #           ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
-  #           ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:${{env.MODULAR_BACK_VERSION}}
+  build:
+    name: Push Docker image to Docker Hub
+    if: github.ref_name == 'develop' || github.ref_name == 'feat/docker'
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker
+        uses: docker/login-action@v3
+        with:
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_TOKEN}}
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: |
+            ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
+            ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:${{env.MODULAR_BACK_VERSION}}
 
   deploy:
     name: Deployment on remote server
     if: github.ref_name == 'develop' || github.ref_name == 'feat/docker'
     runs-on: ubuntu-latest
-    # needs: build
+    needs: build
     steps:
       - name: executing remote ssh commands
         uses: appleboy/ssh-action@v1.0.0
