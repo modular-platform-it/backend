@@ -55,6 +55,8 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:8.3
+    depends_on:
+      - postgres
     env_file: stack.env
     volumes:
       - pgadmin_data:/var/lib/pgadmin
@@ -63,6 +65,7 @@ services:
 
 volumes:
   postgres_data:
+  pgadmin_data:
 
 networks:
   traefik:
