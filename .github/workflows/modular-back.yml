@@ -104,22 +104,24 @@ jobs:
             docker rm ${{vars.BACKEND_CONTAINER_NAME}}
             docker rmi ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
             docker pull ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
-            echo "DATABASE_URL=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME" >> .env
             docker run -d \
               --name=${{vars.BACKEND_CONTAINER_NAME}} \
               --hostname=${{vars.BACKEND_CONTAINER_NAME}} \
               --net=${{secrets.MODULAR_NETWORK_NAME}} \
               --restart=unless-stopped \
               -e DEBUG='False' \
+              -e USE_SQLITE='False' \
               -e DJANGO_SUPERUSER_USERNAME=${{secrets.DJANGO_SUPERUSER_USERNAME}} \
               -e DJANGO_SUPERUSER_PASSWORD=${{secrets.DJANGO_SUPERUSER_PASSWORD}} \
               -e DJANGO_SUPERUSER_EMAIL=${{secrets.DJANGO_SUPERUSER_EMAIL}} \
               -e ALLOWED_HOSTS=${{secrets.DJANGO_ALLOWED_HOSTS}} \
+              -e CSRF_TRUSTED_ORIGINS =$ALLOWED_HOSTS \
               -e DB_ENGINE=${{secrets.DJANGO_DB_ENGINE}} \
               -e POSTGRES_USER=${{secrets.DJANGO_POSTGRES_USER}} \
               -e POSTGRES_PASSWORD=${{secrets.DJANGO_POSTGRES_PASSWORD}} \
               -e DB_NAME=${{secrets.DJANGO_DB_NAME}} \
               -e DB_HOST='postgres' \
+              -e DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME} \
               -e DB_PORT=5432 \
               -v bot_static:/app/bot_constructor/static/ \
               -v bot_media:/app/bot_constructor/media/ \
