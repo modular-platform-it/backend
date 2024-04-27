@@ -109,8 +109,8 @@ jobs:
               --hostname=${{vars.BACKEND_CONTAINER_NAME}} \
               --net=${{secrets.MODULAR_NETWORK_NAME}} \
               --restart=unless-stopped \
-              -e DEBUG='False' \
-              -e USE_SQLITE='False' \
+              -e DEBUG=False \
+              -e USE_SQLITE=False \
               -e DJANGO_SUPERUSER_USERNAME=${{secrets.DJANGO_SUPERUSER_USERNAME}} \
               -e DJANGO_SUPERUSER_PASSWORD=${{secrets.DJANGO_SUPERUSER_PASSWORD}} \
               -e DJANGO_SUPERUSER_EMAIL=${{secrets.DJANGO_SUPERUSER_EMAIL}} \
