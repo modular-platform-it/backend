@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 
 class CartSerializer(serializers.ModelSerializer):
-    """Сериализатор длятоваров"""
+    """Сериализатор для товаров"""
 
     class Meta:
         model = Cart
