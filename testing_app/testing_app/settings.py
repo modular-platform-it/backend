@@ -123,7 +123,7 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "collected_static"
 
-STATICFILES_DIRS = ((BASE_DIR / "static/"),)
+# STATICFILES_DIRS = ((BASE_DIR / "static/"),)
 INITIAL_DATA_DIR = BASE_DIR / "data/"
 
 MEDIA_URL = "/media/"
@@ -150,4 +150,5 @@ SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
         "Token": {"type": "apiKey", "name": "Authorization", "in": "header"}
     },
+    'DEFAULT_INFO': 'testing_app.urls.api_info',
 }

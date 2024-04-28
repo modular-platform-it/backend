@@ -10,6 +10,8 @@ from .serializers import (
 
 
 class CartViewSet(ModelViewSet):
+    """Вьюсет карточки товаров"""
+
     lookup_field = "id"
     pagination_class = None
     permission_classes = (IsAuthenticatednOrReadOnly,)
@@ -18,13 +20,15 @@ class CartViewSet(ModelViewSet):
 
 
 class ShoppingCartViewSet(ModelViewSet):
+    """Вьюсет для списка покупок"""
+
     lookup_field = "id"
     pagination_class = None
     permission_classes = (IsAuthenticatednOrReadOnly,)
     queryset = ShoppingCart.objects.all()
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        serializer.save(user=self.request.user)
 
     def get_queryset(self):
         user = self.request.user
