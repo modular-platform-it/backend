@@ -10,10 +10,7 @@ urlpatterns = [
     path("api/", include("api.urls")),
 ]
 
-api_info = openapi.Info(
-    title="Snippets API",
-    default_version="v1"
-)
+api_info = openapi.Info(title="Snippets API", default_version="v1")
 
 schema_view = get_schema_view(
     openapi.Info(

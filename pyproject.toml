@@ -23,9 +23,8 @@ factory-boy = "^3.3.0"
 faker-file = "^0.17.11"
 sqlparse = "^0.5.0"
 idna = "^3.7"
-
- = "^1.21.7"
 djoser = "^2.2.2"
+drf-yasg = "^1.21.7"
 
 
 [tool.poetry.group.dev.dependencies]

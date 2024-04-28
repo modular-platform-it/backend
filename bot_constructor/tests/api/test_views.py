@@ -165,7 +165,6 @@ class TestTelegramBotActionView(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(count - 1, TelegramBotAction.objects.count())
 
-
     def test_telegram_bot_action_update_view(self) -> None:
         """Проверка представления обновления телеграм бота."""
         telegram_bot: TelegramBot = TelegramBotFactory.create(
@@ -303,7 +302,6 @@ class TestTelegramBotFileView(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(count - 1, TelegramBotFile.objects.count())
-
 
     def test_telegram_bot_action_update_view(self) -> None:
         """Проверка представления обновления файла телеграм бота."""
