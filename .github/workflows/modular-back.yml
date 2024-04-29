@@ -115,13 +115,11 @@ jobs:
               -e DJANGO_SUPERUSER_EMAIL=${{secrets.DJANGO_SUPERUSER_EMAIL}} \
               -e ALLOWED_HOSTS=${{secrets.DJANGO_ALLOWED_HOSTS}} \
               -e CSRF_TRUSTED_ORIGINS=${{secrets.DJANGO_CSRF_TRUSTED_ORIGINS}} \
-              -e DB_ENGINE=${{secrets.DJANGO_DB_ENGINE}} \
+              -e POSTGRES_DB=${{secrets.DJANGO_DB_NAME}} \
               -e POSTGRES_USER=${{secrets.DJANGO_POSTGRES_USER}} \
               -e POSTGRES_PASSWORD=${{secrets.DJANGO_POSTGRES_PASSWORD}} \
-              -e POSTGRES_DB=${{secrets.DJANGO_DB_NAME}} \
               -e DB_HOST='postgres' \
               -e DB_PORT=5432 \
-              -e DB_LOCALE=ru_RU.UTF-8 \
               -v bot_static:/app/bot_constructor/static/ \
               -v bot_media:/app/bot_constructor/media/ \
               ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
