@@ -160,5 +160,12 @@ cython_debug/
 
 #.idea/
 
+# VS Code
+.vscode/
+
+# Media
+media/
+
 # Static
 static/
+.github/workflows/temp*.*
