@@ -28,9 +28,9 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{env.PYTHON_VERSION}}
-    -
-      name: Isort
-      uses: isort/isort-action@v1
+    # -
+    #   name: Isort
+    #   uses: isort/isort-action@v1
     -
       name: Install and configure Poetry
       uses: snok/install-poetry@v1
