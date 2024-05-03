@@ -2,7 +2,7 @@ name: modular backend CICD
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: [ "production", "develop", "feat/new_infra" ]
+    branches: [ "production", "develop" ]
     paths-ignore:
       - '**/pyproject.toml'
   workflow_dispatch:
@@ -68,7 +68,7 @@ jobs:
 
   build:
     name: Push Docker image to Docker Hub
-    if: github.ref_name == 'develop' || github.ref_name == 'feat/new_infra'
+    if: github.ref_name == 'develop' || github.ref_name == 'production'
     runs-on: ubuntu-latest
     needs: test
     steps:
@@ -93,7 +93,7 @@ jobs:
 
   deploy:
     name: Deployment on remote server
-    if: github.ref_name == 'develop' || github.ref_name == 'feat/new_infra'
+    if: github.ref_name == 'develop' || github.ref_name == 'production'
     runs-on: ubuntu-latest
     needs: build
     steps:
