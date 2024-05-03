@@ -2,9 +2,9 @@ name: modular backend CICD
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: [ "production", "develop", "feat/infra" ]
+    branches: [ "production", "develop", "feat/new_infra" ]
     paths-ignore:
-      - 'pyproject.toml'
+      - '**/pyproject.toml'
   workflow_dispatch:
 
 env:
@@ -64,7 +64,7 @@ jobs:
 
   build:
     name: Push Docker image to Docker Hub
-    if: github.ref_name == 'develop' || github.ref_name == 'production'
+    if: github.ref_name == 'develop' || github.ref_name == 'feat/new_infra'
     runs-on: ubuntu-latest
     needs: test
     steps:
@@ -80,8 +80,8 @@ jobs:
       - name: Push to Docker Hub
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: Dockerfile
+          context: ./bot_constructor
+          file: bot_constructor/Dockerfile
           push: true
           tags: |
             ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
@@ -89,7 +89,7 @@ jobs:
 
   deploy:
     name: Deployment on remote server
-    if: github.ref_name == 'develop' || github.ref_name == 'production'
+    if: github.ref_name == 'develop' || github.ref_name == 'feat/new_infra'
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -130,7 +130,7 @@ jobs:
     steps:
       - name: Set $author and $author_tg_nick values to env
         run: |
-          author=${{github.actor}}
+          author=echo "${{github.actor}}" | awk '{print tolower($0)}'
           declare -A tg_nicks=(${{vars.TG_BACK_TEAM_NICKS}})
           if [ ${tg_nicks[$author]+_} ]; then tg_nick="(@${tg_nicks[$author]})"; else tg_nick=""; fi
           echo "AUTHOR=${author}" >> "$GITHUB_ENV"
