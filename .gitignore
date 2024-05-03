@@ -170,3 +170,4 @@ media/
 # Static
 static/
 .github/workflows/temp*.*
+.github/workflows/*.sh

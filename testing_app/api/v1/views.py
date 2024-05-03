@@ -1,7 +1,7 @@
 from purchases.models import Cart, ShoppingCart
 from rest_framework.viewsets import ModelViewSet
 
-from .permissions import IsAdminOrReadOnly, IsAuthenticatednOrReadOnly
+from .permissions import IsAuthenticatednOrReadOnly
 from .serializers import (
     CartSerializer,
     ShoppingCartReadSerializer,
