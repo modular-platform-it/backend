@@ -46,13 +46,13 @@ jobs:
     -
       name: Install dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-      run: ./bot_constructor/poetry install --no-interaction --no-root
+      run: bot_constructor/poetry install --no-interaction --no-root
     -
       name: Install project
       run: poetry install --no-interaction
     -
       name: Run black
-      run: poetry run black .
+      run: bot_constructor/poetry run black .
     -
       name: Run tests
       run: |
