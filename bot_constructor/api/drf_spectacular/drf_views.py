@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .drf_serializers import LoginSerializer
+from .drf_serializers import LoginSerializer, LogoutSerializer
 
 
 @extend_schema(
@@ -47,6 +47,7 @@ def swagger_login(request):
 
 
 @extend_schema(
+    request=LogoutSerializer,
     responses={
         200: {"description": "Выйти"},
     },
@@ -55,6 +56,7 @@ def swagger_login(request):
     methods=["GET"],
 )
 @extend_schema(
+    request=LogoutSerializer,
     responses={
         302: {"description": "Вы вышли."},
     },
