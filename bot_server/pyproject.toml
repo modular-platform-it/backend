@@ -1,37 +1,20 @@
 [tool.poetry]
-name = "bot-constructor"
+name = "bot-server"
 version = "0.1.0"
-description = "Платформа для создания и управления ботами"
+description = "Серверная часть по запуску и управлению ботов."
 authors = ["Olesya Orlenko <olees.orlenko@yandex.ru>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-django = "^5.0.4"
-djangorestframework = "^3.15.1"
-python-dotenv = "^1.0.1"
-django-stubs = "^4.2.7"
-mypy = "^1.9.0"
-django-allauth = "^0.61.1"
-drf-spectacular = "^0.27.2"
-gunicorn = "^22.0.0"
-psycopg = {extras = ["binary"], version = "^3.1.18"}
-whitenoise = "^6.6.0"
-drf-nested-routers = "^0.93.5"
-django-filter = "^24.2"
-factory-boy = "^3.3.0"
-faker-file = "^0.17.11"
-sqlparse = "^0.5.0"
-idna = "^3.7"
-djoser = "^2.2.2"
-drf-yasg = "^1.21.7"
+fastapi = "^0.111.0"
+aiogram = "^3.5.0"
 
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.3.0"
-isort = "^5.13.2"
+black = "^24.4.2"
 pre-commit = "^3.7.0"
-coverage = "^7.4.4"
+isort = "^5.13.2"
 
 [build-system]
 requires = ["poetry-core"]
