@@ -134,7 +134,8 @@ jobs:
     steps:
       - name: Set $author and $author_tg_nick values to env
         run: |
-          author=echo "${{github.actor}}" | awk '{print tolower($0)}'
+          ghactor=${{github.actor}}
+          author=${ghactor,,}
           declare -A tg_nicks=(${{vars.TG_BACK_TEAM_NICKS}})
           if [ ${tg_nicks[$author]+_} ]; then tg_nick="(@${tg_nicks[$author]})"; else tg_nick=""; fi
           echo "AUTHOR=${author}" >> "$GITHUB_ENV"
