@@ -1,5 +1,5 @@
 venv
 .env
 .git
-db.sqlite3
 .vscode/
+bot_constructor/db.sqlite3

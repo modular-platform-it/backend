@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 
 from django.core.management.utils import get_random_secret_key
@@ -6,17 +7,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 
-
-DEBUG = os.getenv("DEBUG")
+DEBUG = os.getenv("DEBUG", False) == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1").split(",")
 
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "https://127.0.0.1").split(",")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -29,8 +28,8 @@ INSTALLED_APPS = [
     "allauth.account",
     "rest_framework",
     "django_filters",
-    "apps.bot_management",
     "api",
+    "apps.bot_management",
     "drf_spectacular",
 ]
 
@@ -83,11 +82,11 @@ TEMPLATES = [
 WSGI_APPLICATION = "bot_constructor.wsgi.application"
 
 
-if os.getenv("USE_SQLITE", "True") == "True":
+if sys.argv[1] == "test":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": str(BASE_DIR / "db.sqlite3"),
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
         }
     }
 else:
@@ -131,7 +130,7 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "/api/bots/"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 LANGUAGE_CODE = "ru"

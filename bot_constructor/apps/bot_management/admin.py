@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import TelegramBot
+
+
+@admin.register(TelegramBot)
+class TelegramBotAdmin(admin.ModelAdmin):
+    list_display = ("name", "bot_state")
