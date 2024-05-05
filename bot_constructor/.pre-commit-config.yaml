@@ -40,10 +40,6 @@ repos:
       - id: mypy
         types: [python]
         exclude: migrations?
-        args:
-          - --python-version
-          - '3.12'
-          - --ignore-missing-imports
-          - --disable-error-code
-          - attr-defined
+        args: [--python-version, '3.12', --ignore-missing-imports,
+               --disable-error-code, 'attr-defined']
         additional_dependencies: [django-stubs]
