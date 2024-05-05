@@ -30,7 +30,6 @@ repos:
     hooks:
       - id: black
         language_version: python3.12
-    # exclude: migrations
         exclude: ^.*\b(migrations)\b.*$
 
   # - repo: https://github.com/PyCQA/isort
