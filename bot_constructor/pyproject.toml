@@ -60,3 +60,8 @@ src_paths = ["backend"]
 
 [tool.yamllint]
 line_length = 88
+
+[tool.yamlfix]
+line_length = 88
+allow_duplicate_keys = true
+none_representation = "null"
