@@ -31,18 +31,20 @@ repos:
       - id: black
         language_version: python3.12
         exclude: ^.*\b(migrations)\b.*$
-
-  # - repo: https://github.com/PyCQA/isort
-  #   rev: 5.13.2
-  #   hooks:
-  #     - id: isort
-
-  # - repo: https://github.com/pre-commit/mirrors-mypy
-  #   rev: v1.8.0
-  #   hooks:
-  #     - id: mypy
-  #       types: [python]
-  #       exclude: migrations?
-  #       args: [--python-version, '3.12', --ignore-missing-imports,
-  #              --disable-error-code, 'attr-defined']
-  #       additional_dependencies: [django-stubs]
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        types: [python]
+        exclude: ^.*\b(migrations)\b.*$
+        args:
+          - --python-version
+          - '3.12'
+          - --ignore-missing-imports
+          - --disable-error-code
+          - attr-defined
+        additional_dependencies: [django-stubs]
