@@ -24,7 +24,7 @@ class TestTelegramBotSerialzier(TestCase):
         self.data: dict[str, str | bool | datetime] = {
             "name": "test",
             "telegram_token": "0000000001:" + 35 * "a",
-            "api_key": "ierugh9843",
+            "api_key": "ierugh9843",  # pragma: allowlist secret
             "api_url": "http://127.0.0.1",
             "is_started": True,
             "bot_state": "DRAFT",

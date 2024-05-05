@@ -21,11 +21,10 @@ repos:
     hooks:
       - id: yamllint
         args: ['-d {extends: relaxed, rules: {line-length: disable}}', -s]
-
-  # - repo: https://github.com/Yelp/detect-secrets
-  #   rev: v1.4.0
-  #   hooks:
-  #     - id: detect-secrets
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
 
   # - repo: https://github.com/psf/black-pre-commit-mirror
   #   rev: 24.1.1
