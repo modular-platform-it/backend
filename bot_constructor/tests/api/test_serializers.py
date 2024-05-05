@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
 from api.serializers import (
-    TelegramBotActionSerializer,
     TelegramBotCreateSerializer,
     TelegramBotSerializer,
     TelegramBotShortSerializer,
