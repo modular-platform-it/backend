@@ -9,10 +9,6 @@ from rest_framework import serializers, validators
 class TelegramBotCreateSerializer(serializers.ModelSerializer):
     """Сериализатор телеграм бота при создании и обновлении."""
 
-    name = serializers.RegexField(
-        regex=rf"^[a-zA-Zа-яёА-ЯЁ]{{{constants.MIN_LETTERS}}}[\w\W]"
-        rf"{{{0},{constants.BOT_NAME_LENGTH - constants.MIN_LETTERS - 1}}}\S$"
-    )
     telegram_token = serializers.RegexField(
         regex=r"^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$",
         validators=(
@@ -32,10 +28,6 @@ class TelegramBotCreateSerializer(serializers.ModelSerializer):
 class TelegramBotShortSerializer(serializers.ModelSerializer):
     """Сериализатор для отображения телеграм бота в списке."""
 
-    name = serializers.RegexField(
-        regex=rf"^[a-zA-Zа-яёА-ЯЁ]{{{constants.MIN_LETTERS}}}[\w\W]"
-        rf"{{{0},{constants.BOT_NAME_LENGTH - constants.MIN_LETTERS - 1}}}\S$"
-    )
     is_started = serializers.BooleanField(read_only=True)
 
     class Meta:
@@ -107,10 +99,6 @@ class TelegramBotActionSerializer(serializers.ModelSerializer):
     """Сериализатор команд телеграм бота."""
 
     telegram_bot = TelegramBotPKField()
-    name = serializers.RegexField(
-        regex=rf"^[a-zA-Zа-яёА-ЯЁ]{{{constants.MIN_LETTERS}}}[\w\W]"
-        rf"{{{0},{constants.ACTION_NAME_LENGTH - constants.MIN_LETTERS - 1}}}\S$"
-    )
     command_keyword = serializers.RegexField(regex=r"^/[a-zA-Z0-9_]{1,32}$")
     position = serializers.IntegerField(min_value=1, max_value=constants.MAX_POSITIONS)
     files = TelegramFileSerializer(many=True, required=False)
