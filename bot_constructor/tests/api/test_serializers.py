@@ -1,5 +1,11 @@
 from datetime import datetime, timedelta
 
+from django.test import TestCase
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.test import APITestCase
+
 from api.serializers import (
     TelegramBotActionSerializer,
     TelegramBotCreateSerializer,
@@ -7,12 +13,7 @@ from api.serializers import (
     TelegramBotShortSerializer,
 )
 from apps.bot_management.models import TelegramBot, TelegramBotFile
-from django.test import TestCase
-from django.urls import reverse
 from factory_data.factories import TelegramBotFactory
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.test import APITestCase
 
 
 class TestTelegramBotSerialzier(TestCase):

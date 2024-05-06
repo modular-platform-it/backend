@@ -1,5 +1,6 @@
-from apps.bot_management.models import TelegramBotAction
 from django.test import TestCase
+
+from apps.bot_management.models import TelegramBotAction
 from factory_data.factories import (
     TelegramBotActionFactory,
     TelegramBotFactory,
