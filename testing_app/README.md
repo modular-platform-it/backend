@@ -38,8 +38,8 @@ POST  /api/users/
 ####  Body
 ```
 {
-    "password": "password",
-    "username": "username"
+    "password": <password>,
+    "username": <username>
 }
 ```
 
@@ -52,8 +52,8 @@ POST  api/auth/token/
 ####  Body
 ```
 {
-    "username": "username",
-    "password": "password",
+    "password": <password>,
+    "username": <username>
 }
 ```
 

@@ -1,5 +1,5 @@
 ---
-files: ^bot_constructor/
+# files: ^bot_constructor/
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
@@ -11,7 +11,11 @@ repos:
       - id: check-added-large-files
       - id: check-merge-conflict
       - id: end-of-file-fixer
-        exclude: ^uml/
+        exclude: |
+          (?x)^(
+              uml/.*|
+              .idea/.*
+          )$
   - repo: https://github.com/lyz-code/yamlfix/
     rev: 1.16.0
     hooks:
