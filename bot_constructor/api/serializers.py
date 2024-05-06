@@ -149,7 +149,9 @@ class TelegramBotActionSerializer(serializers.ModelSerializer):
 class TokenSerializer(serializers.Serializer):
     """Сериализатор для телеграм токена."""
 
-    telegram_token = serializers.RegexField(regex=r"^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$")
+    telegram_token = serializers.RegexField(
+        regex=r"^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$", write_only=True
+    )
 
     class Meta:
         fields = ("telegram_token",)

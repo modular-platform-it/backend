@@ -3,6 +3,17 @@ from datetime import datetime as dt
 from typing import Any
 
 import requests
+from api.drf_spectacular.drf_serializers import (
+    DummyActionSerializer,
+    DummyBotSerializer,
+    DummyFileSerializer,
+    DummyStartStopBotSerializer,
+    DummyTokenErrorSerializer,
+    DummyTokenSerializer,
+    MethodNotAlowedSerializer,
+    NotFoundSerializer,
+)
+from api.exceptions import BotIsRunningException
 from api.filters import TelegramBotFilter
 from api.serializers import (
     TelegramBotActionSerializer,
@@ -15,7 +26,12 @@ from api.serializers import (
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as df_filters
-from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    OpenApiResponse,
+    extend_schema,
+    extend_schema_view,
+)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
@@ -24,7 +40,97 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 
+def check_bot_started(telegram_bot_pk) -> bool:
+    telegram_bot = get_object_or_404(TelegramBot, id=telegram_bot_pk)
+    if telegram_bot.is_started:
+        raise BotIsRunningException
+
+
 @extend_schema(tags=["Телеграм боты"])
+@extend_schema_view(
+    retrieve=extend_schema(
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(response=TelegramBotSerializer),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Телеграм бот не найден"
+            ),
+        }
+    ),
+    destroy=extend_schema(
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(
+                description="Телеграм бот удален"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Телеграм бот не найден"
+            ),
+        }
+    ),
+    update=extend_schema(
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=TelegramBotCreateSerializer, description="Бот обновлен"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyBotSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Телеграм бот не найден"
+            ),
+        }
+    ),
+    create=extend_schema(
+        responses={
+            status.HTTP_201_CREATED: OpenApiResponse(
+                response=TelegramBotCreateSerializer, description="Телеграм бот создан"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyBotSerializer, description="Ошибка в полях"
+            ),
+        }
+    ),
+    partial_update=extend_schema(
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=TelegramBotCreateSerializer, description="Бот обновлен"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyBotSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Телеграм бот не найден"
+            ),
+        }
+    ),
+    check_telegram_token=extend_schema(
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=DummyTokenSerializer, description="Успех"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyTokenErrorSerializer,
+                description="Поле содержит ошибки",
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=DummyTokenSerializer, description="Токен не существует"
+            ),
+            status.HTTP_405_METHOD_NOT_ALLOWED: OpenApiResponse(
+                response=MethodNotAlowedSerializer, description="Метод не разрешен."
+            ),
+        }
+    ),
+    start_stop_bot=extend_schema(
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=DummyStartStopBotSerializer,
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(response=NotFoundSerializer),
+            status.HTTP_405_METHOD_NOT_ALLOWED: OpenApiResponse(
+                response=MethodNotAlowedSerializer, description="Метод не разрешен."
+            ),
+        }
+    ),
+)
 class TelegramBotViewSet(viewsets.ModelViewSet):
     """Набор представлений для телеграм ботов."""
 
@@ -73,32 +179,21 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
     )
     def check_telegram_token(self, request: Request) -> Response:
         """Эндпоинт для проверки введенного телеграм токена на валидность."""
+        # TODO переделать в асинхронный вариант
         telegram_token = request.data.get("telegram_token")
         response = requests.get(f"https://api.telegram.org/bot{telegram_token}/getMe")
         if response.ok:
-            return Response(
-                data={"detail": "Проверка пройдена успешно"}, status=status.HTTP_200_OK
-            )
-        return Response(
-            {"detail": "Данный токен не действителен"}, status=status.HTTP_404_NOT_FOUND
-        )
+            return Response(data={"detail": True}, status=status.HTTP_200_OK)
+        return Response(data={"detail": False}, status=status.HTTP_404_NOT_FOUND)
 
     def update(self, request, *args, **kwargs):
-        telegram_bot = get_object_or_404(TelegramBot, id=self.kwargs.get("pk"))
-        if telegram_bot.is_started:
-            return Response(
-                data={"detail": "Сначала остановите бота"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        telegram_bot_pk = self.kwargs.get("pk")
+        check_bot_started(telegram_bot_pk)
         return super().update(request, *args, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
-        telegram_bot = get_object_or_404(TelegramBot, id=self.kwargs.get("pk"))
-        if telegram_bot.is_started:
-            return Response(
-                data={"detail": "Сначала остановите бота"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        telegram_bot_pk = self.kwargs.get("pk")
+        check_bot_started(telegram_bot_pk)
         return super().partial_update(request, *args, **kwargs)
 
     @action(methods=["GET"], detail=True, url_name="start_stop_bot")
@@ -119,6 +214,69 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema(tags=["Действия"])
+@extend_schema_view(
+    retrieve=extend_schema(
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=TelegramBotActionSerializer,
+                description="Действие телеграм бота",
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyActionSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Действие не найдено"
+            ),
+        }
+    ),
+    create=extend_schema(
+        responses={
+            status.HTTP_201_CREATED: OpenApiResponse(
+                response=TelegramBotActionSerializer, description="Действие создано"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyActionSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Телеграм бот не найден"
+            ),
+        }
+    ),
+    update=extend_schema(
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=TelegramBotActionSerializer, description="Действие обновлено"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyActionSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Телеграм бот не найден"
+            ),
+        }
+    ),
+    partial_update=extend_schema(
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=TelegramBotActionSerializer, description="Действие обновлено"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyActionSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Телеграм бот не найден"
+            ),
+        }
+    ),
+    destroy=extend_schema(
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Действие удалено"),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Телеграм бот не найден"
+            ),
+        }
+    ),
+)
 class TelegramBotActionViewSet(viewsets.ModelViewSet):
     """Набор представлений для действий телеграм бота."""
 
@@ -161,25 +319,11 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         )
 
     def update(self, request, *args, **kwargs):
-        telegram_bot = get_object_or_404(
-            TelegramBot, id=self.kwargs.get("telegram_bot_pk")
-        )
-        if telegram_bot.is_started:
-            return Response(
-                data={"detail": "Сначала остановите бота"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        check_bot_started(self.kwargs.get("telegram_bot_pk"))
         return super().update(request, *args, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
-        telegram_bot = get_object_or_404(
-            TelegramBot, id=self.kwargs.get("telegram_bot_pk")
-        )
-        if telegram_bot.is_started:
-            return Response(
-                data={"detail": "Сначала остановите бота"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        check_bot_started(self.kwargs.get("telegram_bot_pk"))
         return super().partial_update(request, *args, **kwargs)
 
 
@@ -197,35 +341,85 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
             ),
-        ]
+        ],
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=TelegramFileSerializer, description="Файл действия"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyFileSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Действие или бот не найдены"
+            ),
+        },
     ),
     destroy=extend_schema(
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
             ),
-        ]
+        ],
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Файл удален"),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Действие или бот не найдены"
+            ),
+        },
     ),
     update=extend_schema(
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
             ),
-        ]
+        ],
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=TelegramFileSerializer, description="Файл действия изменен"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyFileSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Действие или бот не найдены"
+            ),
+        },
     ),
     create=extend_schema(
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
             ),
-        ]
+        ],
+        responses={
+            status.HTTP_201_CREATED: OpenApiResponse(
+                response=TelegramFileSerializer, description="Файл действия создан"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyFileSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Действие или бот не найдены"
+            ),
+        },
     ),
     partial_update=extend_schema(
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
             ),
-        ]
+        ],
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=TelegramFileSerializer, description="Файл действия изменен"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyFileSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Действие или бот не найдены"
+            ),
+        },
     ),
 )
 class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
@@ -270,17 +464,14 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
-        telegram_bot = get_object_or_404(
-            TelegramBot, id=self.kwargs.get("telegram_bot_pk")
-        )
-        if telegram_bot.is_started:
-            return Response(
-                data={"detail": "Сначала остановите бота"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        check_bot_started(self.kwargs.get("telegram_bot_pk"))
         return super().update(request, *args, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
+        check_bot_started(self.kwargs.get("telegram_bot_pk"))
+        return super().partial_update(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
         telegram_bot = get_object_or_404(
             TelegramBot, id=self.kwargs.get("telegram_bot_pk")
         )
@@ -289,4 +480,4 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
                 data={"detail": "Сначала остановите бота"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        return super().partial_update(request, *args, **kwargs)
+        return super().create(request, *args, **kwargs)
