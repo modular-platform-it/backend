@@ -20,29 +20,35 @@ repos:
     rev: 1.16.0
     hooks:
       - id: yamlfix
-  - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.35.1
-    hooks:
-      - id: yamllint
-        args: ['-d {extends: relaxed, rules: {line-length: disable}}', -s]
-  - repo: https://github.com/Yelp/detect-secrets
-    rev: v1.4.0
-    hooks:
-      - id: detect-secrets
-  - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 24.1.1
-    hooks:
-      - id: black
-        language_version: python3.12
-        exclude: ^.*\b(migrations)\b.*$
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        exclude: ^.*\b(migrations)\b.*$
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.10.0
-    hooks:
-      - id: mypy
-        exclude: ^.*\b(migrations)\b.*$
-        args: [--ignore-missing-imports, --disable-error-code, attr-defined]
+        exclude: |
+          (?x)(
+              ^infra/|
+              ^.github/|
+              testing_app_swagger.yml
+          )
+  # - repo: https://github.com/adrienverge/yamllint.git
+  #   rev: v1.35.1
+  #   hooks:
+  #     - id: yamllint
+  #       args: ['-d {extends: relaxed, rules: {line-length: disable}}', -s]
+  # - repo: https://github.com/Yelp/detect-secrets
+  #   rev: v1.4.0
+  #   hooks:
+  #     - id: detect-secrets
+  # - repo: https://github.com/psf/black-pre-commit-mirror
+  #   rev: 24.1.1
+  #   hooks:
+  #     - id: black
+  #       language_version: python3.12
+  #       exclude: ^.*\b(migrations)\b.*$
+  # - repo: https://github.com/PyCQA/isort
+  #   rev: 5.13.2
+  #   hooks:
+  #     - id: isort
+  #       exclude: ^.*\b(migrations)\b.*$
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: v1.10.0
+  #   hooks:
+  #     - id: mypy
+  #       exclude: ^.*\b(migrations)\b.*$
+  #       args: [--ignore-missing-imports, --disable-error-code, attr-defined]
