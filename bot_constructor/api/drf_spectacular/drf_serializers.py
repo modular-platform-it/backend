@@ -3,9 +3,11 @@ from rest_framework import serializers
 
 
 class LoginSerializer(serializers.Serializer):
+    """Сериализатор для отображения ендпоинта в swagger"""
+
     email = serializers.CharField()
     password = serializers.CharField()
 
 
 class LogoutSerializer(serializers.Serializer):
-    pass
+    """Сериализатор для отображения ендпоинта в swagger"""
