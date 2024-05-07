@@ -1,12 +1,13 @@
 # type:ignore
 from datetime import timedelta
 
-from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from django.conf import settings
 from django.utils import timezone
 from factory import Faker, Sequence, SubFactory, django, fuzzy
 from faker_file.providers.txt_file import TxtFileProvider
 from faker_file.storages.filesystem import FileSystemStorage
+
+from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 
 FS_STORAGE: str = FileSystemStorage(root_path=settings.MEDIA_ROOT, rel_path="tmp")
 Faker.add_provider(TxtFileProvider)

@@ -14,7 +14,10 @@ class AllauthURLTests(TestCase):
         """Проверка доступности адреса /accounts/login/ и наличия куки."""
         response = self.client.post(
             self.login_url,
-            {"login": "test@test.ru", "password": "password"},
+            {
+                "login": "test@test.ru",  # pragma: allowlist secret
+                "password": "password",  # pragma: allowlist secret
+            },
             follow=True,
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
