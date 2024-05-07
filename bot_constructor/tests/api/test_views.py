@@ -9,12 +9,11 @@ from rest_framework.test import APITestCase, override_settings
 
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from factory_data.factories import (
+    TEST_DIR,
     TelegramBotActionFactory,
     TelegramBotFactory,
     TelegramBotFileFactory,
 )
-
-TEST_DIR = "test_dir"
 
 
 class TestTelegramBotView(APITestCase):
