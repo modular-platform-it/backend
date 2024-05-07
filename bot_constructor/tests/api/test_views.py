@@ -1,17 +1,18 @@
 import os
 import shutil
 
-from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from django.urls import reverse
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.test import APITestCase
+
+from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from factory_data.factories import (
     FS_STORAGE,
     TelegramBotActionFactory,
     TelegramBotFactory,
     TelegramBotFileFactory,
 )
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.test import APITestCase
 
 
 class TestTelegramBotView(APITestCase):

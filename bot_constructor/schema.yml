@@ -1,3 +1,4 @@
+---
 openapi: 3.0.3
 info:
   title: bot-controller
@@ -8,12 +9,11 @@ paths:
     get:
       operationId: login_retrieve
       summary: Авторизация пользователя (GET)
-      tags:
-      - Authorization
+      tags: [Authorization]
       security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
+        - cookieAuth: []
+        - basicAuth: []
+        - {}
       responses:
         '200':
           content:
@@ -24,8 +24,7 @@ paths:
     post:
       operationId: login_create
       summary: Авторизация пользователя (POST)
-      tags:
-      - Authorization
+      tags: [Authorization]
       requestBody:
         content:
           application/json:
@@ -39,9 +38,9 @@ paths:
               $ref: '#/components/schemas/LoginRequest'
         required: true
       security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
+        - cookieAuth: []
+        - basicAuth: []
+        - {}
       responses:
         '302':
           content:
@@ -59,12 +58,11 @@ paths:
     get:
       operationId: logout_retrieve
       summary: Выход пользователя из системы (GET)
-      tags:
-      - Authorization
+      tags: [Authorization]
       security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
+        - cookieAuth: []
+        - basicAuth: []
+        - {}
       responses:
         '200':
           content:
@@ -75,12 +73,11 @@ paths:
     post:
       operationId: logout_create
       summary: Выход пользователя из системы (POST)
-      tags:
-      - Authorization
+      tags: [Authorization]
       security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
+        - cookieAuth: []
+        - basicAuth: []
+        - {}
       responses:
         '302':
           content:
@@ -97,9 +94,7 @@ components:
           type: string
         password:
           type: string
-      required:
-      - email
-      - password
+      required: [email, password]
     LoginRequest:
       type: object
       properties:
@@ -109,9 +104,7 @@ components:
         password:
           type: string
           minLength: 1
-      required:
-      - email
-      - password
+      required: [email, password]
   securitySchemes:
     basicAuth:
       type: http
