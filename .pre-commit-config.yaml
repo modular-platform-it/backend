@@ -27,7 +27,6 @@ repos:
         #   )
         exclude: |
           (?x)(
-              ^infra/|
               testing_app_swagger.yml
           )
   - repo: https://github.com/adrienverge/yamllint.git
@@ -37,7 +36,6 @@ repos:
         args: ['-d {extends: relaxed, rules: {line-length: disable}}', -s]
         exclude: |
           (?x)^(
-              infra/.*|
               .github/.*
           )$
   - repo: https://github.com/Yelp/detect-secrets
