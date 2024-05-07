@@ -171,3 +171,5 @@ media/
 static/
 .github/workflows/temp*.*
 .github/workflows/*.sh
+
+.DS_Store
