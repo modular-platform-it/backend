@@ -41,7 +41,11 @@ from api.serializers import (
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 
 
-def check_bot_started(telegram_bot_pk) -> bool:
+def check_bot_started(telegram_bot_pk) -> None:
+    """
+    Проверяет запущен ли бот во время попытки изменения настроек.
+    Вызывает ошибку со статусом 400 при положительном результате.
+    """
     telegram_bot = get_object_or_404(TelegramBot, id=telegram_bot_pk)
     if telegram_bot.is_started:
         raise BotIsRunningException
