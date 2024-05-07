@@ -2,13 +2,14 @@ import os
 import shutil
 
 from django.urls import reverse
+from faker_file.registry import FILE_REGISTRY
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, override_settings
 
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from factory_data.factories import (
-    FS_STORAGE,
+    TEST_DIR,
     TelegramBotActionFactory,
     TelegramBotFactory,
     TelegramBotFileFactory,
@@ -213,7 +214,9 @@ class TestTelegramBotFileView(APITestCase):
     """Набор тестов для набора представлений файлов действий телеграм бота."""
 
     def setUp(self) -> None:
-        self.telegram_bot: TelegramBot = TelegramBotFactory.create()
+        self.telegram_bot: TelegramBot = TelegramBotFactory.create(
+            bot_state=TelegramBot.BotState.STOPPED
+        )
         self.telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
             telegram_bot=self.telegram_bot,
         )
@@ -223,6 +226,10 @@ class TestTelegramBotFileView(APITestCase):
         self.url_list: str = "telegram_bot_action-files-list"
         self.url_detail: str = "telegram_bot_action-files-detail"
         return super().setUp()
+
+    def tearDown(self) -> None:
+        FILE_REGISTRY.clean_up()
+        return super().tearDown()
 
     def test_telegram_bot_file_list_view(self) -> None:
         """Проверка представления файлов действий телеграм бота в виде списка."""
@@ -244,6 +251,7 @@ class TestTelegramBotFileView(APITestCase):
         for telegram_file in telegram_files:
             self.assertContains(response, telegram_file.id)
 
+    @override_settings(MEDIA_ROOT=TEST_DIR + "/media")
     def test_telegram_bot_file_create_view(self) -> None:
         """Проверка представления создания файла действия телеграм бота."""
         count: int = TelegramBotFile.objects.count()
@@ -304,6 +312,7 @@ class TestTelegramBotFileView(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(count - 1, TelegramBotFile.objects.count())
 
+    @override_settings(MEDIA_ROOT=TEST_DIR + "/media")
     def test_telegram_bot_action_update_view(self) -> None:
         """Проверка представления обновления файла телеграм бота."""
         telegram_bot: TelegramBot = TelegramBotFactory.create(
@@ -345,6 +354,6 @@ class TestTelegramBotFileView(APITestCase):
     @classmethod
     def tearDownClass(cls) -> None:
         """Удаляет временную папку с созданными для тестов файлами после всех тестов."""
-        if os.path.exists(FS_STORAGE.root_path):
-            shutil.rmtree(FS_STORAGE.root_path, ignore_errors=True)
+        if os.path.exists(TEST_DIR):
+            shutil.rmtree(TEST_DIR, ignore_errors=True)
         super().tearDownClass()
