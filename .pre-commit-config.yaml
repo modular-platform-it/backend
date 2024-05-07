@@ -36,7 +36,7 @@ repos:
         args: ['-d {extends: relaxed, rules: {line-length: disable}}', -s]
         exclude: |
           (?x)^(
-              .github/.*
+              infra/.*
           )$
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.4.0
