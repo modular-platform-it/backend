@@ -1,6 +1,6 @@
+from api.v1.views import SwaggerLoginView, SwaggerLogoutView
 from django.contrib import admin
-from django.urls import include, path, re_path
-from django.views.generic import TemplateView
+from django.urls import include, path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
@@ -8,6 +8,10 @@ from rest_framework import permissions
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
+    path("", include("djoser.urls")),
+    path("auth/token/login/", SwaggerLoginView.as_view(), name="swagger_login"),
+    path("auth/token/logout/", SwaggerLogoutView.as_view(), name="swagger_logout"),
+    path("auth/", include("djoser.urls.authtoken")),
 ]
 
 api_info = openapi.Info(title="Snippets API", default_version="v1")

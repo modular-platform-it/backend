@@ -25,12 +25,12 @@ class Cart(models.Model):
 
 
 class ShoppingCart(models.Model):
-    """Модель покупак пользователя, формирует список покупок"""
+    """Модель покупок пользователя, формирует список покупок"""
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="shoper",
+        related_name="shopper",
         verbose_name="Покупатель",
     )
     cart = models.ForeignKey(
