@@ -1,30 +1,80 @@
+from django.utils.decorators import method_decorator
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from purchases.models import Cart, ShoppingCart
 from rest_framework.viewsets import ModelViewSet
 
-from .permissions import IsAuthenticatednOrReadOnly
+from .permissions import IsAuthenticatedOrReadOnly
 from .serializers import (
     CartSerializer,
+    Response400Serializer,
+    Response401Serializer,
+    Response404Serializer,
     ShoppingCartReadSerializer,
     ShoppingCartWriteSerializer,
 )
 
 
+@method_decorator(
+    name="list",
+    decorator=swagger_auto_schema(
+        tags=["Карточки товаров"],
+        responses={
+            200: openapi.Response("OK", CartSerializer(many=True)),
+            404: openapi.Response("Not Found", Response404Serializer()),
+        },
+    ),
+)
+@method_decorator(
+    name="retrieve",
+    decorator=swagger_auto_schema(
+        tags=["Карточки товаров"],
+        responses={
+            200: openapi.Response("OK", CartSerializer(many=True)),
+            400: openapi.Response("Bad Request", Response400Serializer),
+            404: openapi.Response("Not Found", Response404Serializer()),
+        },
+    ),
+)
 class CartViewSet(ModelViewSet):
     """Вьюсет карточки товаров"""
 
     lookup_field = "id"
     pagination_class = None
-    permission_classes = (IsAuthenticatednOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = CartSerializer
     queryset = Cart.objects.all()
 
 
+@method_decorator(
+    name="list",
+    decorator=swagger_auto_schema(
+        tags=["Список покупок"],
+        responses={
+            200: openapi.Response("OK", ShoppingCartReadSerializer(many=True)),
+            401: openapi.Response("Unauthorized", Response401Serializer()),
+            404: openapi.Response("Not Found", Response404Serializer()),
+        },
+    ),
+)
+@method_decorator(
+    name="retrieve",
+    decorator=swagger_auto_schema(
+        tags=["Список покупок"],
+        responses={
+            200: openapi.Response("OK", ShoppingCartReadSerializer(many=True)),
+            400: openapi.Response("Bad Request", Response400Serializer),
+            401: openapi.Response("Unauthorized", Response401Serializer()),
+            404: openapi.Response("Not Found", Response404Serializer()),
+        },
+    ),
+)
 class ShoppingCartViewSet(ModelViewSet):
     """Вьюсет для списка покупок"""
 
     lookup_field = "id"
     pagination_class = None
-    permission_classes = (IsAuthenticatednOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = ShoppingCart.objects.all()
 
     def perform_create(self, serializer):
