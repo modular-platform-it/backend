@@ -3,6 +3,21 @@ from datetime import datetime as dt
 from typing import Any
 
 import requests
+from django.shortcuts import get_object_or_404
+from django_filters import rest_framework as df_filters
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    OpenApiResponse,
+    extend_schema,
+    extend_schema_view,
+)
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.request import Request
+from rest_framework.response import Response
+
 from api.drf_spectacular.drf_serializers import (
     DummyActionSerializer,
     DummyBotSerializer,
@@ -24,20 +39,6 @@ from api.serializers import (
     TokenSerializer,
 )
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
-from django.shortcuts import get_object_or_404
-from django_filters import rest_framework as df_filters
-from drf_spectacular.utils import (
-    OpenApiParameter,
-    OpenApiResponse,
-    extend_schema,
-    extend_schema_view,
-)
-from rest_framework import status, viewsets
-from rest_framework.decorators import action
-from rest_framework.filters import OrderingFilter
-from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.request import Request
-from rest_framework.response import Response
 
 
 def check_bot_started(telegram_bot_pk) -> bool:

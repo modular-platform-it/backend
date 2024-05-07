@@ -1,17 +1,18 @@
 import os
 import shutil
 
-from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from django.urls import reverse
+from faker_file.registry import FILE_REGISTRY
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.test import APITestCase, override_settings
+
+from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from factory_data.factories import (
     TelegramBotActionFactory,
     TelegramBotFactory,
     TelegramBotFileFactory,
 )
-from faker_file.registry import FILE_REGISTRY
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.test import APITestCase, override_settings
 
 TEST_DIR = "test_dir"
 

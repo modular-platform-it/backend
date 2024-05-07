@@ -2,13 +2,14 @@
 import sys
 from datetime import timedelta
 
-from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from django.conf import settings
 from django.test import override_settings
 from django.utils import timezone
 from factory import Faker, Sequence, SubFactory, django, fuzzy
 from faker_file.providers.txt_file import TxtFileProvider
 from faker_file.storages.filesystem import FileSystemStorage
+
+from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 
 TEST_DIR = "test_dir"
 if sys.argv[1] == "test":

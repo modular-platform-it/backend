@@ -1,7 +1,8 @@
 # type:ignore
-from apps.bot_management import constants
 from django.core import validators
 from django.db import models
+
+from apps.bot_management import constants
 
 
 class TelegramBot(models.Model):
