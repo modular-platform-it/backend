@@ -24,10 +24,12 @@ repos:
       - id: isort
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
+    rev: v1.10.0
     hooks:
       - id: mypy
-        types: [python]
         exclude: migrations?
-        args: [--python-version, '3.12', --ignore-missing-imports, --disable-error-code, 'attr-defined']
-        additional_dependencies: [django-stubs]
+        args:
+          - --explicit-package-bases
+          - --ignore-missing-imports
+          - --disable-error-code
+          - attr-defined

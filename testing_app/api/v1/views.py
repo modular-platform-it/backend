@@ -1,4 +1,6 @@
 from django.utils.decorators import method_decorator
+from djoser.serializers import TokenCreateSerializer
+from djoser.views import TokenCreateView, TokenDestroyView
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from purchases.models import Cart, ShoppingCart
@@ -92,3 +94,31 @@ class ShoppingCartViewSet(ModelViewSet):
         if self.action in ["list", "retrieve"]:
             return ShoppingCartReadSerializer
         return ShoppingCartWriteSerializer
+
+
+@method_decorator(
+    name="post",
+    decorator=swagger_auto_schema(
+        tags=["Авторизация"],
+        responses={
+            204: openapi.Response("No Content"),
+            401: openapi.Response("Unauthorized", Response401Serializer()),
+        },
+    ),
+)
+class SwaggerLogoutView(TokenDestroyView):
+    pass
+
+
+@method_decorator(
+    name="post",
+    decorator=swagger_auto_schema(
+        tags=["Авторизация"],
+        responses={
+            200: openapi.Response("Ok", TokenCreateSerializer()),
+            400: openapi.Response("Bad Request", Response400Serializer),
+        },
+    ),
+)
+class SwaggerLoginView(TokenCreateView):
+    pass
