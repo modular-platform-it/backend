@@ -12,6 +12,8 @@ ENV PIP_NO_CACHE_DIR=off
 ENV PIP_DISABLE_PIP_VERSION_CHECK=on
 ENV PIP_DEFAULT_TIMEOUT=100
 
+ENV LANG=ru_RU.UTF-8
+
 RUN apt-get update && apt-get install --no-install-recommends -y curl \
 	&& curl -sSL https://install.python-poetry.org | python3 - --version ${POETRY_VERSION} \
 	&& apt-get purge --auto-remove -y curl \
