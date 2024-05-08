@@ -1,5 +1,5 @@
-from db import Connection, Bots
-
+from db import Connection
+from models import Bots
 
 """Добавление первого бота-тестогого"""
 connection = Connection()
@@ -9,7 +9,6 @@ data = {
     "token": "5887317990:AAH9l1nK1J8UPolkr03luFxBt5xTNtdUU1A"
 }
 bot = Bots(**data)
-print(bot)
 
 connection.session.add(bot)
 connection.session.commit()

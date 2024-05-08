@@ -22,8 +22,8 @@ class Actions(Base):
     __tablename__: str = 'actions'
     id = Column(Integer, primary_key=True)
     parameters = Column(ARRAY(JSON), nullable=True)
-    bots_id = Column(Integer, ForeignKey('bots.id'))
-    author = relationship("Bots")
+    bot_id = Column(Integer, ForeignKey('bots.id'))
+    bot = relationship("Bots")
 
     __table_args__ = (
         ForeignKeyConstraint(
