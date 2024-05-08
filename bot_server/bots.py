@@ -8,6 +8,8 @@ from handlers import router
 from db import Connection
 from models import Bots, Actions
 from aiogram.types import BotCommand
+from aiogram.types import Message
+from aiogram.filters import Command
 """Основа бота"""
 
 connection = Connection()
@@ -19,23 +21,14 @@ class ConfigurableBot:
         self.commands = commands or []
 
         self.bot = Bot(token=self.token)
-        self.dp = Dispatcher(storage=MemoryStorage())
+        self.dispatcher = Dispatcher()
 
     async def start_polling(self):
-        for command in self.commands:
-            BotCommand(command['command'], command['description'])
-
-        await self.bot.set_my_commands(self.commands)
-        await self.dp.start_polling()
-
-    def add_command(self, command, description):
-        self.commands.append({'command': command, 'description': description})
+        await self.dispatcher.start_polling()
 
 
 if __name__ == '__main__':
-    configurable_bot = ConfigurableBot(1)
-
-    configurable_bot.add_command('start', 'Start the bot')
-    configurable_bot.add_command('help', 'Show help message')
-
+    commands: list = []
+    configurable_bot = ConfigurableBot(1, commands=commands)
     configurable_bot.start_polling()
+
