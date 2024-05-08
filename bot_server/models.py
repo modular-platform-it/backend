@@ -1,6 +1,6 @@
 from sqlalchemy import  PrimaryKeyConstraint, ForeignKeyConstraint, ForeignKey
 
-from sqlalchemy import Column, Integer, String, ARRAY, JSON
+from sqlalchemy import Column, Integer, String, ARRAY, JSON, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import declarative_base
 
@@ -12,9 +12,10 @@ class Bots(Base):
     name = Column(String(200), )
     token = Column(String(200),)
     actions = relationship("Actions")
+    status = Column(Boolean, default=True)
 
     __table_args__ = (
-        PrimaryKeyConstraint('id', name='bots_pk'),
+        PrimaryKeyConstraint('id', name='bot_pk'),
     )
 
 
@@ -23,11 +24,10 @@ class Actions(Base):
     id = Column(Integer, primary_key=True)
     parameters = Column(ARRAY(JSON), nullable=True)
     bot_id = Column(Integer, ForeignKey('bots.id'))
-    bot = relationship("Bots")
 
     __table_args__ = (
         ForeignKeyConstraint(
-            ['bots_id'],
+            ['bot_id'],
             ['bots.id']),
     )
 
