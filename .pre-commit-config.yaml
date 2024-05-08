@@ -19,14 +19,9 @@ repos:
     rev: 1.16.0
     hooks:
       - id: yamlfix
-        # exclude: |
-        #   (?x)(
-        #       ^infra/|
-        #       ^.github/|
-        #       testing_app_swagger.yml
-        #   )
         exclude: |
           (?x)(
+              ^infra/|
               testing_app_swagger.yml
           )
   - repo: https://github.com/adrienverge/yamllint.git
@@ -34,10 +29,7 @@ repos:
     hooks:
       - id: yamllint
         args: ['-d {extends: relaxed, rules: {line-length: disable}}', -s]
-        exclude: |
-          (?x)^(
-              infra/.*
-          )$
+        exclude: ^infra/.*
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.4.0
     hooks:
