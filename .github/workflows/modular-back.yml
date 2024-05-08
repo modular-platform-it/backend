@@ -116,7 +116,7 @@ jobs:
               ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
   notify:
     runs-on: ubuntu-latest
-    needs: test
+    needs: deploy
     steps:
       - name: Set $author and $author_tg_nick values to env
         run: |
