@@ -49,9 +49,4 @@ repos:
     rev: v1.10.0
     hooks:
       - id: mypy
-        exclude: ^.*\b(migrations)\b.*$
-        args:
-          - --explicit-package-bases
-          - --ignore-missing-imports
-          - --disable-error-code
-          - attr-defined
+        args: [--explicit-package-bases]
