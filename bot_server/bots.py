@@ -25,6 +25,7 @@ class TelegramBot:
         await self.bot.set_my_commands(commands=self.commands)
         await self.dispatcher.start_polling(self.bot)
 
+
 if __name__ == "__main__":
     bot = TelegramBot(bot_id=1)
     asyncio.run(bot.start())
