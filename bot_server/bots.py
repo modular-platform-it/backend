@@ -1,28 +1,30 @@
 import asyncio
-import logging
 
 from aiogram import Bot, Dispatcher
-from aiogram.fsm.storage.memory import MemoryStorage
 
 from handlers import router
 from db import Connection
-from models import Bots, Actions
+from models import Bots
 from aiogram.types import BotCommand
-from aiogram.types import Message
-from aiogram.filters import Command
+
 """Основа бота"""
 
-connection = Connection()
-
-class ConfigurableBot:
-    def __init__(self, token):
-        self.bot = Bot(token=token)
+class TelegramBot:
+    def __init__(self, bot_id):
+        self.bot_id = bot_id
+        self.connection = Connection()
+        self.token = self.connection.session.query(Bots).filter(Bots.id == bot_id).first().token
+        self.bot = Bot(token=self.token)
         self.dispatcher = Dispatcher()
         self.dispatcher.include_router(router)
+        self.commands = [
+            BotCommand(command="/start", description="Start the bot")
+        ]
 
-async def main():
-    bot = ConfigurableBot(connection.session.query(Bots).filter(Bots.id==1).first().token)
-    await bot.dispatcher.start_polling(bot.bot)
+    async def start(self):
+        await self.bot.set_my_commands(commands=self.commands)
+        await self.dispatcher.start_polling(self.bot)
 
-if __name__ == '__main__':
-    asyncio.run(main())
+if __name__ == "__main__":
+    bot = TelegramBot(bot_id=1)
+    asyncio.run(bot.start())
