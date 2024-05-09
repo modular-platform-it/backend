@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Any
 
 from django.test import TestCase
 from django.urls import reverse
@@ -13,13 +14,13 @@ from api.serializers import (
     TelegramBotShortSerializer,
 )
 from apps.bot_management.models import TelegramBot, TelegramBotFile
-from factory_data.factories import TelegramBotFactory
+from factory_data.factories import TelegramBotFactory  # type: ignore
 
 
 class TestTelegramBotSerialzier(TestCase):
     """Набор тестов для сериализаторов телеграм бота."""
 
-    def setUp(self) -> None:
+    def setUp(self) -> Any:
 
         now: datetime = datetime.now()
         self.data: dict[str, str | bool | datetime] = {
@@ -58,7 +59,7 @@ class TestTelegramBotSerialzier(TestCase):
 class TestTelegramBotActionSerialzier(APITestCase):
     """Набор тестов для сериализаторов действий телеграм бота."""
 
-    def setUp(self) -> None:
+    def setUp(self) -> Any:
         self.telegram_bot: TelegramBot = TelegramBotFactory.create()
         self.data: dict[str, str | bool | list[TelegramBotFile] | int] = {
             "telegram_bot": self.telegram_bot.id,

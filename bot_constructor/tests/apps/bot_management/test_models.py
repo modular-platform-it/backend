@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from apps.bot_management.models import TelegramBotAction
-from factory_data.factories import (
+from factory_data.factories import (  # type: ignore
     TelegramBotActionFactory,
     TelegramBotFactory,
     TelegramBotFileFactory,

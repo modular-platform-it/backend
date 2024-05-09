@@ -1,5 +1,6 @@
 import os
 import shutil
+from typing import Any
 
 from django.urls import reverse
 from rest_framework import status
@@ -7,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.test import APITestCase
 
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
-from factory_data.factories import (
+from factory_data.factories import (  # type: ignore
     FS_STORAGE,
     TelegramBotActionFactory,
     TelegramBotFactory,
@@ -18,7 +19,7 @@ from factory_data.factories import (
 class TestTelegramBotView(APITestCase):
     """Набор тестов для набора представлений телеграм бота."""
 
-    def setUp(self) -> None:
+    def setUp(self) -> Any:
         self.telegram_bot: TelegramBot = TelegramBotFactory.build()
         self.url_list: str = reverse("telegrambot-list")
         self.url_detail: str = "telegrambot-detail"
@@ -92,7 +93,7 @@ class TestTelegramBotView(APITestCase):
 class TestTelegramBotActionView(APITestCase):
     """Набор тестов для набора представлений действий телеграм бота."""
 
-    def setUp(self) -> None:
+    def setUp(self) -> Any:
         self.telegram_bot: TelegramBot = TelegramBotFactory.create()
         self.telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
             telegram_bot=self.telegram_bot,
@@ -212,7 +213,7 @@ class TestTelegramBotActionView(APITestCase):
 class TestTelegramBotFileView(APITestCase):
     """Набор тестов для набора представлений файлов действий телеграм бота."""
 
-    def setUp(self) -> None:
+    def setUp(self) -> Any:
         self.telegram_bot: TelegramBot = TelegramBotFactory.create()
         self.telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
             telegram_bot=self.telegram_bot,
