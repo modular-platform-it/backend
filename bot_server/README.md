@@ -65,5 +65,4 @@ uvicorn main:app --reload
 
 docker compose up --build
 
-redis-server
 
