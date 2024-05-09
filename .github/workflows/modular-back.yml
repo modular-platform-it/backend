@@ -51,9 +51,8 @@ jobs:
       #   run: |
       #     cd bot_constructor/
       #     poetry run black .
-      - name: Run tests
+      - name: Run bot_constructor app tests
         run: |
-          source .venv/bin/activate
           cd bot_constructor/
           python manage.py test
   build:
