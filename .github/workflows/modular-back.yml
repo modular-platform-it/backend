@@ -41,13 +41,13 @@ jobs:
         run: |
           cd bot_constructor/
           poetry install --no-interaction --no-root
-      - name: Install project
-        run: |
-          cd bot_constructor/
-          poetry install --no-interaction
+      # - name: Install project
+      #   run: |
+      #     cd bot_constructor/
+      #     poetry install --no-interaction
       - name: Run bot_constructor local tests
         run: |
-          source .venv/bin/activate
+          source $VENV
           cd bot_constructor/
           python manage.py test
       - name: Pre-commit global check
