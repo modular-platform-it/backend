@@ -3,7 +3,7 @@ name: modular backend CICD
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: [production, develop]
+    branches: [production, develop, feat/cicd-split]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
