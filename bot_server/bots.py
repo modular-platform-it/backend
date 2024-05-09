@@ -14,23 +14,15 @@ from aiogram.filters import Command
 
 connection = Connection()
 
-async def start_bot(dp):
-    await event_loop.create_task(dp.start_polling())
+class ConfigurableBot:
+    def __init__(self, token):
+        self.bot = Bot(token=token)
+        self.dispatcher = Dispatcher()
+        self.dispatcher.include_router(router)
 
-def bot_init(event_loop, token):
-    bot = Bot(token)
-    dp = Dispatcher(bot=bot)
-
-    @router.message(Command("start"))
-    async def process_start_command(message: Message):
-        await message.reply("Привет!\nНапиши мне что-нибудь!")
-
-    event_loop.run_until_complete(start_bot(dp))
-
+async def main():
+    bot = ConfigurableBot(connection.session.query(Bots).filter(Bots.id==1).first().token)
+    await bot.dispatcher.start_polling(bot.bot)
 
 if __name__ == '__main__':
-    event_loop = asyncio.get_event_loop()
-    tokens = connection.session.query(Bots).filter(Bots.id == 1).first().token
-    bot_init(event_loop, tokens)
-
-    event_loop.run_forever()
+    asyncio.run(main())
