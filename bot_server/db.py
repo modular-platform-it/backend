@@ -22,15 +22,15 @@ class DB:
     """Создание в БД таблиц"""
 
     def __init__(self):
-        self.conn = Connection()
+        self.connection = Connection()
 
     def to_db(
         self,
     ):
         Base.metadata.create_all(
-            bind=self.conn.engine,
+            bind=self.connection.engine,
         )
-        self.conn.session.commit()
+        self.connection.session.commit()
 
 
 def run():
