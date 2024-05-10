@@ -1,4 +1,4 @@
-from api.v1.views import SwaggerLoginView, SwaggerLogoutView  # type: ignore
+from api.v1.views import SwaggerLoginView, SwaggerLogoutView
 from django.contrib import admin
 from django.urls import include, path
 from drf_yasg import openapi
