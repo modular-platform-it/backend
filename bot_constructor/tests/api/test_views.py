@@ -1,14 +1,15 @@
 import os
 import shutil
+from typing import Any
 
 from django.urls import reverse
-from faker_file.registry import FILE_REGISTRY
+from faker_file.registry import FILE_REGISTRY  # type: ignore
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import APITestCase, override_settings
 
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
-from factory_data.factories import (
+from factory_data.factories import (  # type: ignore
     TEST_DIR,
     TelegramBotActionFactory,
     TelegramBotFactory,
@@ -19,7 +20,7 @@ from factory_data.factories import (
 class TestTelegramBotView(APITestCase):
     """Набор тестов для набора представлений телеграм бота."""
 
-    def setUp(self) -> None:
+    def setUp(self) -> Any:
         self.telegram_bot: TelegramBot = TelegramBotFactory.build()
         self.url_list: str = reverse("telegrambot-list")
         self.url_detail: str = "telegrambot-detail"
@@ -93,7 +94,7 @@ class TestTelegramBotView(APITestCase):
 class TestTelegramBotActionView(APITestCase):
     """Набор тестов для набора представлений действий телеграм бота."""
 
-    def setUp(self) -> None:
+    def setUp(self) -> Any:
         self.telegram_bot: TelegramBot = TelegramBotFactory.create()
         self.telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
             telegram_bot=self.telegram_bot,
@@ -213,7 +214,7 @@ class TestTelegramBotActionView(APITestCase):
 class TestTelegramBotFileView(APITestCase):
     """Набор тестов для набора представлений файлов действий телеграм бота."""
 
-    def setUp(self) -> None:
+    def setUp(self) -> Any:
         self.telegram_bot: TelegramBot = TelegramBotFactory.create(
             bot_state=TelegramBot.BotState.STOPPED
         )
@@ -227,7 +228,7 @@ class TestTelegramBotFileView(APITestCase):
         self.url_detail: str = "telegram_bot_action-files-detail"
         return super().setUp()
 
-    def tearDown(self) -> None:
+    def tearDown(self) -> Any:
         FILE_REGISTRY.clean_up()
         return super().tearDown()
 
