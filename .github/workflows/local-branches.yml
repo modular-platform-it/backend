@@ -3,7 +3,7 @@ name: Flow for individual branches
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: ['!main', '!develop', '!production', '!review']
+    branches-ignore: [main, develop, production, review]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
