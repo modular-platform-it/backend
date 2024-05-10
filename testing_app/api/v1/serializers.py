@@ -1,4 +1,4 @@
-from purchases.models import Cart, ShoppingCart  # type: ignore
+from purchases.models import Cart, ShoppingCart
 from rest_framework import serializers
 
 
