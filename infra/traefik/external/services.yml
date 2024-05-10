@@ -9,9 +9,9 @@ http:
   routers:
     to-nginx:
       entryPoints:
-        - "web"
-        - "websecure"
-      rule: "Host(`xwick.ru`)"
+        - web
+        - websecure
+      rule: Host(`xwick.ru`)
       tls:
         certResolver: letsencrypt
         # domains:
@@ -22,16 +22,16 @@ http:
 
     to-backend:
       entryPoints:
-        - "websecure"
-      rule: "Host(`api.xwick.ru`)"
+        - websecure
+      rule: Host(`api.xwick.ru`)
       tls:
         certResolver: letsencrypt
       service: backend
 
     to-traefik:
       entryPoints:
-        - "websecure"
-      rule: "Host(`traefik.xwick.ru`)"
+        - websecure
+      rule: Host(`traefik.xwick.ru`)
       middlewares:
         - auth
       tls:
@@ -40,8 +40,8 @@ http:
 
     to-pgadmin:
       entryPoints:
-        - "websecure"
-      rule: "Host(`pgadmin.xwick.ru`)"
+        - websecure
+      rule: Host(`pgadmin.xwick.ru`)
       middlewares:
         - auth
       tls:
@@ -51,25 +51,25 @@ http:
   middlewares:
     auth:
       basicAuth:
-        usersFile: "/external/usersfile"
+        usersFile: /external/usersfile
 
   services:
     nginx:
       loadBalancer:
         servers:
-        - url: "http://nginx:80"
+        - url: http://nginx:80
 
     backend:
       loadBalancer:
         servers:
-        - url: "http://backend:8000"
+        - url: http://backend:8000
 
     pgadmin:
       loadBalancer:
         servers:
-        - url: "http://pgadmin:80"
+        - url: http://pgadmin:80
 
     traefik:
       loadBalancer:
         servers:
-        - url: "http://proxy-server:8080"
+        - url: http://proxy-server:8080
