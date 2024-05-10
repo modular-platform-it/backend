@@ -1,4 +1,6 @@
+# type:ignore
 import asyncio
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 
@@ -22,4 +24,5 @@ def start_bot(bot_id):
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="localhost", port=8080)
