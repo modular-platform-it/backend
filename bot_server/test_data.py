@@ -1,4 +1,3 @@
-# type:ignore
 from db import Connection
 from models import Bots
 
