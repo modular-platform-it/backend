@@ -1,4 +1,5 @@
 version: "3.9"
+# Просто докер для запуска БД локально
 services:
   postgres:
     image: postgres:13.3
