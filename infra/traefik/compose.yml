@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  proxy-server:
+    image: traefik:v2.11.2
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - config:/etc/traefik
+      - external:/external
+      - letsencrypt:/letsencrypt
+    networks:
+      - traefik
+
+volumes:
+  config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sihuan/modular/dockume/traefik/config
+      o: bind
+  letsencrypt:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sihuan/modular/dockume/traefik/letsencrypt
+      o: bind
+  external:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sihuan/modular/dockume/traefik/external
+      o: bind
+
+networks:
+  traefik:
+    external: true

@@ -1,0 +1,5 @@
+venv
+.env
+.git
+.vscode/
+bot_constructor/db.sqlite3

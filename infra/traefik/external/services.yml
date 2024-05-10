@@ -1,0 +1,75 @@
+## DYNAMIC configuration
+## path to place the file
+## scp infra/traefik/external/services.yml sihuan@xwick.ru:/home/sihuan/modular/dockume/traefik/external
+## path to place usersfile
+## scp infra/traefik/external/usersfile sihuan@xwick.ru:/home/sihuan/modular/dockume/traefik/external
+## https://bcrypt-generator.com/
+
+http:
+  routers:
+    to-nginx:
+      entryPoints:
+        - web
+        - websecure
+      rule: Host(`xwick.ru`)
+      tls:
+        certResolver: letsencrypt
+        # domains:
+        #   - main: "xwick.ru"
+        #     sans:
+        #       - "*.xwick.ru"
+      service: nginx
+
+    to-backend:
+      entryPoints:
+        - websecure
+      rule: Host(`api.xwick.ru`)
+      tls:
+        certResolver: letsencrypt
+      service: backend
+
+    to-traefik:
+      entryPoints:
+        - websecure
+      rule: Host(`traefik.xwick.ru`)
+      middlewares:
+        - auth
+      tls:
+        certResolver: letsencrypt
+      service: traefik
+
+    to-pgadmin:
+      entryPoints:
+        - websecure
+      rule: Host(`pgadmin.xwick.ru`)
+      middlewares:
+        - auth
+      tls:
+        certResolver: letsencrypt
+      service: pgadmin
+
+  middlewares:
+    auth:
+      basicAuth:
+        usersFile: /external/usersfile
+
+  services:
+    nginx:
+      loadBalancer:
+        servers:
+        - url: http://nginx:80
+
+    backend:
+      loadBalancer:
+        servers:
+        - url: http://backend:8000
+
+    pgadmin:
+      loadBalancer:
+        servers:
+        - url: http://pgadmin:80
+
+    traefik:
+      loadBalancer:
+        servers:
+        - url: http://proxy-server:8080
