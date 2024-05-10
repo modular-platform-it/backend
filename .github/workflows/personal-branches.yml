@@ -1,5 +1,5 @@
 ---
-name: Flow for individual branches
+name: flow for personal branches
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
