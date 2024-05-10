@@ -8,7 +8,6 @@ from rest_framework.response import Response
 from rest_framework.test import APITestCase
 
 from api.serializers import (
-    TelegramBotActionSerializer,
     TelegramBotCreateSerializer,
     TelegramBotSerializer,
     TelegramBotShortSerializer,
