@@ -2,8 +2,8 @@ from models import Base
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.orm import sessionmaker
-
 """Управление/инициализация БД и модели"""
+
 
 class Connection:
     def __init__(self):

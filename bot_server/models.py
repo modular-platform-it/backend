@@ -5,6 +5,7 @@ from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 
+
 class Bots(Base):
     __tablename__: str = 'bots'
     id = Column(Integer, primary_key=True)

@@ -5,6 +5,7 @@ from aiogram.types import Message
 router = Router()
 """Логика ботов"""
 
+
 @router.message(Command("start"))
 async def start_handler(msg: Message):
     await msg.answer("Привет! Я помогу тебе узнать твой ID, просто отправь мне любое сообщение")

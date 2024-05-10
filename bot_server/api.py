@@ -1,16 +1,18 @@
 import asyncio
-
-from bots import TelegramBot
 from fastapi import FastAPI
 from pydantic import BaseModel
 
+from bots import TelegramBot
+
 """Шина общения и управление ботом"""
 app = FastAPI()
+
 
 class Bot(BaseModel):
     name: str
     token: str
     start: bool
+
 
 @app.get("/{bot_id}/start/")
 def start_bot(bot_id):
