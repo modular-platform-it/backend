@@ -50,5 +50,4 @@ repos:
     hooks:
       - id: mypy
         exclude: (?x)( ^.*\b(migrations)\b.*$ | manage\.py$ )
-        additional_dependencies: [types-requests]
         args: [--explicit-package-bases]
