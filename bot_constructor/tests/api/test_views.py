@@ -3,7 +3,7 @@ import shutil
 from typing import Any
 
 from django.urls import reverse
-from faker_file.registry import FILE_REGISTRY
+from faker_file.registry import FILE_REGISTRY  # type: ignore
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import APITestCase, override_settings
@@ -228,7 +228,7 @@ class TestTelegramBotFileView(APITestCase):
         self.url_detail: str = "telegram_bot_action-files-detail"
         return super().setUp()
 
-    def tearDown(self) -> None:
+    def tearDown(self) -> Any:
         FILE_REGISTRY.clean_up()
         return super().tearDown()
 

@@ -1,19 +1,18 @@
+---
 swagger: '2.0'
 info:
   title: Snippets API
   version: v1
 basePath: /
-consumes:
-- application/json
-produces:
-- application/json
+consumes: [application/json]
+produces: [application/json]
 securityDefinitions:
   Token:
     type: apiKey
     name: Authorization
     in: header
 security:
-- Token: []
+  - Token: []
 paths:
   /api/carts/:
     get:
@@ -31,24 +30,22 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/Response404'
-      tags:
-      - Карточки товаров
+      tags: [Карточки товаров]
     post:
       operationId: api_carts_create
       description: Вьюсет карточки товаров
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/Cart'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Cart'
       responses:
         '201':
           description: ''
           schema:
             $ref: '#/definitions/Cart'
-      tags:
-      - api
+      tags: [api]
     parameters: []
   /api/carts/{id}/:
     get:
@@ -70,40 +67,37 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/Response404'
-      tags:
-      - Карточки товаров
+      tags: [Карточки товаров]
     put:
       operationId: api_carts_update
       description: Вьюсет карточки товаров
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/Cart'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Cart'
       responses:
         '200':
           description: ''
           schema:
             $ref: '#/definitions/Cart'
-      tags:
-      - api
+      tags: [api]
     patch:
       operationId: api_carts_partial_update
       description: Вьюсет карточки товаров
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/Cart'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Cart'
       responses:
         '200':
           description: ''
           schema:
             $ref: '#/definitions/Cart'
-      tags:
-      - api
+      tags: [api]
     delete:
       operationId: api_carts_delete
       description: Вьюсет карточки товаров
@@ -111,14 +105,13 @@ paths:
       responses:
         '204':
           description: ''
-      tags:
-      - api
+      tags: [api]
     parameters:
-    - name: id
-      in: path
-      description: A unique integer value identifying this Карточка.
-      required: true
-      type: integer
+      - name: id
+        in: path
+        description: A unique integer value identifying this Карточка.
+        required: true
+        type: integer
   /api/shoppingCart/:
     get:
       operationId: api_shoppingCart_list
@@ -139,24 +132,22 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/Response404'
-      tags:
-      - Список покупок
+      tags: [Список покупок]
     post:
       operationId: api_shoppingCart_create
       description: Вьюсет для списка покупок
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/ShoppingCartWrite'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ShoppingCartWrite'
       responses:
         '201':
           description: ''
           schema:
             $ref: '#/definitions/ShoppingCartWrite'
-      tags:
-      - api
+      tags: [api]
     parameters: []
   /api/shoppingCart/{id}/:
     get:
@@ -182,40 +173,37 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/Response404'
-      tags:
-      - Список покупок
+      tags: [Список покупок]
     put:
       operationId: api_shoppingCart_update
       description: Вьюсет для списка покупок
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/ShoppingCartWrite'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ShoppingCartWrite'
       responses:
         '200':
           description: ''
           schema:
             $ref: '#/definitions/ShoppingCartWrite'
-      tags:
-      - api
+      tags: [api]
     patch:
       operationId: api_shoppingCart_partial_update
       description: Вьюсет для списка покупок
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/ShoppingCartWrite'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ShoppingCartWrite'
       responses:
         '200':
           description: ''
           schema:
             $ref: '#/definitions/ShoppingCartWrite'
-      tags:
-      - api
+      tags: [api]
     delete:
       operationId: api_shoppingCart_delete
       description: Вьюсет для списка покупок
@@ -223,24 +211,23 @@ paths:
       responses:
         '204':
           description: ''
-      tags:
-      - api
+      tags: [api]
     parameters:
-    - name: id
-      in: path
-      description: A unique integer value identifying this Покупка.
-      required: true
-      type: integer
+      - name: id
+        in: path
+        description: A unique integer value identifying this Покупка.
+        required: true
+        type: integer
   /auth/token/login/:
     post:
       operationId: auth_token_login_create
       description: ''
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/TokenCreate'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TokenCreate'
       responses:
         '200':
           description: Ok
@@ -250,8 +237,7 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/Response400'
-      tags:
-      - Авторизация
+      tags: [Авторизация]
     parameters: []
   /auth/token/logout/:
     post:
@@ -265,31 +251,28 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/Response401'
-      tags:
-      - Авторизация
+      tags: [Авторизация]
     parameters: []
   /users/:
     get:
       operationId: users_list
       description: ''
       parameters:
-      - name: limit
-        in: query
-        description: Number of results to return per page.
-        required: false
-        type: integer
-      - name: offset
-        in: query
-        description: The initial index from which to return the results.
-        required: false
-        type: integer
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
       responses:
         '200':
           description: ''
           schema:
-            required:
-            - count
-            - results
+            required: [count, results]
             type: object
             properties:
               count:
@@ -306,65 +289,60 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/User'
-      tags:
-      - users
+      tags: [users]
     post:
       operationId: users_create
       description: ''
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/UserCreate'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserCreate'
       responses:
         '201':
           description: ''
           schema:
             $ref: '#/definitions/UserCreate'
-      tags:
-      - users
+      tags: [users]
     parameters: []
   /users/activation/:
     post:
       operationId: users_activation
       description: ''
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/Activation'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Activation'
       responses:
         '201':
           description: ''
           schema:
             $ref: '#/definitions/Activation'
-      tags:
-      - users
+      tags: [users]
     parameters: []
   /users/me/:
     get:
       operationId: users_me_read
       description: ''
       parameters:
-      - name: limit
-        in: query
-        description: Number of results to return per page.
-        required: false
-        type: integer
-      - name: offset
-        in: query
-        description: The initial index from which to return the results.
-        required: false
-        type: integer
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
       responses:
         '200':
           description: ''
           schema:
-            required:
-            - count
-            - results
+            required: [count, results]
             type: object
             properties:
               count:
@@ -381,40 +359,37 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/User'
-      tags:
-      - users
+      tags: [users]
     put:
       operationId: users_me_update
       description: ''
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/User'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
       responses:
         '200':
           description: ''
           schema:
             $ref: '#/definitions/User'
-      tags:
-      - users
+      tags: [users]
     patch:
       operationId: users_me_partial_update
       description: ''
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/User'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
       responses:
         '200':
           description: ''
           schema:
             $ref: '#/definitions/User'
-      tags:
-      - users
+      tags: [users]
     delete:
       operationId: users_me_delete
       description: ''
@@ -422,134 +397,126 @@ paths:
       responses:
         '204':
           description: ''
-      tags:
-      - users
+      tags: [users]
     parameters: []
   /users/resend_activation/:
     post:
       operationId: users_resend_activation
       description: ''
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/SendEmailReset'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SendEmailReset'
       responses:
         '201':
           description: ''
           schema:
             $ref: '#/definitions/SendEmailReset'
-      tags:
-      - users
+      tags: [users]
     parameters: []
   /users/reset_password/:
     post:
       operationId: users_reset_password
       description: ''
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/SendEmailReset'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SendEmailReset'
       responses:
         '201':
           description: ''
           schema:
             $ref: '#/definitions/SendEmailReset'
-      tags:
-      - users
+      tags: [users]
     parameters: []
   /users/reset_password_confirm/:
     post:
       operationId: users_reset_password_confirm
       description: ''
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/PasswordResetConfirm'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PasswordResetConfirm'
       responses:
         '201':
           description: ''
           schema:
             $ref: '#/definitions/PasswordResetConfirm'
-      tags:
-      - users
+      tags: [users]
     parameters: []
   /users/reset_username/:
     post:
       operationId: users_reset_username
       description: ''
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/SendEmailReset'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SendEmailReset'
       responses:
         '201':
           description: ''
           schema:
             $ref: '#/definitions/SendEmailReset'
-      tags:
-      - users
+      tags: [users]
     parameters: []
   /users/reset_username_confirm/:
     post:
       operationId: users_reset_username_confirm
       description: ''
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/UsernameResetConfirm'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UsernameResetConfirm'
       responses:
         '201':
           description: ''
           schema:
             $ref: '#/definitions/UsernameResetConfirm'
-      tags:
-      - users
+      tags: [users]
     parameters: []
   /users/set_password/:
     post:
       operationId: users_set_password
       description: ''
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/SetPassword'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SetPassword'
       responses:
         '201':
           description: ''
           schema:
             $ref: '#/definitions/SetPassword'
-      tags:
-      - users
+      tags: [users]
     parameters: []
   /users/set_username/:
     post:
       operationId: users_set_username
       description: ''
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/SetUsername'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SetUsername'
       responses:
         '201':
           description: ''
           schema:
             $ref: '#/definitions/SetUsername'
-      tags:
-      - users
+      tags: [users]
     parameters: []
   /users/{id}/:
     get:
@@ -561,40 +528,37 @@ paths:
           description: ''
           schema:
             $ref: '#/definitions/User'
-      tags:
-      - users
+      tags: [users]
     put:
       operationId: users_update
       description: ''
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/User'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
       responses:
         '200':
           description: ''
           schema:
             $ref: '#/definitions/User'
-      tags:
-      - users
+      tags: [users]
     patch:
       operationId: users_partial_update
       description: ''
       parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/User'
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
       responses:
         '200':
           description: ''
           schema:
             $ref: '#/definitions/User'
-      tags:
-      - users
+      tags: [users]
     delete:
       operationId: users_delete
       description: ''
@@ -602,20 +566,16 @@ paths:
       responses:
         '204':
           description: ''
-      tags:
-      - users
+      tags: [users]
     parameters:
-    - name: id
-      in: path
-      description: A unique integer value identifying this пользователь.
-      required: true
-      type: integer
+      - name: id
+        in: path
+        description: A unique integer value identifying this пользователь.
+        required: true
+        type: integer
 definitions:
   Cart:
-    required:
-    - name
-    - measurement_unit
-    - description
+    required: [name, measurement_unit, description]
     type: object
     properties:
       id:
@@ -645,8 +605,7 @@ definitions:
         default: error text
         minLength: 1
   Response400:
-    required:
-    - field_name
+    required: [field_name]
     type: object
     properties:
       field_name:
@@ -656,9 +615,7 @@ definitions:
           default: Invalid ID
           minLength: 1
   ShoppingCartRead:
-    required:
-    - user
-    - cart
+    required: [user, cart]
     type: object
     properties:
       id:
@@ -679,8 +636,7 @@ definitions:
         default: error text
         minLength: 1
   ShoppingCartWrite:
-    required:
-    - cart
+    required: [cart]
     type: object
     properties:
       id:
@@ -721,9 +677,7 @@ definitions:
         readOnly: true
         minLength: 1
   UserCreate:
-    required:
-    - username
-    - password
+    required: [username, password]
     type: object
     properties:
       email:
@@ -748,9 +702,7 @@ definitions:
         type: string
         minLength: 1
   Activation:
-    required:
-    - uid
-    - token
+    required: [uid, token]
     type: object
     properties:
       uid:
@@ -762,8 +714,7 @@ definitions:
         type: string
         minLength: 1
   SendEmailReset:
-    required:
-    - email
+    required: [email]
     type: object
     properties:
       email:
@@ -772,10 +723,7 @@ definitions:
         format: email
         minLength: 1
   PasswordResetConfirm:
-    required:
-    - uid
-    - token
-    - new_password
+    required: [uid, token, new_password]
     type: object
     properties:
       uid:
@@ -791,8 +739,7 @@ definitions:
         type: string
         minLength: 1
   UsernameResetConfirm:
-    required:
-    - new_username
+    required: [new_username]
     type: object
     properties:
       new_username:
@@ -804,9 +751,7 @@ definitions:
         maxLength: 150
         minLength: 1
   SetPassword:
-    required:
-    - new_password
-    - current_password
+    required: [new_password, current_password]
     type: object
     properties:
       new_password:
@@ -818,9 +763,7 @@ definitions:
         type: string
         minLength: 1
   SetUsername:
-    required:
-    - current_password
-    - new_username
+    required: [current_password, new_username]
     type: object
     properties:
       current_password:
