@@ -5,9 +5,12 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 from bots import TelegramBot
+from db import Connection
+from models import Bots
 
 """Шина общения и управление ботом"""
 app = FastAPI()
+connection = Connection()
 
 
 class Bot(BaseModel):
@@ -18,7 +21,8 @@ class Bot(BaseModel):
 
 @app.get("/{bot_id}/start/")
 def start_bot(bot_id):
-    bot = TelegramBot(bot_id=bot_id)
+    bot_data = connection.session.query(Bots).filter(Bots.id==bot_id).first()
+    bot = TelegramBot(bot_data=bot_data)
     asyncio.run(bot.start())
 
 
