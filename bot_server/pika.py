@@ -1,6 +1,7 @@
 # Модуль, который отправляет задачи в брокер сообщений (например, RabbitMQ)
 import pika
 
+
 def send_task_to_queue(task_data):
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
     channel = connection.channel()

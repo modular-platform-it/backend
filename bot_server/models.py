@@ -1,8 +1,7 @@
-from sqlalchemy import  PrimaryKeyConstraint, ForeignKeyConstraint, ForeignKey
-
-from sqlalchemy import Column, Integer, String, ARRAY, JSON, Boolean
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import (ARRAY, JSON, Boolean, Column, ForeignKey,
+                        ForeignKeyConstraint, Integer, PrimaryKeyConstraint,
+                        String)
+from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 

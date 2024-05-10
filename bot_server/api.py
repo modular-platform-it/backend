@@ -1,8 +1,9 @@
 import asyncio
 
+from bots import TelegramBot
 from fastapi import FastAPI
 from pydantic import BaseModel
-from bots import TelegramBot
+
 """Шина общения и управление ботом"""
 app = FastAPI()
 

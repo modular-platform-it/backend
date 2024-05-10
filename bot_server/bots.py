@@ -1,11 +1,10 @@
 import asyncio
 
 from aiogram import Bot, Dispatcher
-
-from handlers import router
-from db import Connection
-from models import Bots
 from aiogram.types import BotCommand
+from db import Connection
+from handlers import router
+from models import Bots
 
 
 class TelegramBot:
