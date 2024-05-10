@@ -7,9 +7,12 @@ on:
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
-  MODULAR_BACK_VERSION: 1.0.1
-  POETRY_VERSION: 1.8.2
-  PYTHON_VERSION: 3.12
+  APP_VERSION: 0.0.1
+  APP_PROJECT_NAME: bot_constructor  # project folder name, used by current Dockerfile context
+  APP_IMAGE_NAME: ${{vars.BOT_CONSTRUCTOR_IMAGE_NAME}}
+  APP_CONTAINER_NAME: ${{vars.BOT_CONSTRUCTOR_CONTAINER_NAME}}
+  POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
+  PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
   SECRET_KEY: ${{secrets.DJANGO_SECRET_KEY}}
 jobs:
   test:
@@ -66,12 +69,12 @@ jobs:
       - name: Push to Docker Hub
         uses: docker/build-push-action@v5
         with:
-          context: ./bot_constructor
-          file: bot_constructor/Dockerfile
+          context: ./${{env.APP_PROJECT_NAME}}
+          file: ${{env.APP_PROJECT_NAME}}/Dockerfile
           push: true
           tags: |
-            ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
-            ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:${{env.MODULAR_BACK_VERSION}}
+            ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
+            ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:${{env.APP_VERSION}}
   deploy:
     name: Deployment on remote server
     if: github.ref_name == 'develop' || github.ref_name == 'production'
@@ -85,13 +88,13 @@ jobs:
           username: ${{secrets.HOST_USER}}
           key: ${{secrets.HOST_SSH_KEY}}
           script: |
-            docker stop ${{vars.BACKEND_CONTAINER_NAME}}
-            docker rm ${{vars.BACKEND_CONTAINER_NAME}}
-            docker rmi ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
-            docker pull ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
+            docker stop ${{env.APP_CONTAINER_NAME}}
+            docker rm ${{env.APP_CONTAINER_NAME}}
+            docker rmi ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
+            docker pull ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
             docker run -d \
-              --name=${{vars.BACKEND_CONTAINER_NAME}} \
-              --hostname=${{vars.BACKEND_CONTAINER_NAME}} \
+              --name=${{env.APP_CONTAINER_NAME}} \
+              --hostname=${{env.APP_CONTAINER_NAME}} \
               --net=${{secrets.MODULAR_NETWORK_NAME}} \
               --restart=unless-stopped \
               -e DEBUG=FALSE \
@@ -107,7 +110,7 @@ jobs:
               -e DB_PORT=5432 \
               -v bot_static:/app/bot_constructor/static/ \
               -v bot_media:/app/bot_constructor/media/ \
-              ${{secrets.DOCKERHUB_USERNAME}}/${{vars.BACKEND_IMAGE_NAME}}:latest
+              ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
   notify:
     runs-on: ubuntu-latest
     needs: deploy
