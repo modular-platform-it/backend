@@ -11,8 +11,12 @@ class Bot(BaseModel):
     token: str
     start: bool
 
-@app.post("/{bot_id}/start/")
-async def start_bot(bot_id):
-    configurable_bot = TelegramBot(bot_id)
-    asyncio.run(configurable_bot.start())
-    return {"message": "Hello World для бота"}
+@app.get("/{bot_id}/start/")
+def start_bot(bot_id):
+    bot = TelegramBot(bot_id=bot_id)
+    asyncio.run(bot.start())
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="localhost", port=8080)

@@ -61,7 +61,7 @@
     poetry shell
 ```
 
-uvicorn main:app --reload
+uvicorn api:app --reload
 
 docker compose up --build
 
