@@ -24,7 +24,7 @@ jobs:
       - name: Pre-commit global check
         uses: pre-commit/action@v3.0.1
         with:
-          extra_args: ^bot_constructor
+          extra_args: --files ^bot_constructor
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1
         with:
