@@ -3,7 +3,7 @@ name: bot-server CICD
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: [feat/container-for-bot-server]
+    branches: [main]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
