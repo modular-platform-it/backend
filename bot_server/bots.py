@@ -8,7 +8,7 @@ from models import Bots
 
 
 class TelegramBot:
-    """Основана телеграмм Бота"""
+    """Основа телеграмм Бота"""
 
     def __init__(self, bot_data: Bots):
         super().__init__()
@@ -28,12 +28,12 @@ class TelegramBot:
                     "commands": None,
                 }
             },
-            # {
-            #     "name": "SendMassag",
-            #     "parameters": {
-            #         "commands": None
-            #     }
-            # },
+            {
+                "name": "SendMassage",
+                "parameters": {
+                    "commands": None
+                }
+            },
         ]
         for action in actions:
             router = getattr(handlers, action["name"])().router
