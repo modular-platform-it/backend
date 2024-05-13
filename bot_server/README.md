@@ -6,7 +6,7 @@
 
 # Запуск FastApi приложение
 ```
-    uvicorn api:app --reload
+    uvicorn api:app --reload --port=8081
 ```
 
 # Создание таблиц в БД 
