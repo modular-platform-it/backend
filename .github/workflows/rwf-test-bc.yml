@@ -46,7 +46,7 @@ jobs:
           cd ${{inputs.APP_NAME}}/
           poetry install --no-interaction --no-root
       - name: Run local tests
-        run: >-
-          source $VENV
+        run: |-
+          source .venv/bin/activate
           cd ${{inputs.APP_NAME}}/
           python manage.py test
