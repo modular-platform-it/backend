@@ -12,6 +12,9 @@ on:
       APP_NAME:
         required: true
         type: string
+    secrets:
+      SECRET_KEY:
+        required: true
 jobs:
   test:
     name: Poetry & Pytest
@@ -51,4 +54,4 @@ jobs:
           cd ${{inputs.APP_NAME}}/
           python manage.py test
         env:
-          SECRET_KEY: ${{secrets.DJANGO_SECRET_KEY}}
+          SECRET_KEY: ${{secrets.SECRET_KEY}}
