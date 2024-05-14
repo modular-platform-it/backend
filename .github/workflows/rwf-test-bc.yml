@@ -1,5 +1,5 @@
 ---
-name: Reusable workflow - test bot_constructor
+name: Reusable workflow - test app
 on:
   workflow_call:
     inputs:
@@ -7,6 +7,9 @@ on:
         required: true
         type: string
       POETRY_VERSION:
+        required: true
+        type: string
+      APP_NAME:
         required: true
         type: string
 jobs:
@@ -23,14 +26,12 @@ jobs:
           python-version: ${{inputs.PYTHON_VERSION}}
       - name: Pre-commit global check
         uses: pre-commit/action@v3.0.1
-        with:
-          extra_args: --files ^bot_constructor
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
-          virtualenvs-path: --files ./bot_constructor
+          virtualenvs-path: --files ./${{inputs.APP_NAME}}
           version: ${{inputs.POETRY_VERSION}}
       - name: Load cached venv
         id: cached-poetry-dependencies
@@ -42,10 +43,10 @@ jobs:
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
-          cd bot_constructor/
+          cd ${{inputs.APP_NAME}}/
           poetry install --no-interaction --no-root
       - name: Run local tests
         run: |-
           source $VENV
-          cd bot_constructor/
+          cd ${{inputs.APP_NAME}}/
           python manage.py test
