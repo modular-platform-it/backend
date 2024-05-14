@@ -31,7 +31,7 @@ jobs:
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
-          virtualenvs-path: --files ./${{inputs.APP_NAME}}
+          virtualenvs-path: ./${{inputs.APP_NAME}}
           version: ${{inputs.POETRY_VERSION}}
       - name: Load cached venv
         id: cached-poetry-dependencies
