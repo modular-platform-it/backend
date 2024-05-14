@@ -50,3 +50,5 @@ jobs:
           source $VENV
           cd ${{inputs.APP_NAME}}/
           python manage.py test
+        env:
+          SECRET_KEY: ${{secrets.DJANGO_SECRET_KEY}}
