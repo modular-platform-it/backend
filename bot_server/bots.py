@@ -47,6 +47,6 @@ class TelegramBot:
 
 if __name__ == "__main__":
     connection = Connection()
-    bot_data = connection.session.query(Bots).filter(Bots.id == 6).first()
+    bot_data = connection.session.query(Bots).filter(Bots.id == 1).first()
     bot = TelegramBot(bot_data=bot_data)
     asyncio.run(bot.start())
