@@ -1,8 +1,6 @@
-# type:ignore
+from apps.bot_management.models import TelegramBot
 from django.db.models import Q, QuerySet
 from django_filters import rest_framework as filters
-
-from apps.bot_management.models import TelegramBot
 
 
 class TelegramBotFilter(filters.FilterSet):
