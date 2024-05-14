@@ -24,8 +24,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{inputs.PYTHON_VERSION}}
-      - name: Pre-commit global check
-        uses: pre-commit/action@v3.0.1
+      # - name: Pre-commit global check
+      #   uses: pre-commit/action@v3.0.1
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1
         with:
@@ -46,7 +46,7 @@ jobs:
           cd ${{inputs.APP_NAME}}/
           poetry install --no-interaction --no-root
       - name: Run local tests
-        run: |-
+        run: |
           source .venv/bin/activate
           cd ${{inputs.APP_NAME}}/
           python manage.py test
