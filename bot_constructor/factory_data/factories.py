@@ -1,14 +1,22 @@
 # type:ignore
+import sys
 from datetime import timedelta
 
-from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from django.conf import settings
+from django.test import override_settings
 from django.utils import timezone
 from factory import Faker, Sequence, SubFactory, django, fuzzy
 from faker_file.providers.txt_file import TxtFileProvider
 from faker_file.storages.filesystem import FileSystemStorage
 
-FS_STORAGE: str = FileSystemStorage(root_path=settings.MEDIA_ROOT, rel_path="tmp")
+from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
+
+TEST_DIR = "test_dir"
+if sys.argv[1] == "test":
+    with override_settings(MEDIA_ROOT=TEST_DIR + "/media"):
+        FS_STORAGE = FileSystemStorage(root_path=settings.MEDIA_ROOT, rel_path="tmp")
+else:
+    FS_STORAGE = FileSystemStorage(root_path=settings.MEDIA_ROOT, rel_path="tmp")
 Faker.add_provider(TxtFileProvider)
 
 cyrillic_letters = "".join(map(chr, range(ord("А"), ord("я") + 1))) + "Ёё"

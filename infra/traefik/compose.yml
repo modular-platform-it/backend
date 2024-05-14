@@ -2,8 +2,7 @@ version: '3'
 
 services:
   proxy-server:
-    # image: traefik:v2.11.2
-    image: traefik:latest
+    image: traefik:v2.11.2
     ports:
       - 80:80
       - 443:443
@@ -12,9 +11,9 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - letsencrypt:/letsencrypt
       - config:/etc/traefik
       - external:/external
+      - letsencrypt:/letsencrypt
     networks:
       - traefik
 

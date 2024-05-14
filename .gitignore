@@ -121,6 +121,7 @@ celerybeat.pid
 
 # Environments
 .env
+*.env
 .venv
 env/
 venv/
@@ -169,3 +170,6 @@ media/
 # Static
 static/
 .github/workflows/temp*.*
+.github/workflows/*.sh
+
+.DS_Store

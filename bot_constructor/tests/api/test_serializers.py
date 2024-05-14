@@ -1,30 +1,31 @@
 from datetime import datetime, timedelta
+from typing import Any
+
+from django.test import TestCase
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.test import APITestCase
 
 from api.serializers import (
-    TelegramBotActionSerializer,
     TelegramBotCreateSerializer,
     TelegramBotSerializer,
     TelegramBotShortSerializer,
 )
 from apps.bot_management.models import TelegramBot, TelegramBotFile
-from django.test import TestCase
-from django.urls import reverse
-from factory_data.factories import TelegramBotFactory
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.test import APITestCase
+from factory_data.factories import TelegramBotFactory  # type: ignore
 
 
 class TestTelegramBotSerialzier(TestCase):
     """Набор тестов для сериализаторов телеграм бота."""
 
-    def setUp(self) -> None:
+    def setUp(self) -> Any:
 
         now: datetime = datetime.now()
         self.data: dict[str, str | bool | datetime] = {
             "name": "test",
             "telegram_token": "0000000001:" + 35 * "a",
-            "api_key": "ierugh9843",
+            "api_key": "ierugh9843",  # pragma: allowlist secret
             "api_url": "http://127.0.0.1",
             "is_started": True,
             "bot_state": "DRAFT",
@@ -57,7 +58,7 @@ class TestTelegramBotSerialzier(TestCase):
 class TestTelegramBotActionSerialzier(APITestCase):
     """Набор тестов для сериализаторов действий телеграм бота."""
 
-    def setUp(self) -> None:
+    def setUp(self) -> Any:
         self.telegram_bot: TelegramBot = TelegramBotFactory.create()
         self.data: dict[str, str | bool | list[TelegramBotFile] | int] = {
             "telegram_bot": self.telegram_bot.id,

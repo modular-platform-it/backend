@@ -26,3 +26,25 @@ class ShoppingCartWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCart
         fields = ("id", "cart")
+
+
+class ResponseErrorSerializer(serializers.Serializer):
+    """Сериализатор для ответа с кодом ошибок."""
+
+    detail = serializers.CharField(default="error text")
+
+
+class Response400Serializer(serializers.Serializer):
+    """Сериализатор для ответа с кодом ошибки 400."""
+
+    field_name = serializers.ListField(
+        child=serializers.CharField(default="Invalid ID")
+    )
+
+
+class Response401Serializer(ResponseErrorSerializer):
+    """Сериализатор для ответа с кодом ошибки 401."""
+
+
+class Response404Serializer(ResponseErrorSerializer):
+    """Сериализатор для ответа с кодом ошибки 404."""

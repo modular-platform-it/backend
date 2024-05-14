@@ -19,16 +19,12 @@ RUN apt-get update && apt-get install --no-install-recommends -y curl \
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
+COPY . .
 
 RUN apt-get update && apt-get install --no-install-recommends -y build-essential  \
 	&& poetry install --no-root --only main \
 	&& apt-get purge --auto-remove -y build-essential \
 	&& rm -rf /var/lib/apt/lists/*
-
-COPY bot_constructor bot_constructor/
-
-WORKDIR /app/bot_constructor
 
 RUN chmod +x entrypoint.sh
 

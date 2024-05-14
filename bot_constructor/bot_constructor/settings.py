@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 
 from django.core.management.utils import get_random_secret_key
@@ -81,7 +82,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "bot_constructor.wsgi.application"
 
 
-if os.getenv("USE_SQLITE", "True") == "True":
+if os.getenv("USE_SQLITE", "False") == "True" or sys.argv[1] == "test":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",

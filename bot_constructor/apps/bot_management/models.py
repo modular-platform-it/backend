@@ -1,7 +1,8 @@
 # type:ignore
-from apps.bot_management import constants
 from django.core import validators
 from django.db import models
+
+from apps.bot_management import constants
 
 
 class TelegramBot(models.Model):
@@ -16,13 +17,6 @@ class TelegramBot(models.Model):
     name = models.CharField(
         verbose_name="Название бота",
         max_length=constants.BOT_NAME_LENGTH,
-        validators=(
-            validators.RegexValidator(
-                regex=rf"^[a-zA-Zа-яёА-ЯЁ]{{{constants.MIN_LETTERS}}}[\w\W]"
-                rf"{{{0},{constants.BOT_NAME_LENGTH - constants.MIN_LETTERS - 1}}}"
-                r"\S$"
-            ),
-        ),
     )
     telegram_token = models.CharField(
         verbose_name="Токен авторизации телеграм бота",
@@ -108,14 +102,6 @@ class TelegramBotAction(models.Model):
     name = models.CharField(
         verbose_name="Название действия",
         max_length=constants.ACTION_NAME_LENGTH,
-        help_text="только латинские буквы и цифры, от 3 до 20 символов.",
-        validators=(
-            validators.RegexValidator(
-                regex=rf"^[a-zA-Zа-яёА-ЯЁ]{{{constants.MIN_LETTERS}}}[\w\W]"
-                rf"{{{0},{constants.ACTION_NAME_LENGTH - constants.MIN_LETTERS - 1}}}"
-                r"\S$"
-            ),
-        ),
     )
     description = models.CharField(
         verbose_name="Описание действия",

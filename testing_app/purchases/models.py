@@ -2,6 +2,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from .constants import CART_NAME_LENGTH
+
 User = get_user_model()
 
 
@@ -9,7 +11,7 @@ class Cart(models.Model):
     """Модель карточки товара в магазине"""
 
     name = models.CharField(
-        max_length=256,
+        max_length=CART_NAME_LENGTH,
         verbose_name="Название карточки",
         help_text="Введите название карточки",
     )
@@ -25,12 +27,12 @@ class Cart(models.Model):
 
 
 class ShoppingCart(models.Model):
-    """Модель покупак пользователя, формирует список покупок"""
+    """Модель покупок пользователя, формирует список покупок"""
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="shoper",
+        related_name="shopper",
         verbose_name="Покупатель",
     )
     cart = models.ForeignKey(
