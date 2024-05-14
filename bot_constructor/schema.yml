@@ -3,8 +3,7 @@ openapi: 3.0.3
 info:
   title: bot-controller
   version: 1.0.0
-  description: Платформа для создания и управления
-    ботами.
+  description: Платформа для создания и управления ботами.
 paths:
   /api/login/:
     get:
@@ -53,8 +52,7 @@ paths:
           content:
             application/json:
               schema:
-                description: Указанные вами адрес электронной
-                  почты и/или пароль неверны
+                description: Указанные вами адрес электронной почты и/или пароль неверны
           description: ''
   /api/logout/:
     get:
