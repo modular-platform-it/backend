@@ -12,9 +12,6 @@ on:
       APP_NAME:
         required: true
         type: string
-    secrets:
-      SECRET_KEY:
-        required: true
 jobs:
   test:
     name: Poetry & Pytest
@@ -48,6 +45,7 @@ jobs:
         run: |
           cd ${{inputs.APP_NAME}}/
           poetry install --no-interaction --no-root
+          echo $VENV
       - name: Run local tests
         run: |
           source $VENV
