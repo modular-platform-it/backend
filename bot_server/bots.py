@@ -3,8 +3,8 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
 
-from db import Connection
 import handlers
+from db import Connection
 from models import Bots
 
 
@@ -27,14 +27,9 @@ class TelegramBot:
                 "name": "Handlers",
                 "parameters": {
                     "commands": None,
-                }
+                },
             },
-            {
-                "name": "SendMassage",
-                "parameters": {
-                    "commands": None
-                }
-            },
+            {"name": "SendMassage", "parameters": {"commands": None}},
         ]
         for action in actions:
             router = getattr(handlers, action["name"])().router
