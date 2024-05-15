@@ -1,8 +1,7 @@
+from models import Base
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.orm import sessionmaker
-
-from models import Base
 
 
 class Connection:
