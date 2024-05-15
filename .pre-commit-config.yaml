@@ -23,7 +23,8 @@ repos:
           (?x)(
               ^infra/|
               ^.github/|
-              testing_app_swagger.yml
+              testing_app_swagger.yml|
+              schema.yml
           )
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.35.1
