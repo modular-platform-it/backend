@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 jobs:
   test_bc:
-    # if: github.ref_name == 'develop' || github.ref_name == 'production'
+    if: github.ref_name == 'develop' || github.ref_name == 'production'
     uses: ./.github/workflows/rwf-test-app.yml
     with:
       APP_PROJECT_NAME: bot_constructor
