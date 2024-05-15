@@ -2,11 +2,9 @@
 name: Reusable workflow - notification
 on:
   workflow_call:
-    # secrets:
-    #   TG_BOT_TOKEN:
-    #     required: true
 jobs:
   notify:
+    name: TG notification
     runs-on: ubuntu-latest
     steps:
       - name: Set $author and $author_tg_nick values to env

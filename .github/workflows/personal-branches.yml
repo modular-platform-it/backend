@@ -1,5 +1,5 @@
 ---
-name: for personal branches
+name: test personal branches
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
@@ -8,12 +8,13 @@ on:
   workflow_dispatch:
 jobs:
   test_bc:
+    # if: github.ref_name == 'develop' || github.ref_name == 'production'
     uses: ./.github/workflows/rwf-test-app.yml
     with:
-      POETRY_VERSION: 1.8.2
-      PYTHON_VERSION: 3.12
-      APP_NAME: bot_constructor
-  notification:
+      APP_PROJECT_NAME: bot_constructor
+      POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
+      PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
+  notify:
     uses: ./.github/workflows/rwf-notify.yml
     needs: test_bc
     secrets: inherit  # pragma: allowlist secret

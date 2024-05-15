@@ -9,7 +9,7 @@ on:
       POETRY_VERSION:
         required: true
         type: string
-      APP_NAME:
+      APP_PROJECT_NAME:
         required: true
         type: string
 jobs:
@@ -31,7 +31,7 @@ jobs:
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
-          virtualenvs-path: ./${{inputs.APP_NAME}}
+          virtualenvs-path: ./${{inputs.APP_PROJECT_NAME}}
           version: ${{inputs.POETRY_VERSION}}
       - name: Load cached venv
         id: cached-poetry-dependencies
@@ -43,10 +43,10 @@ jobs:
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
-          cd ${{inputs.APP_NAME}}/
+          cd ${{inputs.APP_PROJECT_NAME}}/
           poetry install --no-interaction --no-root
       - name: Run local tests
         run: |
-          cd ${{inputs.APP_NAME}}/
+          cd ${{inputs.APP_PROJECT_NAME}}/
           source $VENV
           python manage.py test
