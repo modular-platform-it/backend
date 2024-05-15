@@ -7,13 +7,13 @@ on:
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 jobs:
-  test:
+  test_bc:
     uses: ./.github/workflows/rwf-test-app.yml
     with:
       POETRY_VERSION: 1.8.2
       PYTHON_VERSION: 3.12
       APP_NAME: bot_constructor
-  notify:
+  notification:
     uses: ./.github/workflows/rwf-notify.yml
-    needs: test
-    # secrets: inherit  # pragma: allowlist secret
+    needs: test_bc
+    secrets: inherit  # pragma: allowlist secret
