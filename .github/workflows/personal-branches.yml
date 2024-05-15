@@ -7,7 +7,7 @@ on:
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 jobs:
-  test_bc:
+  test_app:
     if: github.ref_name == 'develop' || github.ref_name == 'production'
     uses: ./.github/workflows/rwf-test-app.yml
     with:
@@ -16,5 +16,5 @@ jobs:
       PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
   notify:
     uses: ./.github/workflows/rwf-notify.yml
-    needs: test_bc
+    needs: test_app
     secrets: inherit  # pragma: allowlist secret
