@@ -3,12 +3,12 @@ name: test personal branches
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches-ignore: [main, develop, production, review]
+    branches: [main]
+    # branches-ignore: [main, develop, production, review]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 jobs:
   test_app:
-    if: github.ref_name == 'develop' || github.ref_name == 'production'
     uses: ./.github/workflows/rwf-test-app.yml
     with:
       APP_PROJECT_NAME: bot_constructor
