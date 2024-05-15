@@ -48,8 +48,5 @@ jobs:
           echo $VENV
       - name: Run local tests
         run: |
-          source $VENV
           cd ${{inputs.APP_NAME}}/
           python manage.py test
-        env:
-          SECRET_KEY: ${{secrets.SECRET_KEY}}
