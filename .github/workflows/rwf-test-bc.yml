@@ -49,4 +49,5 @@ jobs:
       - name: Run local tests
         run: |
           cd ${{inputs.APP_NAME}}/
+          source $VENV
           python manage.py test
