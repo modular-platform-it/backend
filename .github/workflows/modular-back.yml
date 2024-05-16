@@ -15,7 +15,7 @@ jobs:
   test_bs:
     uses: ./.github/workflows/rwf-test-app.yml
     with:
-      APP_PROJECT_NAME: bot_server
+      APP_PROJECT_NAME: bot_constructor
       POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
       PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
 
