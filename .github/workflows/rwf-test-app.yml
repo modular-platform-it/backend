@@ -45,8 +45,8 @@ jobs:
         run: |
           cd ${{inputs.APP_PROJECT_NAME}}/
           poetry install --no-interaction --no-root
-      - name: Run local tests
-        run: |
-          cd ${{inputs.APP_PROJECT_NAME}}/
-          source $VENV
-          python manage.py test
+      # - name: Run local tests
+      #   run: |
+      #     cd ${{inputs.APP_PROJECT_NAME}}/
+      #     source $VENV
+      #     python manage.py test

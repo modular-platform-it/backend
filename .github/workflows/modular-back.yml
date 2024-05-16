@@ -1,5 +1,5 @@
 ---
-name: modular CICD
+name: modular basic CICD
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
@@ -12,12 +12,21 @@ env:
   APP_CONTAINER_NAME: ${{vars.BOT_CONSTRUCTOR_CONTAINER_NAME}}
   SECRET_KEY: ${{secrets.DJANGO_SECRET_KEY}}
 jobs:
-  test_bs:
-    uses: ./.github/workflows/rwf-test-app.yml
-    with:
-      APP_PROJECT_NAME: bot_constructor
-      POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
-      PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
+  test_bc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test app
+        uses: ./.github/workflows/rwf-test-app.yml
+        with:
+          APP_PROJECT_NAME: bot_constructor
+          POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
+          PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
+      - name: Run local tests
+        run: |
+          cd ${{inputs.APP_PROJECT_NAME}}/
+          source $VENV
+          python manage.py test
+
 
   # build:
   #   name: Push Docker image to Docker Hub
