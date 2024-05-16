@@ -88,7 +88,7 @@ jobs:
   #             -v bot_static:/app/bot_constructor/static/ \
   #             -v bot_media:/app/bot_constructor/media/ \
   #             ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
-  notify:
-    uses: ./.github/workflows/rwf-notify.yml
-    needs: test_bs
-    secrets: inherit  # pragma: allowlist secret
+  # notify:
+  #   uses: ./.github/workflows/rwf-notify.yml
+  #   needs: test
+  #   secrets: inherit  # pragma: allowlist secret
