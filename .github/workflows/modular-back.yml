@@ -16,8 +16,8 @@ on:
 jobs:
   lint:
     uses: ./.github/workflows/rwf-precommit.yml
-    # with:
-    #   PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
+    with:
+      PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
 
   pytest:
     needs: lint
