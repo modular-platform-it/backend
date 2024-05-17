@@ -18,7 +18,7 @@ jobs:
     outputs:
       app_project_name: ${{env.APP_PROJECT_NAME}}
     steps:
-      - name: Echo
+      - name: Echo - fake step
         if: false
         run: echo
 
@@ -29,7 +29,7 @@ jobs:
       PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
 
   test-bc:
-    needs: lint
+    needs: [variables, lint]
     uses: ./.github/workflows/rwf-pytest.yml
     with:
       APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
