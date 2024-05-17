@@ -7,19 +7,22 @@ on:
         required: true
         type: string
 jobs:
-  pre-commit:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: ☁️ Check out repository
         uses: actions/checkout@v4
+
       - name: 🔧 Set up Python
         id: setup-python
         uses: actions/setup-python@v5
         with:
           python-version: ${{inputs.PYTHON_VERSION}}
+
       - name: 💫 Pre-commit global check
         uses: pre-commit/action@v3.0.1
+
       - name: Create pre-commit job artifact
         uses: actions/upload-artifact@v4
         with:
-          path: pre-commit/
+          path: lint/
