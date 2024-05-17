@@ -53,9 +53,8 @@ jobs:
     needs: [variables]
     uses: ./.github/workflows/rwf-deploy.yml
     with:
-      APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
       APP_IMAGE_NAME: ${{needs.variables.outputs.app_image_name}}
-      APP_VERSION: ${{needs.variables.outputs.app_version}}
+      APP_CONTAINER_NAME: ${{needs.variables.outputs.app_container_name}}
     secrets: inherit  # pragma: allowlist secret
 
   notify:
