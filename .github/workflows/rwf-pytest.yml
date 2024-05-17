@@ -1,5 +1,4 @@
 ---
-name: Reusable workflow - test app
 on:
   workflow_call:
     inputs:
@@ -10,12 +9,11 @@ on:
         required: true
         type: string
 jobs:
-  test:
-    name: Poetry & Pytest
+  pytest:
     runs-on: ubuntu-latest
     steps:
-      - name: ☁️ Check out repository
-        uses: actions/checkout@v4
+      # - name: ☁️ Check out repository
+      #   uses: actions/checkout@v4
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1
         with:

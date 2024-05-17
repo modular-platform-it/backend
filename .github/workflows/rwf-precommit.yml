@@ -1,5 +1,4 @@
 ---
-name: Lint with pre-commit
 on:
   workflow_call:
     inputs:
