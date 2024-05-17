@@ -13,27 +13,26 @@ env:
   APP_CONTAINER_NAME: ${{vars.BOT_CONSTRUCTOR_CONTAINER_NAME}}
 #   SECRET_KEY: ${{secrets.DJANGO_SECRET_KEY}}
 jobs:
-  namespace:
+  variables:
     runs-on: ubuntu-latest
     outputs:
-      APP_PROJECT_NAME: ${{steps.step1.outputs.app_project_name}}
+      app_project_name: ${{env.APP_PROJECT_NAME}}
     steps:
       - name: Print inputs passed to the reusable workflow
-        id: step1
-        run: echo "APP_PROJECT_NAME=$APP_PROJECT_NAME" >> $GITHUB_OUTPUT
-      - run: echo $APP_PROJECT_NAME
+        if: false
+        run: echo
 
   # lint:
-  #   needs: namespace
+  #   needs: variables
   #   uses: ./.github/workflows/rwf-precommit.yml
   #   with:
   #     PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
 
   test-bc:
-    needs: namespace
+    needs: variables
     uses: ./.github/workflows/rwf-pytest.yml
     with:
-      APP_PROJECT_NAME: ${{needs.namespace.outputs.APP_PROJECT_NAME}}
+      APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
       POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
       PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
 
