@@ -16,13 +16,13 @@ jobs:
   workspace:
     runs-on: ubuntu-latest
     outputs:
-      app_project_name: ${{steps.data.outputs.app_project_name}}
+      APP_PROJECT_NAME: ${{steps.data.outputs.app_project_name}}
     steps:
       - name: Print inputs passed to the reusable workflow
         id: data
         run: |
           echo "app_project_name: $APP_PROJECT_NAME"
-          echo "app_project_name=$APP_PROJECT_NAME" >> $GITHUB_OUTPUT
+          echo "APP_PROJECT_NAME=$APP_PROJECT_NAME" >> $GITHUB_OUTPUT
 
   lint:
     needs: workspace
@@ -34,7 +34,7 @@ jobs:
     needs: lint
     uses: ./.github/workflows/rwf-pytest.yml
     with:
-      APP_PROJECT_NAME: ${{needs.workspace.outputs.app_project_name}}
+      APP_PROJECT_NAME: ${{needs.workspace.outputs.APP_PROJECT_NAME}}
       POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
       PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
 
