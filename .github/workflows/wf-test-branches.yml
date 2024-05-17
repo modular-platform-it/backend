@@ -1,5 +1,5 @@
 ---
-name: test personal branches
+name: test all branches
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
@@ -9,10 +9,8 @@ on:
   workflow_dispatch:
 jobs:
   test_app:
-    uses: ./.github/workflows/rwf-test-app.yml
+    uses: ./.github/workflows/rwf-precommit.yml
     with:
-      APP_PROJECT_NAME: bot_constructor
-      POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
       PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
   notify:
     uses: ./.github/workflows/rwf-notify.yml
