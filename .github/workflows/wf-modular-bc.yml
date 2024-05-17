@@ -17,9 +17,9 @@ jobs:
     name: Workaround to pass env variables to rwf
     runs-on: ubuntu-latest
     outputs:
+      app_version: ${{env.APP_VERSION}}
       app_project_name: ${{env.APP_PROJECT_NAME}}
       app_image_name: ${{env.APP_IMAGE_NAME}}
-      app_version: ${{env.APP_VERSION}}
       app_container_name: ${{env.APP_CONTAINER_NAME}}
     steps:
       - name: Echo - fake step
