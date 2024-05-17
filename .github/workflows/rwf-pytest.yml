@@ -2,6 +2,9 @@
 on:
   workflow_call:
     inputs:
+      PYTHON_VERSION:
+        required: true
+        type: string
       POETRY_VERSION:
         required: true
         type: string
