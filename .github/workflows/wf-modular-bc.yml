@@ -87,5 +87,5 @@ jobs:
   #             ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
   notify:
     uses: ./.github/workflows/rwf-notify.yml
-    needs: build
+    needs: build-bc
     secrets: inherit  # pragma: allowlist secret
