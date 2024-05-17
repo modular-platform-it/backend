@@ -7,8 +7,7 @@ on:
         required: true
         type: string
 jobs:
-  lint:
-    name: Lint code with pre-commit hooks
+  pre-commit:
     runs-on: ubuntu-latest
     steps:
       - name: ☁️ Check out repository
@@ -20,3 +19,7 @@ jobs:
           python-version: ${{inputs.PYTHON_VERSION}}
       - name: 💫 Pre-commit global check
         uses: pre-commit/action@v3.0.1
+      - name: Create pre-commit job artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: pre-commit/
