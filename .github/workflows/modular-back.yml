@@ -25,7 +25,7 @@ jobs:
       - name: Download pre-commit job artifact
         uses: actions/download-artifact@v4
         with:
-          path: pre-commit/
+          path: lint/
       - uses: ./.github/workflows/rwf-pytest.yml
         with:
           APP_PROJECT_NAME: bot_constructor
