@@ -16,8 +16,8 @@ on:
 jobs:
   lint:
     uses: ./.github/workflows/rwf-precommit.yml
-    with:
-      PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
+    # with:
+    #   PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
 
   pytest:
     needs: lint
@@ -25,6 +25,7 @@ jobs:
     with:
       APP_PROJECT_NAME: bot_constructor
       POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
+      PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
 
   # build:
   #   name: Push Docker image to Docker Hub

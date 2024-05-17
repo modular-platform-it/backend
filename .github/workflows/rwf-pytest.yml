@@ -14,6 +14,11 @@ jobs:
     steps:
       - name: ☁️ Check out repository
         uses: actions/checkout@v4
+      - name: 🔧 Set up Python
+        id: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{inputs.PYTHON_VERSION}}
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1
         with:
