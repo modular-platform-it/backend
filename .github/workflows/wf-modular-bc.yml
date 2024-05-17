@@ -18,18 +18,18 @@ jobs:
     outputs:
       app_project_name: ${{env.APP_PROJECT_NAME}}
     steps:
-      - name: Print inputs passed to the reusable workflow
+      - name: Echo
         if: false
         run: echo
 
-  # lint:
-  #   needs: variables
-  #   uses: ./.github/workflows/rwf-precommit.yml
-  #   with:
-  #     PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
+  lint:
+    needs: variables
+    uses: ./.github/workflows/rwf-precommit.yml
+    with:
+      PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
 
   test-bc:
-    needs: variables
+    needs: lint
     uses: ./.github/workflows/rwf-pytest.yml
     with:
       APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
