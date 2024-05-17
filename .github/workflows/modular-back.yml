@@ -15,9 +15,15 @@ on:
 #   SECRET_KEY: ${{secrets.DJANGO_SECRET_KEY}}
 jobs:
   lint:
-    uses: ./.github/workflows/rwf-precommit.yml
-    with:
-      PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/workflows/rwf-precommit.yml
+        with:
+          PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
+      - name: Create job artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: lint/
   pytest:
     needs: lint
     runs-on: ubuntu-latest

@@ -21,8 +21,3 @@ jobs:
 
       - name: 💫 Pre-commit global check
         uses: pre-commit/action@v3.0.1
-
-      - name: Create pre-commit job artifact
-        uses: actions/upload-artifact@v4
-        with:
-          path: lint/
