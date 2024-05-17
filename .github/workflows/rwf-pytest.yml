@@ -12,8 +12,8 @@ jobs:
   pytest:
     runs-on: ubuntu-latest
     steps:
-      # - name: ☁️ Check out repository
-      #   uses: actions/checkout@v4
+      - name: ☁️ Check out repository
+        uses: actions/checkout@v4
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1
         with:
