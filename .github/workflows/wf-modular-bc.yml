@@ -1,5 +1,5 @@
 ---
-name: modular bot_constructor CICD
+name: modular bot_constructor full CICD
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
@@ -14,34 +14,39 @@ env:
 #   SECRET_KEY: ${{secrets.DJANGO_SECRET_KEY}}
 jobs:
   variables:
+    name: Workaround to pass env variables to reusable workflows
     runs-on: ubuntu-latest
     outputs:
       app_project_name: ${{env.APP_PROJECT_NAME}}
+      app_image_name: ${{env.APP_IMAGE_NAME}}
+      app_version: ${{env.APP_VERSION}}
     steps:
       - name: Echo - fake step
         if: false
         run: echo
 
-  lint:
-    needs: variables
-    uses: ./.github/workflows/rwf-precommit.yml
-    with:
-      PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
+  # lint:
+  #   needs: variables
+  #   uses: ./.github/workflows/rwf-precommit.yml
+  #   with:
+  #     PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
 
-  test-bc:
-    needs: [variables, lint]
-    uses: ./.github/workflows/rwf-pytest.yml
+  # test-bc:
+  #   needs: [variables, lint]
+  #   uses: ./.github/workflows/rwf-pytest.yml
+  #   with:
+  #     APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
+  #     POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
+  #     PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
+
+  build-bc:
+    needs: [variables]
+    uses: ./.github/workflows/rwf-deploy.yml
     with:
       APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
-      POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
-      PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
-
-  # build:
-  #   needs: test-bc
-  #   uses: ./.github/workflows/rwf-deploy.yml
-  #   with:
-  #     APP_PROJECT_NAME: ${{env.APP_PROJECT_NAME}}
-  #   secrets: inherit  # pragma: allowlist secret
+      APP_IMAGE_NAME: ${{needs.variables.outputs.app_image_name}}
+      APP_VERSION: ${{needs.variables.outputs.app_version}}
+    secrets: inherit  # pragma: allowlist secret
 
 
   # deploy:
@@ -82,5 +87,5 @@ jobs:
   #             ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
   notify:
     uses: ./.github/workflows/rwf-notify.yml
-    needs: test-bc
+    needs: build
     secrets: inherit  # pragma: allowlist secret

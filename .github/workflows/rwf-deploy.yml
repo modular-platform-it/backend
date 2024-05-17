@@ -6,6 +6,16 @@ on:
       APP_PROJECT_NAME:
         required: true
         type: string
+      APP_IMAGE_NAME:
+        required: true
+        type: string
+      APP_VERSION:
+        required: true
+        type: string
+      DOCKERFILE_NAME:
+        required: false
+        type: string
+        default: Dockerfile
 jobs:
   build:
     if: github.ref_name == 'develop' || github.ref_name == 'feat/container-for-bot-server'
@@ -23,9 +33,9 @@ jobs:
       - name: Push to Docker Hub
         uses: docker/build-push-action@v5
         with:
-          context: ./${{env.APP_PROJECT_NAME}}
-          file: ${{env.APP_PROJECT_NAME}}/Dockerfile
+          context: ./${{inputs.APP_PROJECT_NAME}}
+          file: ${{inputs.APP_PROJECT_NAME}}/${{inputs.DOCKERFILE_NAME}}
           push: true
           tags: |
-            ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
-            ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:${{env.APP_VERSION}}
+            ${{secrets.DOCKERHUB_USERNAME}}/${{inputs.APP_IMAGE_NAME}}:latest
+            ${{secrets.DOCKERHUB_USERNAME}}/${{inputs.APP_IMAGE_NAME}}:${{inputs.APP_VERSION}}
