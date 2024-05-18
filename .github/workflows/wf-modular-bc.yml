@@ -11,7 +11,6 @@ env:
   APP_PROJECT_NAME: bot_constructor
   APP_IMAGE_NAME: ${{vars.BOT_CONSTRUCTOR_IMAGE_NAME}}
   APP_CONTAINER_NAME: ${{vars.BOT_CONSTRUCTOR_CONTAINER_NAME}}
-#   SECRET_KEY: ${{secrets.DJANGO_SECRET_KEY}}
 jobs:
   variables:
     name: Workaround to pass env variables to rwf
