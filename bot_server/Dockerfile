@@ -21,10 +21,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN apt-get update && apt-get install --no-install-recommends -y build-essential  \
-	&& poetry install --no-root --only main \
-	&& apt-get purge --auto-remove -y build-essential \
-	&& rm -rf /var/lib/apt/lists/*
+RUN poetry install --no-root --only main
 
 RUN chmod +x entrypoint.sh
 
