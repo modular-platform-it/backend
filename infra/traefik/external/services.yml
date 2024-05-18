@@ -31,7 +31,7 @@ http:
     to-botserver:
       entryPoints:
         - websecure
-      rule: Host(`api.xwick.ru`)
+      rule: Host(`api.xwick.ru`) && PathPrefix(`/bserver`)
       tls:
         certResolver: letsencrypt
       service: botserver
@@ -73,9 +73,9 @@ http:
         - url: http://botconstructor:8000
 
     botserver:
-    loadBalancer:
-      servers:
-      - url: http://botserver:8080
+      loadBalancer:
+        servers:
+        - url: http://botserver:8080
 
     pgadmin:
       loadBalancer:

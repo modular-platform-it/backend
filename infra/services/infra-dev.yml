@@ -20,6 +20,7 @@ services:
     image: dpage/pgadmin4:8.6
     depends_on:
       postgres:
+        condition: service_started
     env_file: stack.env
     volumes:
       - pgadmin_data:/var/lib/pgadmin
