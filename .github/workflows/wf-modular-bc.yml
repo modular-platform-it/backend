@@ -3,7 +3,7 @@ name: modular bot_constructor full CICD
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: [production, develop, feat/container-for-bot-server]
+    branches: [main]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
