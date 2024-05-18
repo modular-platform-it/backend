@@ -26,7 +26,6 @@ jobs:
         run: echo
 
   lint:
-    needs: variables
     uses: ./.github/workflows/rwf-precommit.yml
     with:
       PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
