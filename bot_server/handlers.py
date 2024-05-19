@@ -2,6 +2,8 @@ from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.types import Message
 
+from api import app
+
 
 class Handlers:
     """Логика работы ботов"""
@@ -18,3 +20,8 @@ class Handlers:
         @self.router.message()
         async def message_handler(msg: Message):
             await msg.answer(f"Твой ID: {msg.from_user.id}")
+
+
+class SendMassage:
+    def __init__(self):
+        self.router = Router()
