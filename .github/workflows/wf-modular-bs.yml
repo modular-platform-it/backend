@@ -3,7 +3,7 @@ name: modular bot_server container launch
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: [feat/**bot-server**]
+    branches: ['**/bot-server**']
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
