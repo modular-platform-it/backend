@@ -4,7 +4,6 @@ from aiogram.types import BotCommand
 
 import handlers
 
-
 class BaseTelegramBot:
     """Основа телеграмм Бота"""
 
@@ -19,7 +18,9 @@ class BaseTelegramBot:
                 command="/start", description=f"Start the bot {self.bot_data.name}"
             ),
         ]
+
         actions = []
+
         for action in actions:
             router = getattr(handlers, action["name"])().router
             self.dispatcher.include_router(router)
