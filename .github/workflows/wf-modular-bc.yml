@@ -1,0 +1,61 @@
+---
+name: modular bot_constructor full CICD
+run-name: ${{ github.actor }} started 🚀 GitHub Actions
+on:
+  push:
+    branches: ['**/bot_constructor**']
+    paths-ignore: ['**/pyproject.toml']
+  workflow_dispatch:
+env:
+  APP_VERSION: 0.0.1
+  APP_PROJECT_NAME: bot_constructor
+  APP_IMAGE_NAME: ${{vars.BOT_CONSTRUCTOR_IMAGE_NAME}}
+  APP_CONTAINER_NAME: ${{vars.BOT_CONSTRUCTOR_CONTAINER_NAME}}
+jobs:
+  variables:
+    name: Workaround to pass env variables to rwf
+    runs-on: ubuntu-latest
+    outputs:
+      app_version: ${{env.APP_VERSION}}
+      app_project_name: ${{env.APP_PROJECT_NAME}}
+      app_image_name: ${{env.APP_IMAGE_NAME}}
+      app_container_name: ${{env.APP_CONTAINER_NAME}}
+    steps:
+      - name: Echo - fake step
+        if: false
+        run: echo
+
+  lint:
+    uses: ./.github/workflows/rwf-precommit.yml
+    with:
+      PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
+
+  test-bc:
+    needs: [variables, lint]
+    uses: ./.github/workflows/rwf-pytest.yml
+    with:
+      APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
+      POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
+      PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
+
+  build-bc:
+    needs: [variables, test-bc]
+    uses: ./.github/workflows/rwf-build.yml
+    with:
+      APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
+      APP_IMAGE_NAME: ${{needs.variables.outputs.app_image_name}}
+      APP_VERSION: ${{needs.variables.outputs.app_version}}
+    secrets: inherit  # pragma: allowlist secret
+
+  deploy-bc:
+    needs: [variables, build-bc]
+    uses: ./.github/workflows/rwf-deploy.yml
+    with:
+      APP_IMAGE_NAME: ${{needs.variables.outputs.app_image_name}}
+      APP_CONTAINER_NAME: ${{needs.variables.outputs.app_container_name}}
+    secrets: inherit  # pragma: allowlist secret
+
+  notify:
+    uses: ./.github/workflows/rwf-notify.yml
+    needs: deploy-bc
+    secrets: inherit  # pragma: allowlist secret
