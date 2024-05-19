@@ -1,20 +1,17 @@
-import asyncio
 
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
 
 import handlers
-from db import Connection
-from models import Bots
 
 
-class TelegramBot:
+class BaseTelegramBot:
     """Основа телеграмм Бота"""
 
-    def __init__(self, bot_data: Bots):
+    def __init__(self, bot_data):
         super().__init__()
         self.bot_data = bot_data
-        self.token = self.bot_data.token
+        self.token = self.bot_data.telegram_token
         self.bot = Bot(token=self.token)
         self.dispatcher = Dispatcher()
         self.commands = [
@@ -22,15 +19,7 @@ class TelegramBot:
                 command="/start", description=f"Start the bot {self.bot_data.name}"
             ),
         ]
-        actions = [
-            {
-                "name": "Handlers",
-                "parameters": {
-                    "commands": None,
-                },
-            },
-            {"name": "SendMassage", "parameters": {"commands": None}},
-        ]
+        actions = []
         for action in actions:
             router = getattr(handlers, action["name"])().router
             self.dispatcher.include_router(router)
@@ -42,7 +31,10 @@ class TelegramBot:
 
 
 if __name__ == "__main__":
+    import asyncio
+    from db import Connection
+    from models import TelegramBot
     connection = Connection()
-    bot_data = connection.session.query(Bots).filter(Bots.id == 1).first()
-    bot = TelegramBot(bot_data=bot_data)
+    bot_data = connection.session.query(TelegramBot).filter(TelegramBot.id == 3).first()
+    bot = BaseTelegramBot(bot_data=bot_data)
     asyncio.run(bot.start())
