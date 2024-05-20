@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "rest_framework",
     "django_filters",
+    "corsheaders",
     "api",
     "apps.bot_management",
     "drf_spectacular",
@@ -35,6 +36,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
