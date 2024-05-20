@@ -9,31 +9,60 @@ from sqlalchemy import (
     Integer,
     PrimaryKeyConstraint,
     String,
+    DateTime,
 )
 from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy_file import File, FileField
+from datetime import datetime
 
 Base = declarative_base()
 
 
-class Bots(Base):
-    __tablename__: str = "bots"
+class TelegramBot(Base):
+    __tablename__: str = "bot_management_telegrambot"
     id = Column(Integer, primary_key=True)
-    name = Column(
-        String(200),
-    )
-    token = Column(
-        String(200),
-    )
-    actions = relationship("Actions")
-    status = Column(Boolean, default=True)
+    name = Column(String(200),)
+    telegram_token = Column(String(200),)
+    description = Column(String(200),)
+    api_key = Column(String(200),)
+    api_url = Column(String(200),)
+    api_availability = Column(Boolean,)
+    bot_state = Column(String(200),)
+    created_at = Column(DateTime, default=datetime.now)
+    started_at = Column(DateTime)
+    actions = relationship("TelegramBotAction")
 
     __table_args__ = (PrimaryKeyConstraint("id", name="bot_pk"),)
 
 
-class Actions(Base):
-    __tablename__: str = "actions"
+class TelegramBotAction(Base):
+    __tablename__: str = "bot_management_telegrambotaction"
     id = Column(Integer, primary_key=True)
-    parameters = Column(ARRAY(JSON), nullable=True)
-    bot_id = Column(Integer, ForeignKey("bots.id"))
+    telegram_bot_id = Column(Integer, ForeignKey("bot_management_telegrambot.id"))
+    name = Column(String(200),)
+    description = Column(String(200),)
+    command_keyword = Column(String(200),)
+    message = Column(String(200),)
+    api_url = Column(String(200),)
+    api_key = Column(String(200),)
+    position = Column(Integer,)
+    is_active = Column(Boolean,)
+    next_action_id = Column(Integer, ForeignKey("bot_management_telegrambotaction.id"))
 
-    __table_args__ = (ForeignKeyConstraint(["bot_id"], ["bots.id"]),)
+    __table_args__ = (
+        PrimaryKeyConstraint("id", name="action_pk"),
+        ForeignKeyConstraint(["telegram_bot_id"], ["bot_management_telegrambot.id"]),
+        ForeignKeyConstraint(["next_action_id"], ["bot_management_telegrambotaction.id"])
+    )
+
+
+class TelegramBotFile(Base):
+    __tablename__: str = "bot_management_telegrambotfile"
+    id = Column(Integer, primary_key=True)
+    telegram_action_id = Column(Integer, ForeignKey("bot_management_telegrambotaction.id"))
+    file = Column(FileField,)
+
+    __table_args__ = (
+        PrimaryKeyConstraint("id", name="telegrambotfile_pk"),
+        ForeignKeyConstraint(["telegram_action_id"], ["bot_management_telegrambotaction.id"])
+    )
