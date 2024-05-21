@@ -4,8 +4,6 @@ from typing import List
 
 from pydantic import BaseModel
 from sqlalchemy import (
-    ARRAY,
-    JSON,
     Boolean,
     Column,
     DateTime,
@@ -16,7 +14,7 @@ from sqlalchemy import (
     String,
 )
 from sqlalchemy.orm import declarative_base, relationship
-from sqlalchemy_file import File, FileField
+from sqlalchemy_file import FileField
 
 Base = declarative_base()
 

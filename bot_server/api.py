@@ -20,7 +20,9 @@ class Bot(BaseModel):
 
 @app.get("/{bot_id}/start/")
 def start_bot(bot_id):
-    bot_data = connection.session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
+    bot_data = (
+        connection.session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
+    )
     bot = BaseTelegramBot(bot_data=bot_data)
     asyncio.run(bot.start())
 

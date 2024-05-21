@@ -1,34 +1,35 @@
-import json
-
 import requests
-from aiogram import Bot, Dispatcher, F, Router, types
+from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 from fastapi import HTTPException
-from models import ItemList, TelegramBot
 
-bot = TelegramBot()
-
-
-async def get_list() -> ItemList:
-    """Получить список из другого приложения по API."""
-    # response = requests.get("https://api.xwick.ru/v1/bots/")
-    response = requests.get(bot.api_url)
-    if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail=response.text)
-    items = [value["name"] for value in response.json()]
-    return ItemList(items=items)
+from models import ItemList
 
 
 class Handlers:
     """Логика работы ботов"""
 
-    def __init__(self):
+    def __init__(self, bot_data):
+        self.bot_data = bot_data
         self.router = Router()
 
         @self.router.message(Command("start"))
         async def start_handler(msg: Message):
             await msg.answer("Привет!")
+
+        async def get_list() -> ItemList:
+            """Получить список из другого приложения по API."""
+            response = requests.get(
+                self.bot_data.api_url,
+                headers={"Authorization": f"{self.bot_data.api_key}"},
+            )
+            if response.status_code != 200:
+                raise HTTPException(
+                    status_code=response.status_code, detail=response.text
+                )
+            items = [value["name"] for value in response.json()]
+            return ItemList(items=items)
 
         @self.router.message(Command("get_list"))
         async def get_list_handler(msg: Message):
