@@ -1,8 +1,8 @@
-
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
 
 import handlers
+
 
 class BaseTelegramBot:
     """Основа телеграмм Бота"""
@@ -35,6 +35,7 @@ if __name__ == "__main__":
     import asyncio
     from db import Connection
     from models import TelegramBot
+
     connection = Connection()
     bot_data = connection.session.query(TelegramBot).filter(TelegramBot.id == 3).first()
     bot = BaseTelegramBot(bot_data=bot_data)

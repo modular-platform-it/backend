@@ -4,6 +4,7 @@ from aiogram.types import Message
 
 # from api import app
 
+
 class Handlers:
     """Логика работы ботов"""
 
