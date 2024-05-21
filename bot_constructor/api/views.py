@@ -1,4 +1,3 @@
-from datetime import datetime as dt
 from typing import Any
 
 import requests
@@ -24,6 +23,7 @@ from api.serializers import (
 )
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django_filters import rest_framework as df_filters
 from drf_spectacular.utils import (
     OpenApiParameter,
@@ -209,7 +209,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
                 data={"detail": "Бот успешно остановлен"}, status=status.HTTP_200_OK
             )
         telegram_bot.bot_state = TelegramBot.BotState.RUNNING
-        telegram_bot.started_at = dt.now()
+        telegram_bot.started_at = timezone.now()
         telegram_bot.save()
         return Response(
             data={"detail": "Бот успешно запущен"}, status=status.HTTP_200_OK

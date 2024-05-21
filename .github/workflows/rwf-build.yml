@@ -18,7 +18,7 @@ on:
         default: Dockerfile
 jobs:
   build:
-    if: github.ref_name == 'develop'
+    # if: github.ref_name == 'develop'
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
