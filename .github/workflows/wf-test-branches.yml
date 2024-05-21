@@ -1,5 +1,5 @@
 ---
-name: test all branches
+name: test current branch
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
