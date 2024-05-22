@@ -46,7 +46,6 @@ class StopHandler:
             await msg.answer("До новых встреч!")
 
 
-
 class Handlers:
     """Хэндлер запуска бота"""
 
