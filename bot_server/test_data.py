@@ -12,6 +12,7 @@ data = {
     "api_availability": True,
     "bot_state": "RUNNING",
 }
+
 bot = TelegramBot(**data)
 
 connection.session.add(bot)

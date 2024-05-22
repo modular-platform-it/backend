@@ -1,7 +1,7 @@
+import handlers
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
 
-import handlers
 
 
 class BaseTelegramBot:
@@ -18,11 +18,20 @@ class BaseTelegramBot:
                 command="/start", description=f"Start the bot {self.bot_data.name}"
             ),
         ]
-
-        actions = []
+        actions = [
+            {
+                "name": "Handlers",
+            },
+            {
+                "name": "StopHandler",
+            },
+            {
+                "name": "GetListHandler",
+            },
+        ]
 
         for action in actions:
-            router = getattr(handlers, action["name"])().router
+            router = getattr(handlers, action["name"])(bot_data=self.bot_data).router
             self.dispatcher.include_router(router)
 
     async def start(self):
@@ -33,10 +42,11 @@ class BaseTelegramBot:
 
 if __name__ == "__main__":
     import asyncio
+
     from db import Connection
     from models import TelegramBot
 
     connection = Connection()
-    bot_data = connection.session.query(TelegramBot).filter(TelegramBot.id == 3).first()
+    bot_data = connection.session.query(TelegramBot).filter(TelegramBot.id == 6).first()
     bot = BaseTelegramBot(bot_data=bot_data)
     asyncio.run(bot.start())

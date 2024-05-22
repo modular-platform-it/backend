@@ -1,19 +1,20 @@
 # type:ignore
+from datetime import datetime
+from typing import List
+
+from pydantic import BaseModel
 from sqlalchemy import (
-    ARRAY,
-    JSON,
     Boolean,
     Column,
+    DateTime,
     ForeignKey,
     ForeignKeyConstraint,
     Integer,
     PrimaryKeyConstraint,
     String,
-    DateTime,
 )
 from sqlalchemy.orm import declarative_base, relationship
-from sqlalchemy_file import File, FileField
-from datetime import datetime
+from sqlalchemy_file import FileField
 
 Base = declarative_base()
 
@@ -104,3 +105,7 @@ class TelegramBotFile(Base):
             ["telegram_action_id"], ["bot_management_telegrambotaction.id"]
         ),
     )
+
+    
+class ItemList(BaseModel):
+    items: List[str]
