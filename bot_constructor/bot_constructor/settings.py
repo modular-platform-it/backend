@@ -20,6 +20,8 @@ CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "https://127.0.0.1").sp
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
+IS_TESTING = sys.argv[1:2] == ["test"]
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
