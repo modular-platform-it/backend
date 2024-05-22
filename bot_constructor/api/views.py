@@ -11,6 +11,7 @@ from api.drf_spectacular.drf_serializers import (
     DummyTokenErrorSerializer,
     DummyTokenSerializer,
     DummyVariableSerializer,
+    ForbiddenSerializer,
     MethodNotAlowedSerializer,
     NotFoundSerializer,
 )
@@ -65,9 +66,20 @@ def check_bot_started(telegram_bot_pk) -> None:
 
 @extend_schema(tags=["Телеграм боты"])
 @extend_schema_view(
+    list=extend_schema(
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(response=TelegramBotSerializer),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
+        }
+    ),
     retrieve=extend_schema(
         responses={
             status.HTTP_200_OK: OpenApiResponse(response=TelegramBotSerializer),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Телеграм бот не найден"
             ),
@@ -77,6 +89,9 @@ def check_bot_started(telegram_bot_pk) -> None:
         responses={
             status.HTTP_204_NO_CONTENT: OpenApiResponse(
                 description="Телеграм бот удален"
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
             ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Телеграм бот не найден"
@@ -91,6 +106,9 @@ def check_bot_started(telegram_bot_pk) -> None:
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyBotSerializer, description="Ошибка в полях"
             ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Телеграм бот не найден"
             ),
@@ -100,6 +118,9 @@ def check_bot_started(telegram_bot_pk) -> None:
         responses={
             status.HTTP_201_CREATED: OpenApiResponse(
                 response=TelegramBotCreateSerializer, description="Телеграм бот создан"
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyBotSerializer, description="Ошибка в полях"
@@ -113,6 +134,9 @@ def check_bot_started(telegram_bot_pk) -> None:
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyBotSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
             ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Телеграм бот не найден"
@@ -128,6 +152,9 @@ def check_bot_started(telegram_bot_pk) -> None:
                 response=DummyTokenErrorSerializer,
                 description="Поле содержит ошибки",
             ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=DummyTokenSerializer, description="Токен не существует"
             ),
@@ -140,6 +167,9 @@ def check_bot_started(telegram_bot_pk) -> None:
         responses={
             status.HTTP_200_OK: OpenApiResponse(
                 response=DummyStartStopBotSerializer,
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
             ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(response=NotFoundSerializer),
             status.HTTP_405_METHOD_NOT_ALLOWED: OpenApiResponse(
@@ -234,6 +264,14 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
 
 @extend_schema(tags=["Действия"])
 @extend_schema_view(
+    list=extend_schema(
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(response=TelegramBotSerializer),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
+        }
+    ),
     retrieve=extend_schema(
         responses={
             status.HTTP_200_OK: OpenApiResponse(
@@ -242,6 +280,9 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyActionSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
             ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Действие не найдено"
@@ -256,6 +297,9 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyActionSerializer, description="Ошибка в полях"
             ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Телеграм бот не найден"
             ),
@@ -268,6 +312,9 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyActionSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
             ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Телеграм бот не найден"
@@ -282,6 +329,9 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyActionSerializer, description="Ошибка в полях"
             ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Телеграм бот не найден"
             ),
@@ -290,6 +340,9 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
     destroy=extend_schema(
         responses={
             status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Действие удалено"),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Телеграм бот не найден"
             ),
@@ -365,7 +418,13 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
             ),
-        ]
+        ],
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(response=TelegramBotSerializer),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
+        },
     ),
     retrieve=extend_schema(
         parameters=[
@@ -380,6 +439,9 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyFileSerializer, description="Ошибка в полях"
             ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Действие или бот не найдены"
             ),
@@ -393,6 +455,9 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         ],
         responses={
             status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Файл удален"),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Действие или бот не найдены"
             ),
@@ -410,6 +475,9 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyFileSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
             ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Действие или бот не найдены"
@@ -429,6 +497,9 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyFileSerializer, description="Ошибка в полях"
             ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Действие или бот не найдены"
             ),
@@ -446,6 +517,9 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyFileSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
             ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Действие или бот не найдены"
@@ -522,7 +596,13 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
             ),
-        ]
+        ],
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(response=TelegramBotSerializer),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
+        },
     ),
     retrieve=extend_schema(
         parameters=[
@@ -538,6 +618,9 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyVariableSerializer, description="Ошибка в полях"
             ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Действие или бот не найдены"
             ),
@@ -552,6 +635,9 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
         responses={
             status.HTTP_204_NO_CONTENT: OpenApiResponse(
                 description="Переменная удалена"
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
             ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer,
@@ -571,6 +657,9 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyVariableSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
             ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer,
@@ -591,6 +680,9 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyVariableSerializer, description="Ошибка в полях"
             ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Действие или бот не найдены"
             ),
@@ -609,6 +701,9 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyVariableSerializer, description="Ошибка в полях"
             ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer,
                 description="Переменная, действие или бот не найдены",
@@ -619,6 +714,7 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
 class VariableViewSet(viewsets.ModelViewSet):
     queryset = Variable.objects.all()
     serializer_class = VariableSerializer
+    permission_classes = (IsAuthenticated,)
 
 
 @extend_schema(tags=["Заголовки http запросов"])
@@ -628,7 +724,13 @@ class VariableViewSet(viewsets.ModelViewSet):
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
             ),
-        ]
+        ],
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(response=TelegramBotSerializer),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
+        },
     ),
     retrieve=extend_schema(
         parameters=[
@@ -644,6 +746,9 @@ class VariableViewSet(viewsets.ModelViewSet):
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyHeaderSerializer, description="Ошибка в полях"
             ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer,
                 description="Заголовок, действие или бот не найдены",
@@ -658,6 +763,9 @@ class VariableViewSet(viewsets.ModelViewSet):
         ],
         responses={
             status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Заголовок удален"),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer,
                 description="Заголовок, действие или бот не найдены",
@@ -678,6 +786,9 @@ class VariableViewSet(viewsets.ModelViewSet):
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyVariableSerializer, description="Ошибка в полях"
             ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer,
                 description="Заголовок, действие или бот не найдены",
@@ -696,6 +807,9 @@ class VariableViewSet(viewsets.ModelViewSet):
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyVariableSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
             ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Действие или бот не найдены"
@@ -716,6 +830,9 @@ class VariableViewSet(viewsets.ModelViewSet):
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyVariableSerializer, description="Ошибка в полях"
             ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer,
                 description="Заголовок, действие или бот не найдены",
@@ -726,3 +843,4 @@ class VariableViewSet(viewsets.ModelViewSet):
 class HeaderViewSet(viewsets.ModelViewSet):
     queryset = Header.objects.all()
     serializer_class = HeaderSerializer
+    permission_classes = (IsAuthenticated,)

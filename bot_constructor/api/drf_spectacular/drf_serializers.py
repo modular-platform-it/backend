@@ -111,3 +111,7 @@ class DummyHeaderSerializer(DummySerializer):
 
     name = serializers.ListSerializer(child=serializers.CharField())
     telegram_action = serializers.ListSerializer(child=serializers.CharField())
+
+
+class ForbiddenSerializer(DummySerializer):
+    detail = serializers.CharField()
