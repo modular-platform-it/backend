@@ -1,8 +1,6 @@
 # type:ignore
 from datetime import datetime
-from typing import List
 
-from pydantic import BaseModel
 from sqlalchemy import (
     Boolean,
     Column,
@@ -105,7 +103,3 @@ class TelegramBotFile(Base):
             ["telegram_action_id"], ["bot_management_telegrambotaction.id"]
         ),
     )
-
-
-class ItemList(BaseModel):
-    items: List[str]

@@ -1,6 +1,5 @@
 import handlers
 from aiogram import Bot, Dispatcher
-from aiogram.types import BotCommand
 
 
 class BaseTelegramBot:
@@ -12,11 +11,7 @@ class BaseTelegramBot:
         self.token = self.bot_data.telegram_token
         self.bot = Bot(token=self.token)
         self.dispatcher = Dispatcher()
-        self.commands = [
-            BotCommand(
-                command="/start", description=f"Start the bot {self.bot_data.name}"
-            ),
-        ]
+        self.commands = []
         actions = [
             {
                 "name": "Handlers",
@@ -30,11 +25,23 @@ class BaseTelegramBot:
         ]
 
         for action in actions:
-            router = getattr(handlers, action["name"])(bot_data=self.bot_data).router
+            handler = getattr(handlers, action["name"])(bot_data=self.bot_data)
+            router = handler.router
+            self.commands.append(handler.command)
             self.dispatcher.include_router(router)
 
     async def start(self):
         print("Bot starting")
+        await self.bot.set_my_commands(commands=self.commands)
+        await self.dispatcher.start_polling(self.bot)
+
+    async def stop(self):
+        print("Bot stopped")
+        await self.bot.set_my_commands(commands=self.commands)
+        await self.dispatcher.stop_polling(self.bot)
+
+    async def edit(self):
+        print("Bot edited")
         await self.bot.set_my_commands(commands=self.commands)
         await self.dispatcher.start_polling(self.bot)
 
