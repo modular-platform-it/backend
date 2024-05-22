@@ -1,6 +1,5 @@
 import handlers
 from aiogram import Bot, Dispatcher
-from aiogram.types import BotCommand
 
 
 class BaseTelegramBot:
@@ -41,6 +40,11 @@ class BaseTelegramBot:
         await self.bot.set_my_commands(commands=self.commands)
         await self.dispatcher.stop_polling(self.bot)
 
+    async def edit(self):
+        print("Bot edited")
+        await self.bot.set_my_commands(commands=self.commands)
+        await self.dispatcher.start_polling(self.bot)
+
 
 if __name__ == "__main__":
     import asyncio
@@ -49,6 +53,6 @@ if __name__ == "__main__":
     from models import TelegramBot
 
     connection = Connection()
-    bot_data = connection.session.query(TelegramBot).filter(TelegramBot.id == 3).first()
+    bot_data = connection.session.query(TelegramBot).filter(TelegramBot.id == 1).first()
     bot = BaseTelegramBot(bot_data=bot_data)
     asyncio.run(bot.start())

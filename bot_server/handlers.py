@@ -41,7 +41,9 @@ class StopHandler:
     def __init__(self, bot_data):
         self.bot_data = bot_data
         self.router = Router()
-        self.command = BotCommand(command="/stop", description=f"stop the bot {self.bot_data.name}")
+        self.command = BotCommand(
+            command="/stop", description=f"stop the bot {self.bot_data.name}"
+        )
 
         @self.router.message(Command("stop"))
         async def stop_handler(msg: Message):
@@ -54,7 +56,9 @@ class Handlers:
     def __init__(self, bot_data):
         self.bot_data = bot_data
         self.router = Router()
-        self.command = BotCommand(command="/start", description=f"start the bot {self.bot_data.name}")
+        self.command = BotCommand(
+            command="/start", description=f"start the bot {self.bot_data.name}"
+        )
 
         @self.router.message(Command("start"))
         async def start_handler(msg: Message):
