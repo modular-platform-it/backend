@@ -7,8 +7,47 @@ from fastapi import HTTPException
 from models import ItemList
 
 
+async def get_list(api_key, api_url) -> ItemList:
+    """Получить список из другого приложения по API и токену."""
+    response = requests.get(
+        api_url,
+        headers={"Authorization": f"{api_key}"},
+    )
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+    items = [value["name"] for value in response.json()]
+    return ItemList(items=items)
+
+
+class GetListHandler:
+    """Хэндлер получения списка из стороннего приложения"""
+
+    def __init__(self, bot_data):
+        self.bot_data = bot_data
+        self.router = Router()
+
+        @self.router.message(Command("get_list"))
+        async def get_list_handler(msg: Message):
+            item_list = await get_list(
+                api_key=self.bot_data.api_key, api_url=self.bot_data.api_url
+            )
+            await msg.answer(f"Список из вашего приложения: {item_list.items}")
+
+
+class StopHandler:
+    """Хэндлер остановки бота"""
+
+    def __init__(self, bot_data):
+        self.bot_data = bot_data
+        self.router = Router()
+
+        @self.router.message(Command("stop"))
+        async def stop_handler(msg: Message):
+            await msg.answer("До новых встреч!")
+
+
 class Handlers:
-    """Логика работы ботов"""
+    """Хэндлер запуска бота"""
 
     def __init__(self, bot_data):
         self.bot_data = bot_data
@@ -17,28 +56,6 @@ class Handlers:
         @self.router.message(Command("start"))
         async def start_handler(msg: Message):
             await msg.answer("Привет!")
-
-        async def get_list() -> ItemList:
-            """Получить список из другого приложения по API."""
-            response = requests.get(
-                self.bot_data.api_url,
-                headers={"Authorization": f"{self.bot_data.api_key}"},
-            )
-            if response.status_code != 200:
-                raise HTTPException(
-                    status_code=response.status_code, detail=response.text
-                )
-            items = [value["name"] for value in response.json()]
-            return ItemList(items=items)
-
-        @self.router.message(Command("get_list"))
-        async def get_list_handler(msg: Message):
-            item_list = await get_list()
-            await msg.answer(f"Список из вашего приложения: {item_list.items}")
-
-        @self.router.message(Command("stop"))
-        async def stop_handler(msg: Message):
-            await msg.answer("До новых встреч!")
 
 
 class SendMassage:

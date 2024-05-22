@@ -21,6 +21,12 @@ class BaseTelegramBot:
             {
                 "name": "Handlers",
             },
+            {
+                "name": "StopHandler",
+            },
+            {
+                "name": "GetListHandler",
+            },
         ]
 
         for action in actions:
@@ -40,6 +46,6 @@ if __name__ == "__main__":
     from models import TelegramBot
 
     connection = Connection()
-    bot_data = connection.session.query(TelegramBot).filter(TelegramBot.id == 2).first()
+    bot_data = connection.session.query(TelegramBot).filter(TelegramBot.id == 6).first()
     bot = BaseTelegramBot(bot_data=bot_data)
     asyncio.run(bot.start())
