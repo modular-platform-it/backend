@@ -91,6 +91,7 @@ class TelegramBot(models.Model):
 class TelegramBotAction(models.Model):
     """Модель действия для телеграм бота."""
 
+    # TODO разбить модель на отдельные виды
     class ActionType(models.TextChoices):
         MESSAGE = "MESSAGE", "Сообщение"
         QUERY = "QUERY", "Запрос к пользователю"
