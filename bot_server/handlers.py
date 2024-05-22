@@ -1,7 +1,7 @@
 import requests
 from aiogram import Router
 from aiogram.filters import Command
-from aiogram.types import Message
+from aiogram.types import Message, BotCommand
 from fastapi import HTTPException
 
 from models import ItemList
@@ -25,6 +25,7 @@ class GetListHandler:
     def __init__(self, bot_data):
         self.bot_data = bot_data
         self.router = Router()
+        self.command = BotCommand(command="/get_list", description=f"get list")
 
         @self.router.message(Command("get_list"))
         async def get_list_handler(msg: Message):
@@ -40,6 +41,7 @@ class StopHandler:
     def __init__(self, bot_data):
         self.bot_data = bot_data
         self.router = Router()
+        self.command = BotCommand(command="/stop", description=f"stop the bot {self.bot_data.name}")
 
         @self.router.message(Command("stop"))
         async def stop_handler(msg: Message):
@@ -52,6 +54,7 @@ class Handlers:
     def __init__(self, bot_data):
         self.bot_data = bot_data
         self.router = Router()
+        self.command = BotCommand(command="/start", description=f"start the bot {self.bot_data.name}")
 
         @self.router.message(Command("start"))
         async def start_handler(msg: Message):

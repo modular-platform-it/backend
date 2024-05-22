@@ -12,11 +12,7 @@ class BaseTelegramBot:
         self.token = self.bot_data.telegram_token
         self.bot = Bot(token=self.token)
         self.dispatcher = Dispatcher()
-        self.commands = [
-            BotCommand(
-                command="/start", description=f"Start the bot {self.bot_data.name}"
-            ),
-        ]
+        self.commands = []
         actions = [
             {
                 "name": "Handlers",
@@ -30,7 +26,9 @@ class BaseTelegramBot:
         ]
 
         for action in actions:
-            router = getattr(handlers, action["name"])(bot_data=self.bot_data).router
+            handler = getattr(handlers, action["name"])(bot_data=self.bot_data)
+            router = handler.router
+            self.commands.append(handler.command)
             self.dispatcher.include_router(router)
 
     async def start(self):
@@ -51,6 +49,6 @@ if __name__ == "__main__":
     from models import TelegramBot
 
     connection = Connection()
-    bot_data = connection.session.query(TelegramBot).filter(TelegramBot.id == 1).first()
+    bot_data = connection.session.query(TelegramBot).filter(TelegramBot.id == 3).first()
     bot = BaseTelegramBot(bot_data=bot_data)
     asyncio.run(bot.start())
