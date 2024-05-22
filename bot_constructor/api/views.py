@@ -245,6 +245,11 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         check_bot_started(telegram_bot_pk)
         return super().partial_update(request, *args, **kwargs)
 
+    def destroy(self, request, *args, **kwargs):
+        telegram_bot_pk = self.kwargs.get("pk")
+        check_bot_started(telegram_bot_pk)
+        return super().destroy(request, *args, **kwargs)
+
     @action(methods=["GET"], detail=True, url_name="start_stop_bot")
     def start_stop_bot(self, request, *args, **kwargs) -> Response:
         telegram_bot = get_object_or_404(TelegramBot, id=self.kwargs.get("pk"))
@@ -409,6 +414,10 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, *args, **kwargs):
         check_bot_started(self.kwargs.get("telegram_bot_pk"))
         return super().partial_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        check_bot_started(self.kwargs.get("telegram_bot_pk"))
+        return super().destroy(request, *args, **kwargs)
 
 
 @extend_schema(tags=["Файлы"])
@@ -578,15 +587,12 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
         return super().partial_update(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        telegram_bot = get_object_or_404(
-            TelegramBot, id=self.kwargs.get("telegram_bot_pk")
-        )
-        if telegram_bot.is_started:
-            return Response(
-                data={"detail": "Сначала остановите бота"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        check_bot_started(self.kwargs.get("telegram_bot_pk"))
         return super().create(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        check_bot_started(self.kwargs.get("telegram_bot_pk"))
+        return super().destroy(request, *args, **kwargs)
 
 
 @extend_schema(tags=["Пользовательские переменные"])
@@ -716,6 +722,22 @@ class VariableViewSet(viewsets.ModelViewSet):
     serializer_class = VariableSerializer
     permission_classes = (IsAuthenticated,)
 
+    def update(self, request, *args, **kwargs):
+        check_bot_started(self.kwargs.get("telegram_bot_pk"))
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        check_bot_started(self.kwargs.get("telegram_bot_pk"))
+        return super().partial_update(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        check_bot_started(self.kwargs.get("telegram_bot_pk"))
+        return super().create(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        check_bot_started(self.kwargs.get("telegram_bot_pk"))
+        return super().destroy(request, *args, **kwargs)
+
 
 @extend_schema(tags=["Заголовки http запросов"])
 @extend_schema_view(
@@ -844,3 +866,25 @@ class HeaderViewSet(viewsets.ModelViewSet):
     queryset = Header.objects.all()
     serializer_class = HeaderSerializer
     permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return Header.objects.filter(
+            telegram_action__telegram_bot=self.kwargs["telegram_bot_pk"],
+            telegram_action=self.kwargs["telegram_action_pk"],
+        )
+
+    def update(self, request, *args, **kwargs):
+        check_bot_started(self.kwargs.get("telegram_bot_pk"))
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        check_bot_started(self.kwargs.get("telegram_bot_pk"))
+        return super().partial_update(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        check_bot_started(self.kwargs.get("telegram_bot_pk"))
+        return super().create(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        check_bot_started(self.kwargs.get("telegram_bot_pk"))
+        return super().destroy(request, *args, **kwargs)
