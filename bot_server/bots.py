@@ -38,6 +38,11 @@ class BaseTelegramBot:
         await self.bot.set_my_commands(commands=self.commands)
         await self.dispatcher.start_polling(self.bot)
 
+    async def stop(self):
+        print("Bot stopped")
+        await self.bot.set_my_commands(commands=self.commands)
+        await self.dispatcher.stop_polling(self.bot)
+
 
 if __name__ == "__main__":
     import asyncio
