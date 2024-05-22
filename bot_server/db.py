@@ -9,7 +9,7 @@ class Connection:
 
     def __init__(self):
         self.engine = create_engine(
-            "postgresql+psycopg2://postgres:456852@localhost:5439/postgres?client_encoding=utf8",
+            "postgresql+psycopg2://postgres:456852@localhost:5432/postgres?client_encoding=utf8",
             echo=True,
             client_encoding="utf8",
         )

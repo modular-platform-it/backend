@@ -1,23 +1,7 @@
-# type:ignore
 from datetime import datetime as dt
-from typing import Any
+from typing import Any, Type
 
 import requests
-from django.shortcuts import get_object_or_404
-from django_filters import rest_framework as df_filters
-from drf_spectacular.utils import (
-    OpenApiParameter,
-    OpenApiResponse,
-    extend_schema,
-    extend_schema_view,
-)
-from rest_framework import status, viewsets
-from rest_framework.decorators import action
-from rest_framework.filters import OrderingFilter
-from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.request import Request
-from rest_framework.response import Response
-
 from api.drf_spectacular.drf_serializers import (
     DummyActionSerializer,
     DummyBotSerializer,
@@ -51,6 +35,22 @@ from apps.bot_management.models import (
     TelegramBotFile,
     Variable,
 )
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from django_filters import rest_framework as df_filters
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    OpenApiResponse,
+    extend_schema,
+    extend_schema_view,
+)
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 
 def check_bot_started(telegram_bot_pk) -> None:
@@ -173,11 +173,13 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
     )
     ordering = ("-created_at",)
     lookup_field = "pk"
+    permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(
         self,
-    ) -> type(TelegramBotShortSerializer) | type(
-        TelegramBotSerializer | type(TelegramBotCreateSerializer)
+    ) -> (
+        Type[TelegramBotShortSerializer]
+        | Type[TelegramBotSerializer | TelegramBotCreateSerializer]
     ):
         if self.action == "list":
             return TelegramBotShortSerializer
@@ -223,7 +225,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
                 data={"detail": "Бот успешно остановлен"}, status=status.HTTP_200_OK
             )
         telegram_bot.bot_state = TelegramBot.BotState.RUNNING
-        telegram_bot.started_at = dt.now()
+        telegram_bot.started_at = timezone.now()
         telegram_bot.save()
         return Response(
             data={"detail": "Бот успешно запущен"}, status=status.HTTP_200_OK
@@ -301,6 +303,7 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
     serializer_class = TelegramBotActionSerializer
     parser_classes = (FormParser, MultiPartParser)
     lookup_field = "pk"
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return TelegramBotAction.objects.filter(
@@ -455,6 +458,7 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
 
     queryset = TelegramBotFile.objects.all()
     serializer_class = TelegramFileSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return TelegramBotFile.objects.filter(

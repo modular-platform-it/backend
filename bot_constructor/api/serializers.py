@@ -1,7 +1,4 @@
-# type:ignore
 from typing import IO, Any
-
-from rest_framework import serializers, validators
 
 from apps.bot_management import constants, regexps
 from apps.bot_management.models import (
@@ -11,6 +8,7 @@ from apps.bot_management.models import (
     TelegramBotFile,
     Variable,
 )
+from rest_framework import serializers, validators
 
 
 class TelegramBotCreateSerializer(serializers.ModelSerializer):

@@ -1,8 +1,7 @@
-# type:ignore
+from apps.bot_management import constants, regexps
 from django.core import validators
 from django.db import models
-
-from apps.bot_management import constants, regexps
+from django.utils import timezone
 
 
 class TelegramBot(models.Model):
@@ -44,7 +43,9 @@ class TelegramBot(models.Model):
         choices=BotState,
         default=BotState.DRAFT,
     )
-    created_at = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
+    created_at = models.DateTimeField(
+        verbose_name="Дата создания", default=timezone.now
+    )
     started_at = models.DateTimeField(
         verbose_name="Дата последнего запуска бота", blank=True, null=True
     )

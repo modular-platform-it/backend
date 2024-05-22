@@ -2,19 +2,18 @@ import os
 import shutil
 from typing import Any
 
-from django.urls import reverse
-from faker_file.registry import FILE_REGISTRY  # type: ignore
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.test import APITestCase, override_settings
-
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
-from factory_data.factories import (  # type: ignore
-    TEST_DIR,
+from django.urls import reverse
+from factory_data.factories import TEST_DIR  # type: ignore
+from factory_data.factories import (
     TelegramBotActionFactory,
     TelegramBotFactory,
     TelegramBotFileFactory,
 )
+from faker_file.registry import FILE_REGISTRY  # type: ignore
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.test import APITestCase, override_settings
 
 
 class TestTelegramBotView(APITestCase):
