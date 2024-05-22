@@ -4,7 +4,7 @@ from aiogram.filters import Command
 from aiogram.types import Message, BotCommand
 from fastapi import HTTPException
 
-from models import ItemList
+from models_api import ItemList
 
 
 async def get_list(api_key, api_url) -> ItemList:

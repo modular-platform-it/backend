@@ -5,7 +5,8 @@ from pydantic import BaseModel
 
 from bots import BaseTelegramBot
 from db import Connection
-from models import TelegramBot, EditBot
+from models import TelegramBot
+from models_api import EditBot
 
 # import concurrent.futures # для MacOS
 
