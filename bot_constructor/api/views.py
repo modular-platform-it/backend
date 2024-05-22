@@ -22,23 +22,35 @@ from api.drf_spectacular.drf_serializers import (
     DummyActionSerializer,
     DummyBotSerializer,
     DummyFileSerializer,
+    DummyHeaderSerializer,
     DummyStartStopBotSerializer,
     DummyTokenErrorSerializer,
     DummyTokenSerializer,
+    DummyVariableSerializer,
     MethodNotAlowedSerializer,
     NotFoundSerializer,
 )
 from api.exceptions import BotIsRunningException
 from api.filters import TelegramBotFilter
 from api.serializers import (
+    HeaderSerializer,
+    TelegramBotActionHttpRequestSerializer,
+    TelegramBotActionMessageSerializer,
     TelegramBotActionSerializer,
     TelegramBotCreateSerializer,
     TelegramBotSerializer,
     TelegramBotShortSerializer,
     TelegramFileSerializer,
     TokenSerializer,
+    VariableSerializer,
 )
-from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
+from apps.bot_management.models import (
+    Header,
+    TelegramBot,
+    TelegramBotAction,
+    TelegramBotFile,
+    Variable,
+)
 
 
 def check_bot_started(telegram_bot_pk) -> None:
@@ -306,6 +318,17 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         serializer = TelegramBotActionSerializer(telegram_action)
         return Response(serializer.data)
 
+    def get_serializer_class(self):
+        action_type = self.request.data.get("action_type")
+        if action_type == TelegramBotAction.ActionType.HTTP_REQUEST:
+            return TelegramBotActionHttpRequestSerializer
+        elif action_type in (
+            TelegramBotAction.ActionType.MESSAGE,
+            TelegramBotAction.ActionType.QUERY,
+        ):
+            return TelegramBotActionMessageSerializer
+        return super().get_serializer_class()
+
     def get_serializer_context(self) -> dict[str, Any]:
         context = super(TelegramBotActionViewSet, self).get_serializer_context()
         if len(self.request.FILES) > 0:
@@ -486,3 +509,216 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         return super().create(request, *args, **kwargs)
+
+
+@extend_schema(tags=["Пользовательские переменные"])
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ]
+    ),
+    retrieve=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ],
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=VariableSerializer,
+                description="Пользовательская переменная действия",
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyVariableSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Действие или бот не найдены"
+            ),
+        },
+    ),
+    destroy=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ],
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(
+                description="Переменная удалена"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer,
+                description="Переменная, действие или бот не найдены",
+            ),
+        },
+    ),
+    update=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ],
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=VariableSerializer, description="Переменная действия изменена"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyVariableSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer,
+                description="Переменная, действие или бот не найдены",
+            ),
+        },
+    ),
+    create=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ],
+        responses={
+            status.HTTP_201_CREATED: OpenApiResponse(
+                response=VariableSerializer, description="Переменная действия создана"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyVariableSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Действие или бот не найдены"
+            ),
+        },
+    ),
+    partial_update=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ],
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=VariableSerializer, description="Переменная действия изменена"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyVariableSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer,
+                description="Переменная, действие или бот не найдены",
+            ),
+        },
+    ),
+)
+class VariableViewSet(viewsets.ModelViewSet):
+    queryset = Variable.objects.all()
+    serializer_class = VariableSerializer
+
+
+@extend_schema(tags=["Заголовки http запросов"])
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ]
+    ),
+    retrieve=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ],
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=HeaderSerializer,
+                description="Пользовательская заголовок http запроса",
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyHeaderSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer,
+                description="Заголовок, действие или бот не найдены",
+            ),
+        },
+    ),
+    destroy=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ],
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Заголовок удален"),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer,
+                description="Заголовок, действие или бот не найдены",
+            ),
+        },
+    ),
+    update=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ],
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=VariableSerializer,
+                description="Заголовок htttp запроса изменен",
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyVariableSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer,
+                description="Заголовок, действие или бот не найдены",
+            ),
+        },
+    ),
+    create=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ],
+        responses={
+            status.HTTP_201_CREATED: OpenApiResponse(
+                response=VariableSerializer, description="Заголовок http запроса создан"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyVariableSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Действие или бот не найдены"
+            ),
+        },
+    ),
+    partial_update=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
+            ),
+        ],
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=VariableSerializer,
+                description="Заголовок http запроса изменен",
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyVariableSerializer, description="Ошибка в полях"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer,
+                description="Заголовок, действие или бот не найдены",
+            ),
+        },
+    ),
+)
+class HeaderViewSet(viewsets.ModelViewSet):
+    queryset = Header.objects.all()
+    serializer_class = HeaderSerializer
