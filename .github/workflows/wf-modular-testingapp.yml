@@ -1,5 +1,5 @@
 ---
-name: modular testing app container launch
+name: testing app container launch
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
