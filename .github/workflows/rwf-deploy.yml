@@ -23,7 +23,6 @@ on:
         type: string
 jobs:
   deploy:
-    if: github.ref_name == 'develop'
     runs-on: ubuntu-latest
     steps:
       - name: executing remote ssh commands
