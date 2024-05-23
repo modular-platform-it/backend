@@ -1,0 +1,65 @@
+---
+name: modular testing app container launch
+run-name: ${{ github.actor }} started 🚀 GitHub Actions
+on:
+  push:
+    branches: ['**/testing-app**']
+    paths-ignore: ['**/pyproject.toml']
+  workflow_dispatch:
+env:
+  APP_VERSION: 0.0.1
+  APP_PROJECT_NAME: testing_app
+  APP_IMAGE_NAME: ${{vars.TESTING_APP_IMAGE_NAME}}
+  APP_CONTAINER_NAME: ${{vars.TESTING_APP_CONTAINER_NAME}}
+jobs:
+  variables:
+    name: Workaround to pass env variables to rwf
+    runs-on: ubuntu-latest
+    outputs:
+      app_version: ${{env.APP_VERSION}}
+      app_project_name: ${{env.APP_PROJECT_NAME}}
+      app_image_name: ${{env.APP_IMAGE_NAME}}
+      app_container_name: ${{env.APP_CONTAINER_NAME}}
+    steps:
+      - name: Echo - fake step
+        if: false
+        run: echo
+  build-bs:
+    needs: [variables]
+    uses: ./.github/workflows/rwf-build.yml
+    with:
+      APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
+      APP_IMAGE_NAME: ${{needs.variables.outputs.app_image_name}}
+      APP_VERSION: ${{needs.variables.outputs.app_version}}
+    secrets: inherit  # pragma: allowlist secret
+  deploy-bs:
+    name: Deployment on remote server
+    runs-on: ubuntu-latest
+    needs: build-bs
+    steps:
+      - name: executing remote ssh commands
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{secrets.MODULAR_HOST}}
+          username: ${{secrets.HOST_USER}}
+          key: ${{secrets.HOST_SSH_KEY}}
+          script: |
+            docker stop ${{env.APP_CONTAINER_NAME}}
+            docker rm ${{env.APP_CONTAINER_NAME}}
+            docker rmi ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
+            docker pull ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
+            docker run -d \
+              --name=${{env.APP_CONTAINER_NAME}} \
+              --hostname=${{env.APP_CONTAINER_NAME}} \
+              --net=${{secrets.MODULAR_NETWORK_NAME}} \
+              --restart=unless-stopped \
+              -e POSTGRES_DB=${{secrets.DJANGO_DB_NAME}} \
+              -e POSTGRES_USER=${{secrets.DJANGO_POSTGRES_USER}} \
+              -e POSTGRES_PASSWORD=${{secrets.DJANGO_POSTGRES_PASSWORD}} \
+              -e DB_HOST='postgres' \
+              -e DB_PORT=5432 \
+              ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
+  notify:
+    uses: ./.github/workflows/rwf-notify.yml
+    needs: deploy-bs
+    secrets: inherit  # pragma: allowlist secret
