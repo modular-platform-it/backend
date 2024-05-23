@@ -10,11 +10,12 @@ from faker_file.providers.txt_file import TxtFileProvider
 from faker_file.storages.filesystem import FileSystemStorage
 
 TEST_DIR = "test_dir"
-if sys.argv[1] == "test":
+if settings.IS_TESTING:
     with override_settings(MEDIA_ROOT=TEST_DIR + "/media"):
         FS_STORAGE = FileSystemStorage(root_path=settings.MEDIA_ROOT, rel_path="tmp")
 else:
     FS_STORAGE = FileSystemStorage(root_path=settings.MEDIA_ROOT, rel_path="tmp")
+
 Faker.add_provider(TxtFileProvider)
 
 cyrillic_letters = "".join(map(chr, range(ord("А"), ord("я") + 1))) + "Ёё"
@@ -28,7 +29,11 @@ class TelegramBotFactory(django.DjangoModelFactory):
 
     name = fuzzy.FuzzyText(prefix="тест_", length=15, chars=cyrillic_letters)
     telegram_token = Faker("bothify", text=10 * "#" + ":" + 35 * "?")
-    created_at = Faker("date_time_between", start_date=timedelta(days=30))
+    created_at = Faker(
+        "date_time_between",
+        start_date=timedelta(days=30),
+        tzinfo=timezone.get_current_timezone(),
+    )
     started_at = Faker(
         "date_time_this_month", after_now=False, tzinfo=timezone.get_current_timezone()
     )

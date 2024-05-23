@@ -1,8 +1,10 @@
 from allauth.account.views import LoginView, LogoutView
 from api.views import (
+    HeaderViewSet,
     TelegramBotActionFileViewSet,
     TelegramBotActionViewSet,
     TelegramBotViewSet,
+    VariableViewSet,
 )
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
@@ -24,6 +26,18 @@ files_router_v1 = routers.NestedDefaultRouter(
 files_router_v1.register(
     "files", TelegramBotActionFileViewSet, basename="telegram_bot_action-files"
 )
+variables_router_v1 = routers.NestedDefaultRouter(
+    actions_router_v1, "actions", lookup="telegram_action"
+)
+variables_router_v1.register(
+    "variables", VariableViewSet, basename="telegram_bot_action-variables"
+)
+headers_router_v1 = routers.NestedDefaultRouter(
+    actions_router_v1, "actions", lookup="telegram_action"
+)
+headers_router_v1.register(
+    "headers", HeaderViewSet, basename="telegram_bot_action-headers"
+)
 
 urlpatterns = [
     path("users/login/", LoginView.as_view(), name="account_login"),
@@ -39,4 +53,6 @@ urlpatterns = [
     path("", include(router_v1.urls)),
     path("", include(actions_router_v1.urls)),
     path("", include(files_router_v1.urls)),
+    path("", include(variables_router_v1.urls)),
+    path("", include(headers_router_v1.urls)),
 ]
