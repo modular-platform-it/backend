@@ -16,6 +16,7 @@ class TelegramBot(models.Model):
     name = models.CharField(
         verbose_name="Название бота",
         max_length=constants.BOT_NAME_LENGTH,
+        unique=True,
     )
     telegram_token = models.CharField(
         verbose_name="Токен авторизации телеграм бота",
