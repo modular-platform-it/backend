@@ -55,6 +55,9 @@ class TelegramBotAction(Base):
     name = Column(
         String(200),
     )
+    action_type = Column(
+        String(200),
+    )
     description = Column(
         String(200),
     )

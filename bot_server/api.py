@@ -1,12 +1,11 @@
 import asyncio
 
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-
 from bots import BaseTelegramBot
 from db import Connection
+from fastapi import FastAPI, HTTPException
 from models import TelegramBot
 from models_api import EditBot
+from pydantic import BaseModel
 
 # import concurrent.futures # для MacOS
 
