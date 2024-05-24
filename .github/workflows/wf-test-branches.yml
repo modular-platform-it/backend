@@ -3,7 +3,7 @@ name: test current branch
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches-ignore: [develop, production, review, fix/bot-constructor-container-launch]
+    branches-ignore: [develop, production, review, fix/app-launch]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 jobs:
