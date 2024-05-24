@@ -26,7 +26,7 @@ def start_bot(bot_id):
         connection.session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
     )
     bot = BaseTelegramBot(bot_data=bot_data)
-    # with concurrent.futures.ThreadPoolExecutor() as executor: для MacOS - добавить строки во всех api
+    # with concurrent.futures.ThreadPoolExecutor() as executor: # для MacOS - добавить строки во всех api
     #     executor.submit(bot.start)
     asyncio.run(bot.start())  # для MacOS - убрать строку
     return "Бот запущен"
