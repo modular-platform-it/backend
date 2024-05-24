@@ -12,7 +12,11 @@ services:
     image: postgres:16.1-alpine
     env_file: stack.env
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - type: bind
+        source: /opt/docker_postgres/postgres_data
+        target: /var/lib/postgresql/data/
+    volumes:
+        - ./init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
     networks:
       - traefik
 

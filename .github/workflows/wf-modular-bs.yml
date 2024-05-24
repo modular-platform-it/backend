@@ -1,5 +1,5 @@
 ---
-name: modular bot_server container launch
+name: bot_server container launch
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
