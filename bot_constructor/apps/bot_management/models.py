@@ -16,6 +16,7 @@ class TelegramBot(models.Model):
     name = models.CharField(
         verbose_name="Название бота",
         max_length=constants.BOT_NAME_LENGTH,
+        unique=True,
     )
     telegram_token = models.CharField(
         verbose_name="Токен авторизации телеграм бота",
@@ -97,6 +98,10 @@ class TelegramBotAction(models.Model):
         MESSAGE = "MESSAGE", "Сообщение"
         QUERY = "QUERY", "Запрос к пользователю"
         HTTP_REQUEST = "HTTP_REQUEST", "Http запрос"
+        GetListHandler = "GetListHandler", "Получение Списка"
+        StopHandler = "StopHandler", "Остановка"
+        Handlers = "Handlers", "Старт"
+        SendMassage = "SendMassage", "Получение обьекта"
 
     class APIMethodType(models.TextChoices):
         GET = "GET", "Get запрос"

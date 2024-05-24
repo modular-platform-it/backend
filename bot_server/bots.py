@@ -1,5 +1,11 @@
+import asyncio
+
 import handlers
 from aiogram import Bot, Dispatcher
+from db import Connection
+from models import TelegramBot, TelegramBotAction
+
+connection = Connection()
 
 
 class BaseTelegramBot:
@@ -12,20 +18,14 @@ class BaseTelegramBot:
         self.bot = Bot(token=self.token)
         self.dispatcher = Dispatcher()
         self.commands = []
-        actions = [
-            {
-                "name": "Handlers",
-            },
-            {
-                "name": "StopHandler",
-            },
-            {
-                "name": "GetListHandler",
-            },
-        ]
+        self.actions = (
+            connection.session.query(TelegramBotAction)
+            .filter(TelegramBotAction.telegram_bot_id == bot_data.id)
+            .all()
+        )
 
-        for action in actions:
-            handler = getattr(handlers, action["name"])(bot_data=self.bot_data)
+        for action in self.actions:
+            handler = getattr(handlers, action.action_type)(bot_data=self.bot_data)
             router = handler.router
             self.commands.append(handler.command)
             self.dispatcher.include_router(router)
@@ -38,7 +38,7 @@ class BaseTelegramBot:
     async def stop(self):
         print("Bot stopped")
         await self.bot.set_my_commands(commands=self.commands)
-        await self.dispatcher.stop_polling(self.bot)
+        await self.dispatcher.stop_polling()
 
     async def edit(self):
         print("Bot edited")
@@ -47,12 +47,7 @@ class BaseTelegramBot:
 
 
 if __name__ == "__main__":
-    import asyncio
 
-    from db import Connection
-    from models import TelegramBot
-
-    connection = Connection()
     bot_data = connection.session.query(TelegramBot).filter(TelegramBot.id == 1).first()
     bot = BaseTelegramBot(bot_data=bot_data)
     asyncio.run(bot.start())

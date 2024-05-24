@@ -9,9 +9,20 @@ on:
       APP_CONTAINER_NAME:
         required: true
         type: string
+      APP_DB_NAME:
+        required: true
+        type: string
+      APP_DB_USER:
+        required: true
+        type: string
+      APP_DB_PWD:
+        required: true
+        type: string
+      APP_VOLUME:
+        required: true
+        type: string
 jobs:
   deploy:
-    if: github.ref_name == 'develop'
     runs-on: ubuntu-latest
     steps:
       - name: executing remote ssh commands
@@ -36,11 +47,11 @@ jobs:
               -e DJANGO_SUPERUSER_EMAIL=${{secrets.DJANGO_SUPERUSER_EMAIL}} \
               -e ALLOWED_HOSTS=${{secrets.DJANGO_ALLOWED_HOSTS}} \
               -e CSRF_TRUSTED_ORIGINS=${{secrets.DJANGO_CSRF_TRUSTED_ORIGINS}} \
-              -e POSTGRES_DB=${{secrets.DJANGO_DB_NAME}} \
-              -e POSTGRES_USER=${{secrets.DJANGO_POSTGRES_USER}} \
-              -e POSTGRES_PASSWORD=${{secrets.DJANGO_POSTGRES_PASSWORD}} \
+              -e POSTGRES_DB=${{inputs.APP_DB_NAME}} \
+              -e POSTGRES_USER=${{inputs.APP_DB_USER}} \
+              -e POSTGRES_PASSWORD=${{inputs.APP_DB_PWD}} \
               -e DB_HOST='postgres' \
               -e DB_PORT=5432 \
-              -v bot_static:/app/bot_constructor/static/ \
-              -v bot_media:/app/bot_constructor/media/ \
+              -v ${{inputs.APP_VOLUME}}_static:/app/${{inputs.APP_VOLUME}}/static/ \
+              -v ${{inputs.APP_VOLUME}}_media:/app/${{inputs.APP_VOLUME}}/media/ \
               ${{secrets.DOCKERHUB_USERNAME}}/${{inputs.APP_IMAGE_NAME}}:latest
