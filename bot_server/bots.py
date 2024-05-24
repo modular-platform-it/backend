@@ -1,10 +1,9 @@
-import handlers
-from aiogram import Bot, Dispatcher
-from models import TelegramBot, TelegramBotAction
-
 import asyncio
 
+import handlers
+from aiogram import Bot, Dispatcher
 from db import Connection
+from models import TelegramBot, TelegramBotAction
 
 connection = Connection()
 
@@ -19,9 +18,11 @@ class BaseTelegramBot:
         self.bot = Bot(token=self.token)
         self.dispatcher = Dispatcher()
         self.commands = []
-        self.actions = connection.session.query(
-            TelegramBotAction).filter(TelegramBotAction.telegram_bot_id == bot_data.id
-                                      ).all()
+        self.actions = (
+            connection.session.query(TelegramBotAction)
+            .filter(TelegramBotAction.telegram_bot_id == bot_data.id)
+            .all()
+        )
 
         for action in self.actions:
             handler = getattr(handlers, action.action_type)(bot_data=self.bot_data)
