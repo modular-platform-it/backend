@@ -1,15 +1,28 @@
+import os
+
 from models import Base
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, inspect, URL
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class Connection:
     """Управление/инициализация БД и модели"""
 
     def __init__(self):
+        self.url_object = URL.create(
+            "postgresql+psycopg2",
+            username=os.getenv("POSTGRES_USER", "postgres"),
+            password=os.getenv("POSTGRES_PASSWORD", "postgres"),
+            host=os.getenv("DB_HOST", "localhost"),
+            database=os.getenv("POSTGRES_DB", "postgres"),
+            port=int(os.getenv("DB_PORT", "5432"))
+        )
         self.engine = create_engine(
-            "postgresql+psycopg2://postgres:456852@localhost:5432/postgresdb?client_encoding=utf8",
+            self.url_object,
             echo=True,
             client_encoding="utf8",
         )
