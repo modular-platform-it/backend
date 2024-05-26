@@ -12,7 +12,6 @@ env:
   APP_IMAGE_NAME: ${{vars.BOT_CONSTRUCTOR_IMAGE_NAME}}
   APP_CONTAINER_NAME: ${{vars.BOT_CONSTRUCTOR_CONTAINER_NAME}}
   APP_DB_NAME: ${{vars.BOT_CONSTRUCTOR_DB_NAME}}
-  APP_DB_USER: ${{vars.BOT_CONSTRUCTOR_DB_USER}}
   APP_DB_PWD: ${{vars.BOT_CONSTRUCTOR_DB_PWD}}
   APP_VOLUME: bot_constructor
 jobs:
@@ -25,7 +24,6 @@ jobs:
       app_image_name: ${{env.APP_IMAGE_NAME}}
       app_container_name: ${{env.APP_CONTAINER_NAME}}
       app_db_name: ${{env.APP_DB_NAME}}
-      app_db_user: ${{env.APP_DB_USER}}
       app_db_pwd: ${{env.APP_DB_PWD}}
       app_volume: ${{env.APP_VOLUME}}
     steps:
@@ -38,16 +36,16 @@ jobs:
     with:
       PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
 
-  # test-bc:
-  #   needs: [variables, lint]
-  #   uses: ./.github/workflows/rwf-pytest.yml
-  #   with:
-  #     APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
-  #     POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
-  #     PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
+  test-bc:
+    needs: [variables, lint]
+    uses: ./.github/workflows/rwf-pytest.yml
+    with:
+      APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
+      POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
+      PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
 
   build-bc:
-    needs: [variables, lint]
+    needs: [variables, test-bc]
     uses: ./.github/workflows/rwf-build.yml
     with:
       APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
@@ -62,7 +60,6 @@ jobs:
       APP_IMAGE_NAME: ${{needs.variables.outputs.app_image_name}}
       APP_CONTAINER_NAME: ${{needs.variables.outputs.app_container_name}}
       APP_DB_NAME: ${{needs.variables.outputs.app_db_name}}
-      APP_DB_USER: ${{needs.variables.outputs.app_db_user}}
       APP_DB_PWD: ${{needs.variables.outputs.app_db_pwd}}
       APP_VOLUME: ${{needs.variables.outputs.app_volume}}
     secrets: inherit  # pragma: allowlist secret
