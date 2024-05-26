@@ -3,7 +3,7 @@ name: testing app container launch
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: ['**/testing-app**']
+    branches: [fix/app-launch]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
