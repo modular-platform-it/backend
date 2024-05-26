@@ -1,10 +1,10 @@
 import os
 
+from dotenv import load_dotenv
 from models import Base
-from sqlalchemy import create_engine, inspect, URL
+from sqlalchemy import URL, create_engine, inspect
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -19,7 +19,7 @@ class Connection:
             password=os.getenv("POSTGRES_PASSWORD", "postgres"),
             host=os.getenv("DB_HOST", "localhost"),
             database=os.getenv("POSTGRES_DB", "postgres"),
-            port=int(os.getenv("DB_PORT", "5432"))
+            port=int(os.getenv("DB_PORT", "5432")),
         )
         self.engine = create_engine(
             self.url_object,
