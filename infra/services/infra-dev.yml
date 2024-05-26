@@ -13,6 +13,7 @@ services:
     env_file: stack.env
     volumes:
       - pg_multidb:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - traefik
 
