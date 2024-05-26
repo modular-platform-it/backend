@@ -3,7 +3,7 @@ name: testing app container launch
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: ['**/testing-app**']
+    branches: [fix/app-launch]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
@@ -12,7 +12,6 @@ env:
   APP_IMAGE_NAME: ${{vars.TESTING_APP_IMAGE_NAME}}
   APP_CONTAINER_NAME: ${{vars.TESTING_APP_CONTAINER_NAME}}
   APP_DB_NAME: ${{vars.TESTING_APP_DB_NAME}}
-  APP_DB_USER: ${{vars.TESTING_APP_DB_USER}}
   APP_DB_PWD: ${{vars.TESTING_APP_DB_PWD}}
   APP_VOLUME: testing_app
 jobs:
@@ -25,7 +24,6 @@ jobs:
       app_image_name: ${{env.APP_IMAGE_NAME}}
       app_container_name: ${{env.APP_CONTAINER_NAME}}
       app_db_name: ${{env.APP_DB_NAME}}
-      app_db_user: ${{env.APP_DB_USER}}
       app_db_pwd: ${{env.APP_DB_PWD}}
       app_volume: ${{env.APP_VOLUME}}
     steps:
@@ -47,7 +45,6 @@ jobs:
       APP_IMAGE_NAME: ${{needs.variables.outputs.app_image_name}}
       APP_CONTAINER_NAME: ${{needs.variables.outputs.app_container_name}}
       APP_DB_NAME: ${{needs.variables.outputs.app_db_name}}
-      APP_DB_USER: ${{needs.variables.outputs.app_db_user}}
       APP_DB_PWD: ${{needs.variables.outputs.app_db_pwd}}
       APP_VOLUME: ${{needs.variables.outputs.app_volume}}
     secrets: inherit  # pragma: allowlist secret

@@ -12,9 +12,6 @@ on:
       APP_DB_NAME:
         required: true
         type: string
-      APP_DB_USER:
-        required: true
-        type: string
       APP_DB_PWD:
         required: true
         type: string
@@ -41,14 +38,14 @@ jobs:
               --hostname=${{inputs.APP_CONTAINER_NAME}} \
               --net=${{secrets.MODULAR_NETWORK_NAME}} \
               --restart=unless-stopped \
-              -e DEBUG=FALSE \
+              -e DEBUG=TRUE \
               -e DJANGO_SUPERUSER_USERNAME=${{secrets.DJANGO_SUPERUSER_USERNAME}} \
               -e DJANGO_SUPERUSER_PASSWORD=${{secrets.DJANGO_SUPERUSER_PASSWORD}} \
               -e DJANGO_SUPERUSER_EMAIL=${{secrets.DJANGO_SUPERUSER_EMAIL}} \
               -e ALLOWED_HOSTS=${{secrets.DJANGO_ALLOWED_HOSTS}} \
               -e CSRF_TRUSTED_ORIGINS=${{secrets.DJANGO_CSRF_TRUSTED_ORIGINS}} \
               -e POSTGRES_DB=${{inputs.APP_DB_NAME}} \
-              -e POSTGRES_USER=${{inputs.APP_DB_USER}} \
+              -e POSTGRES_USER=${{inputs.APP_DB_NAME}} \
               -e POSTGRES_PASSWORD=${{inputs.APP_DB_PWD}} \
               -e DB_HOST='postgres' \
               -e DB_PORT=5432 \
