@@ -3,7 +3,7 @@ name: bot_constructor full CICD
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: [fix/bot-constructor-container-launch]
+    branches: [fix/me]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
@@ -12,7 +12,8 @@ env:
   APP_IMAGE_NAME: ${{vars.BOT_CONSTRUCTOR_IMAGE_NAME}}
   APP_CONTAINER_NAME: ${{vars.BOT_CONSTRUCTOR_CONTAINER_NAME}}
   APP_DB_NAME: ${{vars.BOT_CONSTRUCTOR_DB_NAME}}
-  APP_DB_USER: ${{vars.BOT_CONSTRUCTOR_DB_USER}}
+  # APP_DB_USER substituted to APP_DB_NAME
+  APP_DB_USER: ${{vars.BOT_CONSTRUCTOR_DB_NAME}}
   APP_DB_PWD: ${{vars.BOT_CONSTRUCTOR_DB_PWD}}
   APP_VOLUME: bot_constructor
 jobs:
