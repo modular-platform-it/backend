@@ -9,12 +9,12 @@ set -u
 
 function create_database() {
 	database=$1
-    password=$2
-    echo "Creating user and database '$database' with password '$password'"
-    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
-      CREATE USER $database with encrypted password '$password';
-      CREATE DATABASE $database;
-      GRANT ALL PRIVILEGES ON DATABASE $database TO $database;
+  password=$2
+  echo "Creating user and database '$database' with password '$password'"
+  psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+    CREATE USER $database with encrypted password '$password';
+    CREATE DATABASE $database;
+    GRANT ALL PRIVILEGES ON DATABASE $database TO $database;
 EOSQL
 }
 
