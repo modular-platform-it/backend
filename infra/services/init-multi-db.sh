@@ -1,6 +1,6 @@
 : '
 Script to init multiple postgres databases. Path to place the file:
-scp infra/services/init-multi-db.sql sihuan@xwick.ru:/home/sihuan/modular/dockume/postgres
+scp infra/services/init-multi-db.sh sihuan@xwick.ru:/home/sihuan/modular/dockume/postgres
 '
 #!/bin/bash
 
@@ -14,7 +14,7 @@ function create_database() {
   psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
     CREATE USER $database with encrypted password '$password';
     CREATE DATABASE $database;
-    GRANT ALL PRIVILEGES ON DATABASE $database TO $database;
+    ALTER DATABASE $database OWNER TO $database;
 EOSQL
 }
 
