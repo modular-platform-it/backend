@@ -51,4 +51,4 @@ jobs:
               -e DB_PORT=5432 \
               -v ${{inputs.APP_VOLUME}}_static:/app/${{inputs.APP_VOLUME}}/static/ \
               -v ${{inputs.APP_VOLUME}}_media:/app/${{inputs.APP_VOLUME}}/media/ \
-              ${{secrets.DOCKERHUB_USERNAME}}/${{inputs.APP_IMAGE_NAME}}:cors.1
+              ${{secrets.DOCKERHUB_USERNAME}}/${{inputs.APP_IMAGE_NAME}}:latest
