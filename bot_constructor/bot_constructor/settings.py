@@ -2,8 +2,19 @@ import os
 import sys
 from pathlib import Path
 
+
 from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
+import sentry_sdk
+
+sentry_sdk.init(
+    dsn=os.getenv(
+        "DNS_SENTRY",
+        "https://23e6d5f2732c51c6e2fcae66eb80c996@o4507328929398784.ingest.de.sentry.io/4507328931364944",
+    ),
+    traces_sample_rate=1.0,
+    profiles_sample_rate=1.0,
+)
 
 load_dotenv()
 
@@ -89,25 +100,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "bot_constructor.wsgi.application"
 
-
-if os.getenv("USE_SQLITE", "False") == "True" or sys.argv[1] == "test":
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": str(BASE_DIR / "db.sqlite3"),
-        }
+DATABASES = {
+    "default": {
+        "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.getenv("POSTGRES_DB", "postgresdb"),
+        "USER": os.getenv("POSTGRES_USER", "postgres"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "456852"),
+        "HOST": os.getenv("DB_HOST", "localhost"),
+        "PORT": os.getenv("DB_PORT", "5432"),
     }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),
-            "NAME": os.getenv("POSTGRES_DB", "postgresdb"),
-            "USER": os.getenv("POSTGRES_USER", "postgres"),
-            "PASSWORD": os.getenv("POSTGRES_PASSWORD", "456852"),
-            "HOST": os.getenv("DB_HOST", "localhost"),
-            "PORT": os.getenv("DB_PORT", "5432"),
-        }
-    }
+}
 
 
 AUTH_PASSWORD_VALIDATORS = [

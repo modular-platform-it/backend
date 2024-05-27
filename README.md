@@ -120,11 +120,6 @@ Django приложение, которое принимает запросы о
     docker compose exec backend python manage.py createsuperuser
 ```
 
-### Выполнить Собрать статику Django:
-```bash
-    sudo docker compose  exec backend python manage.py collectstatic
-    sudo docker compose  exec backend cp -r /app/collected_static/. /app/static/
-```
 
 ## Запуск докер контейнеров на удаленной машине:
 
@@ -132,35 +127,3 @@ Django приложение, которое принимает запросы о
 ```bash
     sudo apt update
 ```
-
-### Билдим проект и запускаем:
-```bash
-    cd bot_controler
-    sudo docker compose -f docker-compose.production.yml pull
-    sudo docker compose -f docker-compose.production.yml down
-    sudo docker compose -f docker-compose.production.yml up -d
-    sudo docker system prune -af
-```
-
-### Выполнить миграции:
-```bash
-    sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
-```
-
-### Выполнить миграции:
-```bash
-    docker compose -f docker-compose.production.yml exec backend python manage.py createsuperuser
-```
-
-### Выполнить Собрать статику Django:
-```bash
-    sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
-    sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /app/static/
-```
-
-### Настройки nginx:
-```bash
-    sudo nano /etc/nginx/sites-enabled/default
-```
-
-## Примеры запросов и ответов к API
