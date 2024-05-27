@@ -1,8 +1,5 @@
 import logging
 
-py_logger = logging.getLogger(__name__)
-py_logger.setLevel(logging.INFO)
-
 # получение пользовательского логгера и установка уровня логирования
 py_logger = logging.getLogger(__name__)
 py_logger.setLevel(logging.INFO)
