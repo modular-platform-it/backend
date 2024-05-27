@@ -14,11 +14,11 @@ class Connection:
 
     def __init__(self):
         self.url_object = URL.create(
-            "postgresql+psycopg2",
-            username=os.getenv("POSTGRES_USER", "postgresdb"),
+            drivername="postgresql+psycopg2",
+            username=os.getenv("POSTGRES_USER", "postgres"),
             password=os.getenv("POSTGRES_PASSWORD", "456852"),
             host=os.getenv("DB_HOST", "localhost"),
-            database=os.getenv("POSTGRES_DB", "postgres"),
+            database=os.getenv("POSTGRES_DB", "postgresdb"),
             port=int(os.getenv("DB_PORT", "5432")),
         )
         self.engine = create_engine(
