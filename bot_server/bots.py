@@ -1,10 +1,11 @@
 import asyncio
 
-import handlers
 from aiogram import Bot, Dispatcher
+
+import handlers
 from db import Connection
-from models import TelegramBot, TelegramBotAction
 from log import py_logger
+from models import TelegramBot, TelegramBotAction
 
 connection = Connection()
 

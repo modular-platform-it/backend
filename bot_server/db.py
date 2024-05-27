@@ -1,11 +1,12 @@
 import os
 
 from dotenv import load_dotenv
-from models import Base
 from sqlalchemy import URL, create_engine, inspect
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.orm import sessionmaker
+
 from log import py_logger
+from models import Base
 
 load_dotenv()
 

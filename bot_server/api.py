@@ -1,15 +1,15 @@
 # Шина общения и управление ботом
 import asyncio
-import sentry_sdk
 import os
-from dotenv import load_dotenv
-from log import py_logger
 
+import sentry_sdk
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from bots import BaseTelegramBot
 from db import Connection
+from log import py_logger
 from models import TelegramBot
 from models_api import EditBot
 
@@ -18,7 +18,10 @@ from models_api import EditBot
 
 load_dotenv()
 sentry_sdk.init(
-    dsn=os.getenv("DNS_SENTRY", "https://23e6d5f2732c51c6e2fcae66eb80c996@o4507328929398784.ingest.de.sentry.io/4507328931364944"),
+    dsn=os.getenv(
+        "DNS_SENTRY",
+        "https://23e6d5f2732c51c6e2fcae66eb80c996@o4507328929398784.ingest.de.sentry.io/4507328931364944",
+    ),
     traces_sample_rate=1.0,
     profiles_sample_rate=1.0,
 )
