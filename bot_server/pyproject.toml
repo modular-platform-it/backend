@@ -17,6 +17,7 @@ fastapi = "^0.111.0"
 sqlalchemy-file = "^0.6.0"
 psycopg2-binary = "^2.9.9"
 requests = "^2.32.2"
+sentry-sdk = {extras = ["fastapi"], version = "^2.3.1"}
 
 
 [tool.poetry.group.dev.dependencies]

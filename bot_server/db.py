@@ -5,6 +5,7 @@ from models import Base
 from sqlalchemy import URL, create_engine, inspect
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.orm import sessionmaker
+from log import py_logger
 
 load_dotenv()
 
@@ -18,8 +19,8 @@ class Connection:
             username=os.getenv("POSTGRES_USER", "postgres"),
             password=os.getenv("POSTGRES_PASSWORD", "456852"),
             host=os.getenv("DB_HOST", "localhost"),
-            database=os.getenv("POSTGRES_DB", "postgresdb"),
-            port=int(os.getenv("DB_PORT", "5432")),
+            database=os.getenv("POSTGRES_DB", "postgres"),
+            port=int(os.getenv("DB_PORT", "5439")),
         )
         self.engine = create_engine(
             self.url_object,
@@ -29,6 +30,7 @@ class Connection:
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
         self.inspector: Inspector | None = inspect(subject=self.engine)
+        py_logger.info(f"к базе подключились")
 
 
 class DB:

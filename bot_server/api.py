@@ -1,15 +1,27 @@
+# Шина общения и управление ботом
 import asyncio
+import sentry_sdk
+import os
+from dotenv import load_dotenv
+from log import py_logger
+
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 
 from bots import BaseTelegramBot
 from db import Connection
-from fastapi import FastAPI, HTTPException
 from models import TelegramBot
 from models_api import EditBot
-from pydantic import BaseModel
 
 # import concurrent.futures # для MacOS
 
-"""Шина общения и управление ботом"""
+
+load_dotenv()
+sentry_sdk.init(
+    dsn=os.getenv("DNS_SENTRY", "https://23e6d5f2732c51c6e2fcae66eb80c996@o4507328929398784.ingest.de.sentry.io/4507328931364944"),
+    traces_sample_rate=1.0,
+    profiles_sample_rate=1.0,
+)
 app = FastAPI()
 connection = Connection()
 
@@ -29,6 +41,7 @@ def start_bot(bot_id):
     # with concurrent.futures.ThreadPoolExecutor() as executor: # для MacOS - добавить строки во всех api
     #     executor.submit(bot.start)
     asyncio.run(bot.start())  # для MacOS - убрать строку
+    py_logger.info(f"Бот запущен {bot_id}")
     return "Бот запущен"
 
 
@@ -41,27 +54,8 @@ def stop_bot(bot_id):
         return HTTPException(status_code=404, detail="Бот не найден")
     bot = BaseTelegramBot(bot_data=bot_data)
     asyncio.run(bot.stop())
+    py_logger.info(f"Бот запущен {bot_id}")
     return "Бот остановлен"
-
-
-@app.put("/{bot_id}/edit/")
-def edit_bot(bot_id, data: EditBot):
-    bot_data = (
-        connection.session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
-    )
-    if not bot_data:
-        return HTTPException(status_code=404, detail="Бот не найден")
-    bot_data.name = data.name
-    bot_data.description = data.description
-    bot_data.telegram_token = data.telegram_token
-    bot_data.api_url = data.api_url
-    bot_data.api_key = data.api_key
-    bot_data.api_availability = data.api_availability
-    bot_data.bot_state = data.bot_state
-    connection.session.commit()
-    bot = BaseTelegramBot(bot_data=bot_data)
-    asyncio.run(bot.edit())
-    return "Бот изменен"
 
 
 if __name__ == "__main__":
