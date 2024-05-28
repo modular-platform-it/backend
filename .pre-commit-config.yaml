@@ -9,7 +9,6 @@ repos:
         args: [--markdown-linebreak-ext=md]
       - id: check-added-large-files
       - id: check-merge-conflict
-      - id: end-of-file-fixer
         exclude: |
           (?x)^(
               uml/.*|
