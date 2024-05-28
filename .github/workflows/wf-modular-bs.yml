@@ -24,7 +24,6 @@ jobs:
       app_version: ${{env.APP_VERSION}}
       app_project_name: ${{env.APP_PROJECT_NAME}}
       app_image_name: ${{env.APP_IMAGE_NAME}}
-      app_container_name: ${{env.APP_CONTAINER_NAME}}
     steps:
       - name: Echo - fake step
         if: false
@@ -61,7 +60,7 @@ jobs:
               -e POSTGRES_DB=${{env.APP_DB_NAME}} \
               -e POSTGRES_USER=${{env.APP_DB_USER}} \
               -e POSTGRES_PASSWORD=${{env.APP_DB_PWD}} \
-              -e DB_HOST='postgres' \
+              -e DB_HOST='172.18.0.3' \
               -e DB_PORT=5432 \
               ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
   notify:
