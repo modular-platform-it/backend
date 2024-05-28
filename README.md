@@ -1,4 +1,4 @@
-[![modular backend CICD](https://github.com/modular-platform-it/backend/actions/workflows/modular-back.yml/badge.svg)](https://github.com/modular-platform-it/backend/actions/workflows/modular-back.yml)
+[![modular backend CICD](https://github.com/modular-platform-it/backend/actions/workflows/wf-test-branches.yml/badge.svg)](https://github.com/modular-platform-it/backend/actions/workflows/wf-test-branches.yml)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 
 # Описание

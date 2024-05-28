@@ -20,13 +20,29 @@ http:
         #       - "*.xwick.ru"
       service: nginx
 
-    to-backend:
+    to-botconstructor:
       entryPoints:
         - websecure
       rule: Host(`api.xwick.ru`)
       tls:
         certResolver: letsencrypt
-      service: backend
+      service: botconstructor
+
+    to-botserver:
+      entryPoints:
+        - websecure
+      rule: Host(`api.xwick.ru`) && PathPrefix(`/bserver`)
+      tls:
+        certResolver: letsencrypt
+      service: botserver
+
+    to-testingapp:
+      entryPoints:
+        - websecure
+      rule: Host(`api.xwick.ru`) && PathPrefix(`/tapp`)
+      tls:
+        certResolver: letsencrypt
+      service: testingapp
 
     to-traefik:
       entryPoints:
@@ -59,10 +75,20 @@ http:
         servers:
         - url: http://nginx:80
 
-    backend:
+    botconstructor:
       loadBalancer:
         servers:
-        - url: http://backend:8000
+        - url: http://botconstructor:8000
+
+    botserver:
+      loadBalancer:
+        servers:
+        - url: http://botserver:8080
+
+    testingapp:
+      loadBalancer:
+        servers:
+        - url: http://testing:8081
 
     pgadmin:
       loadBalancer:

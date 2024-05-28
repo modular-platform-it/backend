@@ -2,25 +2,29 @@ import os
 import shutil
 from typing import Any
 
+from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
+from django.contrib.auth import get_user_model
 from django.urls import reverse
+from factory_data.factories import TEST_DIR  # type: ignore
+from factory_data.factories import (
+    TelegramBotActionFactory,
+    TelegramBotFactory,
+    TelegramBotFileFactory,
+)
 from faker_file.registry import FILE_REGISTRY  # type: ignore
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import APITestCase, override_settings
 
-from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
-from factory_data.factories import (  # type: ignore
-    TEST_DIR,
-    TelegramBotActionFactory,
-    TelegramBotFactory,
-    TelegramBotFileFactory,
-)
+User = get_user_model()
 
 
 class TestTelegramBotView(APITestCase):
     """Набор тестов для набора представлений телеграм бота."""
 
     def setUp(self) -> Any:
+        user = User.objects.create_user(username="test@test.ru", password="12345")
+        self.client.force_login(user)
         self.telegram_bot: TelegramBot = TelegramBotFactory.build()
         self.url_list: str = reverse("telegrambot-list")
         self.url_detail: str = "telegrambot-detail"
@@ -95,6 +99,8 @@ class TestTelegramBotActionView(APITestCase):
     """Набор тестов для набора представлений действий телеграм бота."""
 
     def setUp(self) -> Any:
+        user = User.objects.create_user(username="test@test.ru", password="12345")
+        self.client.force_login(user)
         self.telegram_bot: TelegramBot = TelegramBotFactory.create()
         self.telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
             telegram_bot=self.telegram_bot,
@@ -215,6 +221,8 @@ class TestTelegramBotFileView(APITestCase):
     """Набор тестов для набора представлений файлов действий телеграм бота."""
 
     def setUp(self) -> Any:
+        user = User.objects.create_user(username="test@test.ru", password="12345")
+        self.client.force_login(user)
         self.telegram_bot: TelegramBot = TelegramBotFactory.create(
             bot_state=TelegramBot.BotState.STOPPED
         )

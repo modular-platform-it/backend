@@ -1,11 +1,7 @@
-from django.test import TestCase
-
 from apps.bot_management.models import TelegramBotAction
-from factory_data.factories import (  # type: ignore
-    TelegramBotActionFactory,
-    TelegramBotFactory,
-    TelegramBotFileFactory,
-)
+from django.test import TestCase
+from factory_data.factories import TelegramBotActionFactory  # type: ignore
+from factory_data.factories import TelegramBotFactory, TelegramBotFileFactory
 
 
 class TestTelegramBotModel(TestCase):

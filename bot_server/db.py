@@ -9,7 +9,7 @@ class Connection:
 
     def __init__(self):
         self.engine = create_engine(
-            "postgresql+psycopg2://postgres:456852@localhost:5432/postgres?client_encoding=utf8",
+            "postgresql+psycopg2://postgres:456852@localhost:5432/postgresdb?client_encoding=utf8",
             echo=True,
             client_encoding="utf8",
         )
@@ -22,15 +22,15 @@ class DB:
     """Создание в БД таблиц"""
 
     def __init__(self):
-        self.conn = Connection()
+        self.connection = Connection()
 
     def to_db(
         self,
     ):
         Base.metadata.create_all(
-            bind=self.conn.engine,
+            bind=self.connection.engine,
         )
-        self.conn.session.commit()
+        self.connection.session.commit()
 
 
 def run():

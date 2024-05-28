@@ -96,3 +96,22 @@ class DummyNotAuthorized(DummySerializer):
     """Сериализатор для схемы swagger для статуса 401."""
 
     detail = serializers.CharField()
+
+
+class DummyVariableSerializer(DummySerializer):
+    """Сериализатор для схемы swagger для статуса 400 переменной телеграм бота."""
+
+    name = serializers.ListSerializer(child=serializers.CharField())
+    telegram_action = serializers.ListSerializer(child=serializers.CharField())
+    variable_type = serializers.ListSerializer(child=serializers.CharField())
+
+
+class DummyHeaderSerializer(DummySerializer):
+    """Сериализатор swagger для статуса 400 заголовка http запроса телеграм бота."""
+
+    name = serializers.ListSerializer(child=serializers.CharField())
+    telegram_action = serializers.ListSerializer(child=serializers.CharField())
+
+
+class ForbiddenSerializer(DummySerializer):
+    detail = serializers.CharField()
