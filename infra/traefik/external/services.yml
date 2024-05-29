@@ -30,8 +30,8 @@ http:
 
     to-botserver:
       entryPoints:
-        - websecure
-      rule: Host(`api.xwick.ru`) && PathPrefix(`/bserver`)
+        - botserver
+      rule: Host(`xwick.ru`)
       tls:
         certResolver: letsencrypt
       service: botserver

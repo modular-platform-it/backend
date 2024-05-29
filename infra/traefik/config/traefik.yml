@@ -11,6 +11,8 @@ entryPoints:
           to: websecure
   websecure:
     address: :443
+  botserver:
+    address: :8081
 
 api:
   dashboard: true
