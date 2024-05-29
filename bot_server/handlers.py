@@ -67,3 +67,4 @@ class Handlers:
 class SendMassage:
     def __init__(self):
         self.router = Router()
+
