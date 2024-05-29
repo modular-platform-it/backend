@@ -3,7 +3,7 @@ name: bot_server container launch
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: [bot_server]
+    branches: [develop]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
@@ -52,7 +52,7 @@ jobs:
             docker rm ${{env.APP_CONTAINER_NAME}}
             docker rmi ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
             docker pull ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
-            docker run -d \
+            docker run \
               --name=${{env.APP_CONTAINER_NAME}} \
               --hostname=${{env.APP_CONTAINER_NAME}} \
               --net=${{secrets.MODULAR_NETWORK_NAME}} \
