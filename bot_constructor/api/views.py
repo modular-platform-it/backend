@@ -73,6 +73,9 @@ def check_bot_started(telegram_bot_pk) -> None:
     list=extend_schema(
         responses={
             status.HTTP_200_OK: OpenApiResponse(response=TelegramBotSerializer),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyBotSerializer, description="Ошибка в полях"
+            ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
             ),
@@ -94,6 +97,9 @@ def check_bot_started(telegram_bot_pk) -> None:
             status.HTTP_204_NO_CONTENT: OpenApiResponse(
                 description="Телеграм бот удален"
             ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyBotSerializer, description="Ошибка в поле id"
+            ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
             ),
@@ -108,7 +114,8 @@ def check_bot_started(telegram_bot_pk) -> None:
                 response=TelegramBotCreateSerializer, description="Бот обновлен"
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
-                response=DummyBotSerializer, description="Ошибка в полях"
+                response=DummyBotSerializer,
+                description="Ошибка в полях или остановите бота",
             ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
@@ -137,7 +144,8 @@ def check_bot_started(telegram_bot_pk) -> None:
                 response=TelegramBotCreateSerializer, description="Бот обновлен"
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
-                response=DummyBotSerializer, description="Ошибка в полях"
+                response=DummyBotSerializer,
+                description="Ошибка в полях или остановите бота",
             ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
@@ -172,6 +180,9 @@ def check_bot_started(telegram_bot_pk) -> None:
             status.HTTP_200_OK: OpenApiResponse(
                 response=DummyStartStopBotSerializer,
             ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyBotSerializer, description="Ошибка в поле id"
+            ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
             ),
@@ -185,6 +196,9 @@ def check_bot_started(telegram_bot_pk) -> None:
         responses={
             status.HTTP_200_OK: OpenApiResponse(
                 response=DummyStartStopBotSerializer,
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyBotSerializer, description="Ошибка в поле id"
             ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"

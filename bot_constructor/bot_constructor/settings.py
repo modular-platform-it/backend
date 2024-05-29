@@ -62,7 +62,7 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
 ]
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
@@ -139,8 +139,6 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
-LOGIN_REDIRECT_URL = "/v1/bots/"
-ACCOUNT_LOGOUT_REDIRECT_URL = "/v1/users/login/"
 
 LANGUAGE_CODE = "ru"
 
