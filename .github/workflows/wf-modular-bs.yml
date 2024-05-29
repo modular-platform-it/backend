@@ -52,7 +52,7 @@ jobs:
             docker rm ${{env.APP_CONTAINER_NAME}}
             docker rmi ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
             docker pull ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
-            docker run \
+            docker run -d \
               --name=${{env.APP_CONTAINER_NAME}} \
               --hostname=${{env.APP_CONTAINER_NAME}} \
               --net=${{secrets.MODULAR_NETWORK_NAME}} \
