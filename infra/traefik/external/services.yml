@@ -30,8 +30,8 @@ http:
 
     to-botserver:
       entryPoints:
-        - botserver
-      rule: Host(`xwick.ru`)
+        - websecure
+      rule: Host(`api.xwick.ru`) && PathPrefix(`/bserver`)
       tls:
         certResolver: letsencrypt
       service: botserver
@@ -39,7 +39,7 @@ http:
     to-testingapp:
       entryPoints:
         - websecure
-      rule: Host(`api.xwick.ru`) && PathPrefix(`/tapp`)
+      rule: Host(`api.xwick.ru`) && PathPrefix(`/testapp`)
       tls:
         certResolver: letsencrypt
       service: testingapp

@@ -3,7 +3,7 @@ name: bot_constructor full CICD
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: [develop]
+    branches: [todevelop]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
@@ -34,21 +34,8 @@ jobs:
         if: false
         run: echo
 
-  # lint:
-  #   uses: ./.github/workflows/rwf-precommit.yml
-  #   with:
-  #     PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
-
-  # test-bc:
-  #   needs: [variables, lint]
-  #   uses: ./.github/workflows/rwf-pytest.yml
-  #   with:
-  #     APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
-  #     POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
-  #     PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
-
   build-bc:
-    needs: [variables, variables]
+    needs: variables
     uses: ./.github/workflows/rwf-build.yml
     with:
       APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
