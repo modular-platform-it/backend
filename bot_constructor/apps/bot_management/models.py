@@ -95,7 +95,7 @@ class TelegramBotAction(models.Model):
 
     # TODO разбить модель на отдельные виды
     class ActionType(models.TextChoices):
-
+        MESSAGE = "MESSAGE", "Сообщение"
         GetListHandler = "GetListHandler", "Получение Списка"
         StopHandler = "StopHandler", "Остановка"
         Handlers = "Handlers", "Старт"

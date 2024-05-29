@@ -68,3 +68,8 @@ class SendMassage:
     def __init__(self):
         self.router = Router()
 
+
+class MESSAGE:
+    def __init__(self):
+        self.router = Router()
+
