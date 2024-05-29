@@ -12,7 +12,7 @@ from models import TelegramBot
 from models_api import EditBot
 from pydantic import BaseModel
 
-# import concurrent.futures # для MacOS
+import concurrent.futures # для MacOS
 
 
 load_dotenv()
@@ -45,9 +45,9 @@ def start_bot(bot_id):
         connection.session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
     )
     bot = BaseTelegramBot(bot_data=bot_data)
-    # with concurrent.futures.ThreadPoolExecutor() as executor: # для MacOS - добавить строки во всех api
-    #     executor.submit(bot.start)
-    asyncio.run(bot.start())  # для MacOS - убрать строку
+    with concurrent.futures.ThreadPoolExecutor() as executor: # для MacOS - добавить строки во всех api
+        executor.submit(bot.start)
+    # asyncio.run(bot.start())  # для MacOS - убрать строку
     py_logger.info(f"Бот запущен {bot_id}")
     return "Бот запущен"
 
