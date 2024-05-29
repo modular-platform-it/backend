@@ -11,10 +11,10 @@ env:
   APP_PROJECT_NAME: bot_server
   APP_IMAGE_NAME: ${{vars.BOT_SERVER_IMAGE_NAME}}
   APP_CONTAINER_NAME: ${{vars.BOT_SERVER_CONTAINER_NAME}}
-  APP_DB_NAME: ${{vars.BOT_SERVER_DB_NAME}}
+  APP_DB_NAME: ${{vars.BOT_CONTAINER_DB_NAME}}
   # APP_DB_USER substituted to APP_DB_NAME
-  APP_DB_USER: ${{vars.BOT_SERVER_DB_NAME}}
-  APP_DB_PWD: ${{vars.BOT_SERVER_DB_PWD}}
+  APP_DB_USER: ${{vars.BOT_CONTAINER_DB_NAME}}
+  APP_DB_PWD: ${{vars.BOT_CONTAINER_DB_PWD}}
   APP_VOLUME: bot_server
 jobs:
   # variables:
