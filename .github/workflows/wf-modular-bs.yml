@@ -17,29 +17,29 @@ env:
   APP_DB_PWD: ${{vars.BOT_SERVER_DB_PWD}}
   APP_VOLUME: bot_server
 jobs:
-  variables:
-    name: Pass env variables to rwf
-    runs-on: ubuntu-latest
-    outputs:
-      app_version: ${{env.APP_VERSION}}
-      app_project_name: ${{env.APP_PROJECT_NAME}}
-      app_image_name: ${{env.APP_IMAGE_NAME}}
-    steps:
-      - name: Echo - fake step
-        if: false
-        run: echo
-  build-bs:
-    needs: [variables]
-    uses: ./.github/workflows/rwf-build.yml
-    with:
-      APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
-      APP_IMAGE_NAME: ${{needs.variables.outputs.app_image_name}}
-      APP_VERSION: ${{needs.variables.outputs.app_version}}
-    secrets: inherit  # pragma: allowlist secret
+  # variables:
+  #   name: Pass env variables to rwf
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     app_version: ${{env.APP_VERSION}}
+  #     app_project_name: ${{env.APP_PROJECT_NAME}}
+  #     app_image_name: ${{env.APP_IMAGE_NAME}}
+  #   steps:
+  #     - name: Echo - fake step
+  #       if: false
+  #       run: echo
+  # build-bs:
+  #   needs: [variables]
+  #   uses: ./.github/workflows/rwf-build.yml
+  #   with:
+  #     APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
+  #     APP_IMAGE_NAME: ${{needs.variables.outputs.app_image_name}}
+  #     APP_VERSION: ${{needs.variables.outputs.app_version}}
+  #   secrets: inherit  # pragma: allowlist secret
   deploy-bs:
     name: Deployment on remote server
     runs-on: ubuntu-latest
-    needs: build-bs
+    # needs: build-bs
     steps:
       - name: executing remote ssh commands
         uses: appleboy/ssh-action@v1.0.0
