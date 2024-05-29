@@ -60,8 +60,7 @@ jobs:
               -e POSTGRES_DB=${{env.APP_DB_NAME}} \
               -e POSTGRES_USER=${{env.APP_DB_USER}} \
               -e POSTGRES_PASSWORD=${{env.APP_DB_PWD}} \
-              -e POSTGRES_HOST_AUTH_METHOD=trust \
-              -e DB_HOST='172.18.0.5' \
+              -e DB_HOST='postgres' \
               -e DB_PORT=5432 \
               ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
   notify:
