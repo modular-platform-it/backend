@@ -3,15 +3,14 @@ import asyncio
 import os
 
 import sentry_sdk
-from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-
 from bots import BaseTelegramBot
 from db import Connection
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException
 from log import py_logger
 from models import TelegramBot
 from models_api import EditBot
+from pydantic import BaseModel
 
 # import concurrent.futures # для MacOS
 
@@ -33,6 +32,11 @@ class Bot(BaseModel):
     name: str
     token: str
     start: bool
+
+
+@app.get("/check/")
+def check_app():
+    return "Все работает"
 
 
 @app.get("/{bot_id}/start/")

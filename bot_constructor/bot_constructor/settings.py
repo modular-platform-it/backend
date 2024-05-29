@@ -2,10 +2,9 @@ import os
 import sys
 from pathlib import Path
 
-
+import sentry_sdk
 from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
-import sentry_sdk
 
 sentry_sdk.init(
     dsn=os.getenv(
@@ -107,7 +106,7 @@ DATABASES = {
         "USER": os.getenv("POSTGRES_USER", "postgres"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD", "456852"),
         "HOST": os.getenv("DB_HOST", "localhost"),
-        "PORT": os.getenv("DB_PORT", "5432"),
+        "PORT": os.getenv("DB_PORT", "5439"),
     }
 }
 

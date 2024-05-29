@@ -3,15 +3,14 @@ from http import HTTPStatus
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
-
-from purchases.models import Cart, ShoppingCart
 from purchases.constants import (
-    USER_USERNAME,
-    PASSWORD,
-    CART_NAME,
     CART_DESCRIPTION,
     CART_MEASUREMENT_UNIT,
+    CART_NAME,
+    PASSWORD,
+    USER_USERNAME,
 )
+from purchases.models import Cart, ShoppingCart
 
 
 class CartViewSetTests(TestCase):

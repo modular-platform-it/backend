@@ -3,7 +3,6 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import BotCommand, Message
 from fastapi import HTTPException
-
 from models_api import ItemList
 
 
