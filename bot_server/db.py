@@ -14,14 +14,15 @@ class Connection:
     """Управление/инициализация БД и модели"""
 
     def __init__(self):
-        self.url_object = URL.create(
-            drivername="postgresql+psycopg2",
-            username=os.getenv("POSTGRES_USER", "postgres"),
-            password=os.getenv("POSTGRES_PASSWORD", "456852"),
-            host=os.getenv("DB_HOST", "localhost"),
-            database=os.getenv("POSTGRES_DB", "postgres"),
-            port=int(os.getenv("DB_PORT", "5439")),
-        )
+        # self.url_object = URL.create(
+        #     drivername="postgresql+psycopg2",
+        #     username=os.getenv("POSTGRES_USER", "postgres"),
+        #     password=os.getenv("POSTGRES_PASSWORD", "456852"),
+        #     host=os.getenv("DB_HOST", "localhost"),
+        #     database=os.getenv("POSTGRES_DB", "postgres"),
+        #     port=int(os.getenv("DB_PORT", "5439")),
+        # )
+        self.url_object = "sqlite:///foo.db"
         self.engine = create_engine(
             self.url_object,
             echo=True,

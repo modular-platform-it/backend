@@ -23,4 +23,5 @@ RUN apt-get update && apt-get install --no-install-recommends -y build-essential
 	&& apt-get purge --auto-remove -y build-essential \
 	&& rm -rf /var/lib/apt/lists/*
 
+CMD ["python", "db.py"]
 CMD ["uvicorn", "api:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8000"]
