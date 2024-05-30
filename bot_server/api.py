@@ -42,9 +42,29 @@ def check_app():
 @error_logger
 @app.get("/{bot_id}/start/")
 def start_bot(bot_id):
-    bot_data = (
-        connection.session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
-    )
+    # bot_data = (
+    #     connection.session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
+    # )
+    if bot_id == 1:
+        bot_data = {
+            "name": "bot3",
+            "telegram_token": "5887317990:AAH9l1nK1J8UPolkr03luFxBt5xTNtdUU1A",
+            "description": "sadsad",
+            "api_key": "sadsad",  # pragma: allowlist secret
+            "api_url": "http://api.sadsad.ru/",
+            "api_availability": True,
+            "bot_state": "RUNNING",
+        }
+    else:
+        bot_data = {
+            "name": "bot4",
+            "telegram_token": "7183394983:AAEzdAGDlbIoN4U129juaaUa7TdTu0SFEuU",
+            "description": "sadsad",
+            "api_key": "sadsad",  # pragma: allowlist secret
+            "api_url": "http://api.sadsad.ru/",
+            "api_availability": True,
+            "bot_state": "RUNNING",
+        }
     bot = BaseTelegramBot(bot_data=bot_data)
     # with concurrent.futures.ThreadPoolExecutor() as executor: # для MacOS - добавить строки во всех api
     #     executor.submit(bot.start)
@@ -70,4 +90,4 @@ def stop_bot(bot_id):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="localhost", port=8080)
+    uvicorn.run(app, host="localhost", port=8000)

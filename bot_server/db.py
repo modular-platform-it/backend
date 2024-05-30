@@ -22,12 +22,13 @@ class Connection:
         #     database=os.getenv("POSTGRES_DB", "postgres"),
         #     port=int(os.getenv("DB_PORT", "5439")),
         # )
-        self.url_object = "sqlite:///foo.db"
-        self.engine = create_engine(
-            self.url_object,
-            echo=True,
-            client_encoding="utf8",
-        )
+        #
+        # self.engine = create_engine(
+        #     self.url_object,
+        #     echo=True,
+        #     client_encoding="utf8",
+        # )
+        self.engine = create_engine("sqlite:///foo.db")
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
         self.inspector: Inspector | None = inspect(subject=self.engine)
