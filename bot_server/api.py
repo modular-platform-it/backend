@@ -41,17 +41,14 @@ def check_app():
 
 
 @app.get("/{bot_id}/start/")
-async def start_bot(bot_id):
-
+def start_bot(bot_id):
     bot_data = (
         connection.session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
     )
     bot = BaseTelegramBot(bot_data=bot_data)
-    bot_thread = threading.Thread(target=bot.run_bot)
-    bot_thread.start()
     # with concurrent.futures.ThreadPoolExecutor() as executor: # для MacOS - добавить строки во всех api
     #     executor.submit(bot.start)
-    # asyncio.run(bot.start())  # для MacOS - убрать строку
+    asyncio.run(bot.start())  # для MacOS - убрать строку
     py_logger.info(f"Бот запущен {bot_id}")
     return "Бот запущен"
 

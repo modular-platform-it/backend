@@ -32,12 +32,6 @@ class BaseTelegramBot:
             self.dispatcher.include_router(router)
         py_logger.info(f"Бот создан {self.bot_data.id}")
 
-    def run_bot(self):
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        loop.create_task(self.start())
-        loop.run_forever()
-
     async def start(self):
         py_logger.info(f"Бот стартовал {self.bot_data.id}")
         await self.bot.set_my_commands(commands=self.commands)
