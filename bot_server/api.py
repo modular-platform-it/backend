@@ -7,7 +7,7 @@ from bots import BaseTelegramBot
 from db import Connection
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-from log import py_logger
+from log import py_logger, error_logger
 from models import TelegramBot
 from models_api import EditBot
 from pydantic import BaseModel
@@ -34,12 +34,12 @@ class Bot(BaseModel):
     token: str
     start: bool
 
-
+@error_logger
 @app.get("/check/")
 def check_app():
     return "Все работает"
 
-
+@error_logger
 @app.get("/{bot_id}/start/")
 def start_bot(bot_id):
     bot_data = (
@@ -52,7 +52,7 @@ def start_bot(bot_id):
     py_logger.info(f"Бот запущен {bot_id}")
     return "Бот запущен"
 
-
+@error_logger
 @app.get("/{bot_id}/stop/")
 def stop_bot(bot_id):
     bot_data = (
@@ -64,6 +64,7 @@ def stop_bot(bot_id):
     asyncio.run(bot.stop())
     py_logger.info(f"Бот запущен {bot_id}")
     return "Бот остановлен"
+
 
 
 if __name__ == "__main__":

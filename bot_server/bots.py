@@ -3,7 +3,7 @@ import asyncio
 import handlers
 from aiogram import Bot, Dispatcher
 from db import Connection
-from log import py_logger
+from log import py_logger, error_logger
 from models import TelegramBot, TelegramBotAction
 
 connection = Connection()
@@ -12,8 +12,8 @@ connection = Connection()
 class BaseTelegramBot:
     """Основа телеграмм Бота"""
 
+    @error_logger
     def __init__(self, bot_data):
-        super().__init__()
         self.bot_data = bot_data
         self.token = self.bot_data.telegram_token
         self.bot = Bot(token=self.token)
@@ -32,11 +32,13 @@ class BaseTelegramBot:
             self.dispatcher.include_router(router)
         py_logger.info(f"Бот создан {self.bot_data.id}")
 
+    @error_logger
     async def start(self):
         py_logger.info(f"Бот стартовал {self.bot_data.id}")
         await self.bot.set_my_commands(commands=self.commands)
         await self.dispatcher.start_polling(self.bot)
 
+    @error_logger
     async def stop(self):
         await self.bot.set_my_commands(commands=self.commands)
         await self.dispatcher.stop_polling()
