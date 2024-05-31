@@ -1,9 +1,9 @@
 ---
-name: bot_constructor full CICD
+name: bot_constructor deployment
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: [develop]
+    branches: [fix/bot-constructor]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
