@@ -67,7 +67,7 @@ REST_FRAMEWORK = {
 }
 
 ROOT_URLCONF = "bot_constructor.urls"
-SESSION_COOKIE_NAME = "csrftoken"
+SESSION_COOKIE_NAME = "X-CSRFToken"
 SPECTACULAR_SETTINGS = {
     "AUTHENTICATION_EXTENSIONS": [
         "api.drf_spectacular.drf_views",
