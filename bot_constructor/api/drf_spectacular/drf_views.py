@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib.auth import login, logout
 from django.shortcuts import redirect
+from drf_spectacular.extensions import OpenApiAuthenticationExtension
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -12,6 +14,19 @@ from .drf_serializers import (
     LoginSerializer,
     LogoutSerializer,
 )
+
+
+class SessionScheme(OpenApiAuthenticationExtension):
+    target_class = "rest_framework.authentication.SessionAuthentication"
+    name = "apiKey"
+    priority = -1
+
+    def get_security_definition(self, auto_schema):
+        return {
+            "type": "csrftoken",
+            "in": "cookie",
+            "name": settings.SESSION_COOKIE_NAME,
+        }
 
 
 @permission_classes([AllowAny])

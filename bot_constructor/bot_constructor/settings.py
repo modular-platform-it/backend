@@ -67,8 +67,11 @@ REST_FRAMEWORK = {
 }
 
 ROOT_URLCONF = "bot_constructor.urls"
-
+SESSION_COOKIE_NAME = "csrftoken"
 SPECTACULAR_SETTINGS = {
+    "AUTHENTICATION_EXTENSIONS": [
+        "api.drf_spectacular.drf_views",
+    ],
     "TITLE": "bot-controller",
     "DESCRIPTION": "Платформа для создания и управления ботами.",
     "VERSION": "1.0.0",
