@@ -3,8 +3,7 @@ name: test current branch
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: develop
-    # branches-ignore: [develop, production, review]
+    branches-ignore: [develop, production, review]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
@@ -24,14 +23,14 @@ jobs:
         if: false
         run: echo
 
-  # lint:
-  #   needs: variables
-  #   uses: ./.github/workflows/rwf-precommit.yml
-  #   with:
-  #     PYTHON_VERSION: ${{needs.variables.outputs.python_version}}
+  lint:
+    needs: variables
+    uses: ./.github/workflows/rwf-precommit.yml
+    with:
+      PYTHON_VERSION: ${{needs.variables.outputs.python_version}}
 
   test-bc:
-    needs: [variables]
+    needs: [variables, lint]
     uses: ./.github/workflows/rwf-pytest.yml
     with:
       APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
