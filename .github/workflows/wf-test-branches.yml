@@ -34,7 +34,7 @@ jobs:
     needs: [variables]
     uses: ./.github/workflows/rwf-pytest.yml
     with:
-      APP_PROJECT_NAME: $${{needs.variables.outputs.app_project_name}}
+      APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
       PYTHON_VERSION: ${{needs.variables.outputs.python_version}}
       POETRY_VERSION: ${{needs.variables.outputs.poetry_version}}
 
