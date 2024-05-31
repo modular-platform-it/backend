@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: $APP_PROJECT_NAME
+        working-directory: ${inputs.APP_PROJECT_NAME}
     steps:
       - name: ☁️ Check out repository
         uses: actions/checkout@v4
