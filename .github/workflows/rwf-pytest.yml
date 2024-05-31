@@ -43,7 +43,6 @@ jobs:
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
-          cd ${{inputs.APP_PROJECT_NAME}}/
           poetry install --no-interaction --no-root
 
       - name: Run local tests
