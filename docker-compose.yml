@@ -29,14 +29,13 @@ services:
     depends_on:
       - db
 
-
   gateway:
     build: ./gateway/
     env_file: .env
     ports:
       - 80:80
     depends_on:
-      - backend1
+      - backend2
     volumes:
       - static:/staticfiles/
       - media:/app/media/

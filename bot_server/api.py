@@ -11,9 +11,9 @@ from log import py_logger, error_logger
 from models import TelegramBot
 from models_api import EditBot
 from pydantic import BaseModel
-import threading
 
-# import concurrent.futures # для MacOS
+import multiprocessing as mp
+import concurrent.futures # для MacOS
 
 
 load_dotenv()
@@ -25,69 +25,50 @@ sentry_sdk.init(
     traces_sample_rate=1.0,
     profiles_sample_rate=1.0,
 )
-app = FastAPI()
 connection = Connection()
 
-
-class Bot(BaseModel):
-    name: str
-    token: str
-    start: bool
-
-@error_logger
-@app.get("/check/")
-def check_app():
-    return "Все работает"
-
-@error_logger
-@app.get("/{bot_id}/start/")
-def start_bot(bot_id):
-    # bot_data = (
-    #     connection.session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
-    # )
-    if bot_id == 1:
-        bot_data = {
-            "name": "bot3",
-            "telegram_token": "5887317990:AAH9l1nK1J8UPolkr03luFxBt5xTNtdUU1A",
-            "description": "sadsad",
-            "api_key": "sadsad",  # pragma: allowlist secret
-            "api_url": "http://api.sadsad.ru/",
-            "api_availability": True,
-            "bot_state": "RUNNING",
-        }
-    else:
-        bot_data = {
-            "name": "bot4",
-            "telegram_token": "7183394983:AAEzdAGDlbIoN4U129juaaUa7TdTu0SFEuU",
-            "description": "sadsad",
-            "api_key": "sadsad",  # pragma: allowlist secret
-            "api_url": "http://api.sadsad.ru/",
-            "api_availability": True,
-            "bot_state": "RUNNING",
-        }
-    bot = BaseTelegramBot(bot_data=bot_data)
-    # with concurrent.futures.ThreadPoolExecutor() as executor: # для MacOS - добавить строки во всех api
-    #     executor.submit(bot.start)
-    asyncio.run(bot.start())  # для MacOS - убрать строку
-    py_logger.info(f"Бот запущен {bot_id}")
-    return "Бот запущен"
-
-@error_logger
-@app.get("/{bot_id}/stop/")
-def stop_bot(bot_id):
-    bot_data = (
-        connection.session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
-    )
-    if not bot_data:
-        return HTTPException(status_code=404, detail="Бот не найден")
-    bot = BaseTelegramBot(bot_data=bot_data)
-    asyncio.run(bot.stop())
-    py_logger.info(f"Бот запущен {bot_id}")
-    return "Бот остановлен"
-
-
-
-if __name__ == "__main__":
+def run_fastapi(shared_data):
     import uvicorn
+    app = FastAPI()
+    # shared_data = shared_data
 
-    uvicorn.run(app, host="localhost", port=8000)
+    @error_logger
+    @app.get("/{bot_id}/start/")
+    def start_bot(bot_id):
+        shared_data.value = int(bot_id)
+        print(shared_data.value)
+        py_logger.info(f"Бот запущен {bot_id}")
+        return "Бот запущен"
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+def run_aiogram(shared_data):
+    import time
+    while True:
+        time.sleep(3)
+
+        if shared_data.value != 0:
+            bot_id = int(shared_data.value)
+            bot_data = (
+                connection.session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
+            )
+
+            bot = BaseTelegramBot(bot_data=bot_data)
+            asyncio.run(bot.start())
+
+
+if __name__ == '__main__':
+
+    MAC = mp.Value('i', 0)
+    MAC.value = 0
+    # Создание процессов для FastAPI и Aiogram
+    p1 = mp.Process(target=run_fastapi, args=(MAC,))
+    p2 = mp.Process(target=run_aiogram, args=(MAC,))
+
+    # Запуск процессов
+    p1.start()
+    p2.start()
+
+    # Ожидание завершения процессов
+    p1.join()
+    p2.join()

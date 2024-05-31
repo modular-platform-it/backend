@@ -58,9 +58,11 @@ class Handlers:
         self.command = BotCommand(
             command="/start", description=f"start the bot {self.bot_data.name}"
         )
+        print('подключен роутер Handlers')
 
         @self.router.message(Command("start"))
         async def start_handler(msg: Message):
+            print("start")
             await msg.answer("Привет!")
 
 
