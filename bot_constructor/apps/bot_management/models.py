@@ -232,6 +232,10 @@ class Variable(models.Model):
         max_length=constants.VARIABLE_TYPE_LENGTH,
     )
 
+    class Meta:
+        verbose_name = "Переменная"
+        verbose_name_plural = "Переменные"
+
     def __str__(self) -> str:
         """Строковое представление пользовательской переменной."""
         return self.name
@@ -248,6 +252,10 @@ class Header(models.Model):
         max_length=constants.ACTION_NAME_LENGTH,
         validators=(validators.RegexValidator(regex=regexps.HEADER_REGEXP),),
     )
+
+    class Meta:
+        verbose_name = "Заголовок"
+        verbose_name_plural = "Заголовки"
 
     def __str__(self) -> str:
         """Строковое представление заголовка для пользовательского http запроса."""
