@@ -18,7 +18,7 @@ env:
   APP_VOLUME: bot_constructor
 jobs:
   variables:
-    name: Workaround to pass env variables to rwf
+    name: Pass env variables to rwf
     runs-on: ubuntu-latest
     outputs:
       app_version: ${{env.APP_VERSION}}
