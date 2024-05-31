@@ -14,6 +14,9 @@ on:
 jobs:
   pytest:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./${{inputs.APP_PROJECT_NAME}}
     steps:
       - name: ☁️ Check out repository
         uses: actions/checkout@v4
@@ -43,11 +46,11 @@ jobs:
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
-          cd ${{ inputs.APP_PROJECT_NAME }}/
           poetry install --no-interaction --no-root
+# cd ${{inputs.APP_PROJECT_NAME}}/
 
       - name: Run local tests
         run: |
-          cd ${{ inputs.APP_PROJECT_NAME }}/
+# cd ${{inputs.APP_PROJECT_NAME}}/
           source $VENV
           python manage.py test
