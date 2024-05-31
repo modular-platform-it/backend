@@ -42,9 +42,12 @@ jobs:
 
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
+        run: |
+          cd ${{inputs.APP_PROJECT_NAME}}/
+          poetry install --no-interaction --no-root
 
       - name: Run local tests
         run: |
+          cd ${{inputs.APP_PROJECT_NAME}}/
           source $VENV
           python manage.py test

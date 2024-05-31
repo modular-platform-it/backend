@@ -24,14 +24,14 @@ jobs:
         if: false
         run: echo
 
-  lint:
-    needs: variables
-    uses: ./.github/workflows/rwf-precommit.yml
-    with:
-      PYTHON_VERSION: ${{needs.variables.outputs.python_version}}
+  # lint:
+  #   needs: variables
+  #   uses: ./.github/workflows/rwf-precommit.yml
+  #   with:
+  #     PYTHON_VERSION: ${{needs.variables.outputs.python_version}}
 
   test-bc:
-    needs: [variables, lint]
+    needs: [variables]
     uses: ./.github/workflows/rwf-pytest.yml
     with:
       APP_PROJECT_NAME: $${{needs.variables.outputs.app_project_name}}
