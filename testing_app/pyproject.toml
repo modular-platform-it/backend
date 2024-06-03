@@ -15,12 +15,8 @@ idna = "^3.7"
 sqlparse = "^0.5.0"
 python-dotenv = "^1.0.1"
 django-filter = "^24.2"
+gunicorn = "^22.0.0"
 
-
-[tool.poetry.group.dev.dependencies]
-black = "^24.4.2"
-isort = "^5.13.2"
-pre-commit = "^3.7.0"
 
 [build-system]
 requires = ["poetry-core"]
