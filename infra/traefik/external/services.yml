@@ -28,6 +28,14 @@ http:
         certResolver: letsencrypt
       service: botconstructor
 
+    to-devconstructor:
+      entryPoints:
+        - websecure
+      rule: Host(`dev.xwick.ru`)
+      tls:
+        certResolver: letsencrypt
+      service: devconstructor
+
     to-botserver:
       entryPoints:
         - websecure
@@ -79,6 +87,11 @@ http:
       loadBalancer:
         servers:
         - url: http://botconstructor:8000
+
+    devconstructor:
+      loadBalancer:
+        servers:
+        - url: http://devconstructor:8000
 
     botserver:
       loadBalancer:
