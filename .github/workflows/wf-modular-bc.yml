@@ -1,9 +1,9 @@
 ---
-name: bot_constructor deployment
-run-name: ${{ github.actor }} started 🚀 GitHub Actions
+name: bot_constructor production
+run-name: ${{ github.actor }} launched 🚀 bot_constructor prod stand
 on:
   push:
-    branches: [fix/bot-constructor]
+    branches: [production]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
