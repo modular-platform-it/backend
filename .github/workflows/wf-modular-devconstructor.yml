@@ -3,7 +3,7 @@ name: bot_constructor dev stand launch
 run-name: ${{ github.actor }} launched 🚀 bot_constructor dev stand
 on:
   push:
-    branches: [develop, feat/dev-stand]
+    branches: [develop]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
