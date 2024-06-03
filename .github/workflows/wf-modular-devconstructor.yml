@@ -1,6 +1,6 @@
 ---
 name: bot_constructor dev stand launch
-run-name: ${{ github.actor }} started 🚀 GitHub Actions
+run-name: ${{ github.actor }} launched 🚀 bot_constructor dev stand
 on:
   push:
     branches: [feat/dev-stand]

@@ -1,9 +1,9 @@
 ---
 name: test current branch
-run-name: ${{ github.actor }} started 🚀 GitHub Actions
+run-name: ${{ github.actor }} started 🚀 tests
 on:
   push:
-    branches-ignore: [develop, production, review]
+    branches-ignore: [develop, production, review, feat/dev-stand]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
