@@ -66,7 +66,7 @@ WSGI_APPLICATION = "testing_app.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-if os.getenv("USE_SQLITE", "True") == "True":
+if os.getenv("USE_SQLITE", "False") == "True" or sys.argv[1] == "test":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
