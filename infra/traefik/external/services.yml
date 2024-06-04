@@ -39,7 +39,7 @@ http:
     to-botserver:
       entryPoints:
         - websecure
-      rule: Host(`api.xwick.ru`) && PathPrefix(`/botserver`)
+      rule: Host(`bsrv.xwick.ru`)
       tls:
         certResolver: letsencrypt
       service: botserver
@@ -47,7 +47,7 @@ http:
     to-testingapp:
       entryPoints:
         - websecure
-      rule: Host(`api.xwick.ru`) && PathPrefix(`/testingapp`)
+      rule: Host(`tapp.xwick.ru`)
       tls:
         certResolver: letsencrypt
       service: testingapp
@@ -101,7 +101,7 @@ http:
     testingapp:
       loadBalancer:
         servers:
-        - url: http://testing:8080
+        - url: http://testingapp:8080
 
     pgadmin:
       loadBalancer:
