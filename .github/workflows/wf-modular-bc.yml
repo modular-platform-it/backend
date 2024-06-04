@@ -1,6 +1,6 @@
 ---
 name: bot_constructor production
-run-name: ${{ github.actor }} launched 🚀 bot_constructor prod stand
+run-name: ${{ github.actor }} launched 🚀 bot_constructor prod 🚀 stand
 on:
   push:
     branches: [production]

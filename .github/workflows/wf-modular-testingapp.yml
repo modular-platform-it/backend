@@ -1,6 +1,6 @@
 ---
 name: testing app container launch
-run-name: ${{ github.actor }} launched 🚀 testing app container
+run-name: ${{ github.actor }} launched 🚀 testing app 🚀 container
 on:
   push:
     branches: [feat/dev-stand]
