@@ -140,7 +140,10 @@ class TelegramBotAction(models.Model):
         blank=True,
     )
     message = models.CharField(
-        verbose_name="Текст сообщения", max_length=constants.MESSAGE_LENGTH, blank=True
+        verbose_name="Текст сообщения",
+        max_length=constants.MESSAGE_LENGTH,
+        blank=True,
+        null=True,
     )
     api_url = models.URLField(
         verbose_name="Адрес API", max_length=constants.API_URL_LENGTH, blank=True

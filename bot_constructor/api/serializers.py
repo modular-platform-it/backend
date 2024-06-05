@@ -142,8 +142,6 @@ class TelegramBotActionSerializer(serializers.ModelSerializer):
     position = serializers.IntegerField(min_value=1, max_value=constants.MAX_POSITIONS)
     files = TelegramFileSerializer(many=True, required=False)
     next_action = TelegramBotActionsPKField(required=False)
-    variables = VariableSerializer(many=True, required=False, read_only=True)
-    headers = HeaderSerializer(many=True, required=False, read_only=True)
 
     def create(self, validated_data: dict[str, Any]):
         """
@@ -176,8 +174,6 @@ class TelegramBotActionSerializer(serializers.ModelSerializer):
             "api_key",
             "api_url",
             "api_method",
-            "headers",
-            "variables",
             "data",
             "files",
             "position",
@@ -264,8 +260,6 @@ class TelegramBotActionMessageSerializer(TelegramBotActionBaseSerializer):
     """Сериализатор действий отправки сообщения или запроса."""
 
     files = TelegramFileSerializer(many=True, required=False)
-    message = serializers.CharField(max_length=constants.MESSAGE_LENGTH, required=True)
-    variables = TelegramActionVariablesPKField()
 
     class Meta:
         model = TelegramBotAction
@@ -277,7 +271,6 @@ class TelegramBotActionMessageSerializer(TelegramBotActionBaseSerializer):
             "description",
             "command_keyword",
             "message",
-            "variables",
             "files",
             "position",
             "next_action",

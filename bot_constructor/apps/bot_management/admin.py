@@ -1,12 +1,7 @@
 from django.contrib import admin
 
-from .models import (  # type: ignore
-    Header,
-    TelegramBot,
-    TelegramBotAction,
-    TelegramBotFile,
-    Variable,
-)
+from .models import TelegramBotAction  # type: ignore
+from .models import Header, TelegramBot, TelegramBotFile, Variable
 
 
 @admin.register(TelegramBot)
