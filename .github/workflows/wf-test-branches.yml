@@ -1,0 +1,43 @@
+---
+name: test current branch
+run-name: ${{ github.actor }} started 🚀 tests
+on:
+  push:
+    branches-ignore: [develop, production, review, feat/dev-stand]
+    paths-ignore: ['**/pyproject.toml']
+  workflow_dispatch:
+env:
+  APP_PROJECT_NAME: bot_constructor
+  PYTHON_VERSION: ${{vars.PROJECT_PYTHON_VERSION}}
+  POETRY_VERSION: ${{vars.PROJECT_POETRY_VERSION}}
+jobs:
+  variables:
+    name: Pass env variables to rwf
+    runs-on: ubuntu-latest
+    outputs:
+      app_project_name: ${{env.APP_PROJECT_NAME}}
+      python_version: ${{env.PYTHON_VERSION}}
+      poetry_version: ${{env.POETRY_VERSION}}
+    steps:
+      - name: Echo - fake step
+        if: false
+        run: echo
+
+  lint:
+    needs: variables
+    uses: ./.github/workflows/rwf-precommit.yml
+    with:
+      PYTHON_VERSION: ${{needs.variables.outputs.python_version}}
+
+  test-bc:
+    needs: [variables, lint]
+    uses: ./.github/workflows/rwf-pytest.yml
+    with:
+      APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
+      PYTHON_VERSION: ${{needs.variables.outputs.python_version}}
+      POETRY_VERSION: ${{needs.variables.outputs.poetry_version}}
+
+  notify:
+    needs: test-bc
+    uses: ./.github/workflows/rwf-notify.yml
+    secrets: inherit  # pragma: allowlist secret

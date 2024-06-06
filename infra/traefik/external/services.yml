@@ -1,16 +1,17 @@
 ## DYNAMIC configuration
 ## path to place the file
 ## scp infra/traefik/external/services.yml sihuan@xwick.ru:/home/sihuan/modular/dockume/traefik/external
+## path to place usersfile
+## scp infra/traefik/external/usersfile sihuan@xwick.ru:/home/sihuan/modular/dockume/traefik/external
+## https://bcrypt-generator.com/
 
 http:
   routers:
     to-nginx:
       entryPoints:
-        - "web"
-        - "websecure"
-      rule: "Host(`xwick.ru`)"
-      # middlewares:
-      #   - traefik-auth
+        - web
+        - websecure
+      rule: Host(`xwick.ru`)
       tls:
         certResolver: letsencrypt
         # domains:
@@ -19,39 +20,95 @@ http:
         #       - "*.xwick.ru"
       service: nginx
 
-    to-backend:
+    to-botconstructor:
       entryPoints:
-        - "websecure"
-      rule: "Host(`api.xwick.ru`)"
+        - websecure
+      rule: Host(`api.xwick.ru`)
       tls:
         certResolver: letsencrypt
-      service: backend
+      service: botconstructor
+
+    to-devconstructor:
+      entryPoints:
+        - websecure
+      rule: Host(`dev.xwick.ru`)
+      tls:
+        certResolver: letsencrypt
+      service: devconstructor
+
+    to-botserver:
+      entryPoints:
+        - websecure
+      rule: Host(`bsrv.xwick.ru`)
+      tls:
+        certResolver: letsencrypt
+      service: botserver
+
+    to-testingapp:
+      entryPoints:
+        - websecure
+      rule: Host(`tapp.xwick.ru`)
+      tls:
+        certResolver: letsencrypt
+      service: testingapp
 
     to-traefik:
       entryPoints:
-        - "websecure"
-      rule: "Host(`traefik.xwick.ru`)"
+        - websecure
+      rule: Host(`traefik.xwick.ru`)
+      middlewares:
+        - auth
       tls:
         certResolver: letsencrypt
       service: traefik
 
+    to-pgadmin:
+      entryPoints:
+        - websecure
+      rule: Host(`pgadmin.xwick.ru`)
+      middlewares:
+        - auth
+      tls:
+        certResolver: letsencrypt
+      service: pgadmin
+
   middlewares:
-    traefik-auth:
-      ipWhiteList:
-        sourceRange: 172.18.0.0/16
+    auth:
+      basicAuth:
+        usersFile: /external/usersfile
 
   services:
     nginx:
       loadBalancer:
         servers:
-        - url: "http://nginx:80"
+        - url: http://nginx:80
 
-    backend:
+    botconstructor:
       loadBalancer:
         servers:
-        - url: "http://backend:8000"
+        - url: http://botconstructor:8000
+
+    devconstructor:
+      loadBalancer:
+        servers:
+        - url: http://devconstructor:8000
+
+    botserver:
+      loadBalancer:
+        servers:
+        - url: http://botserver:8080
+
+    testingapp:
+      loadBalancer:
+        servers:
+        - url: http://testingapp:8080
+
+    pgadmin:
+      loadBalancer:
+        servers:
+        - url: http://pgadmin:80
 
     traefik:
       loadBalancer:
         servers:
-        - url: "http://proxy-server:8080"
+        - url: http://proxy-server:8080

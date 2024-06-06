@@ -8,9 +8,9 @@ box "Django" #LightBlue
 end box
 
 box "Сервер очередей" #LightYellow
-    participant "Сервер очередей" as quire
+    participant "FastApi" as quire
     participant "Боты" as bots
-    database "База данных сервера очередей" as dbq
+
 end box
 
 box "Тестовое приложение" #LightGreen
@@ -24,7 +24,7 @@ group Запуск/выключение/редактирование бота
     quire -> bots: Изменение  состояния бота
     bots -> bots: Проверка изменение бота\nи его состояния
     bots -> quire: Результат изменение бота
-    quire -> dbq: Результат изменение бота
+    quire -> db: Результат изменение бота
     quire -> dj: Результат изменение бота
     dj ->  front--:  Результат изменение бота
 end

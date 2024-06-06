@@ -1,15 +1,40 @@
-from drf_spectacular.utils import extend_schema
+from django.conf import settings
+from django.contrib.auth import login, logout
+from django.shortcuts import redirect
+from drf_spectacular.extensions import OpenApiAuthenticationExtension
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .drf_serializers import LoginSerializer, LogoutSerializer
+from .drf_serializers import (
+    ForbiddenSerializer,
+    LoginResponseSerializer,
+    LoginSerializer,
+    LogoutSerializer,
+)
 
 
+class SessionScheme(OpenApiAuthenticationExtension):
+    target_class = "rest_framework.authentication.SessionAuthentication"
+    name = "apiKey"
+    priority = -1
+
+    def get_security_definition(self, auto_schema):
+        return {
+            "type": "X-CSRFToken",
+            "in": "cookie",
+            "name": settings.SESSION_COOKIE_NAME,
+        }
+
+
+@permission_classes([AllowAny])
 @extend_schema(
     request=LoginSerializer,
     responses={
         200: LoginSerializer,
+        400: OpenApiResponse(description="Вы уже авторизованы"),
     },
     tags=["Авторизация"],
     summary="Авторизация пользователя (GET)",
@@ -18,25 +43,36 @@ from .drf_serializers import LoginSerializer, LogoutSerializer
 @extend_schema(
     request=LoginSerializer,
     responses={
-        302: {"description": "Успешный вход"},
-        400: {
-            "description": "Указанные вами адрес электронной почты и/или пароль неверны"
-        },
+        200: OpenApiResponse(
+            response=LoginResponseSerializer, description="Успешный вход"
+        ),
+        400: OpenApiResponse(
+            description="Указанные вами адрес электронной почты и/или пароль неверны"
+        ),
+        403: OpenApiResponse(
+            response=ForbiddenSerializer, description="Требуется авторизация"
+        ),
     },
     tags=["Авторизация"],
     summary="Авторизация пользователя (POST)",
     methods=["POST"],
 )
 @api_view(["GET", "POST"])
+@permission_classes([AllowAny])
 def swagger_login(request):
     if request.method == "GET":
         return Response({"description": "Войти."}, status=status.HTTP_200_OK)
     elif request.method == "POST":
-        if success:
+        if request.user.is_authenticated:
             return Response(
-                {"detail": f"Успешный вход под именем {request.user.email}"},
-                status=status.HTTP_302_FOUND,
+                {"detail": "Вы уже авторизованы."}, status=status.HTTP_400_BAD_REQUEST
             )
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        if user is not None:
+            login(request, user)
+            return Response({"email": user.email}, status=status.HTTP_200_OK)
         else:
             return Response(
                 {
@@ -50,6 +86,7 @@ def swagger_login(request):
     request=LogoutSerializer,
     responses={
         200: {"description": "Выйти"},
+        400: OpenApiResponse(description="Сначала авторизуйтесь."),
     },
     tags=["Авторизация"],
     summary="Выход пользователя из системы (GET)",
@@ -58,7 +95,11 @@ def swagger_login(request):
 @extend_schema(
     request=LogoutSerializer,
     responses={
-        302: {"description": "Вы вышли."},
+        302: OpenApiResponse(description="Вы вышли"),
+        400: OpenApiResponse(description="Сначала авторизуйтесь."),
+        403: OpenApiResponse(
+            response=ForbiddenSerializer, description="Неверный токен."
+        ),
     },
     tags=["Авторизация"],
     summary="Выход пользователя из системы (POST)",
@@ -66,9 +107,27 @@ def swagger_login(request):
 )
 @api_view(["GET", "POST"])
 def swagger_logout(request):
-    if request.method == "GET":
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            return Response(
+                {"detail": "Вы уверены, что хотите выйти?"}, status=status.HTTP_200_OK
+            )
+        elif request.method == "POST":
+            logout(request)
+            return redirect("/v1/users/login/")
+            # return HttpResponseRedirect('/v1/users/login/')
+            # return Response(
+            #     data={'redirect_url': '/v1/users/login/'},
+            #     status=302,
+            #     headers={'Content-Type': 'application/json'}
+            # )
+    else:
         return Response(
-            {"detail": "Вы уверены, что хотите выйти?"}, status=status.HTTP_200_OK
+            {"detail": "Сначала авторизуйтесь."}, status=status.HTTP_400_BAD_REQUEST
         )
-    elif request.method == "POST":
-        return Response({"detail": "Вы вышли."}, status=status.HTTP_302_FOUND)
+        # return Response(
+        #     {"detail": "Вы уверены, что хотите выйти?"}, status=status.HTTP_200_OK
+        # )
+
+        # else:
+        #     return Response({"detail": "Вы вышли."}, status=status.HTTP_302_FOUND)

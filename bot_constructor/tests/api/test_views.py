@@ -1,23 +1,30 @@
 import os
 import shutil
+from typing import Any
 
 from apps.bot_management.models import TelegramBot, TelegramBotAction, TelegramBotFile
+from django.contrib.auth import get_user_model
 from django.urls import reverse
+from factory_data.factories import TEST_DIR  # type: ignore
 from factory_data.factories import (
-    FS_STORAGE,
     TelegramBotActionFactory,
     TelegramBotFactory,
     TelegramBotFileFactory,
 )
+from faker_file.registry import FILE_REGISTRY  # type: ignore
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, override_settings
+
+User = get_user_model()
 
 
 class TestTelegramBotView(APITestCase):
     """Набор тестов для набора представлений телеграм бота."""
 
-    def setUp(self) -> None:
+    def setUp(self) -> Any:
+        user = User.objects.create_user(username="test@test.ru", password="12345")
+        self.client.force_login(user)
         self.telegram_bot: TelegramBot = TelegramBotFactory.build()
         self.url_list: str = reverse("telegrambot-list")
         self.url_detail: str = "telegrambot-detail"
@@ -57,7 +64,9 @@ class TestTelegramBotView(APITestCase):
 
     def test_telegram_bot_delete_view(self) -> None:
         """Проверка отображения удаления телеграм бота."""
-        telegram_bot: TelegramBot = TelegramBotFactory.create()
+        telegram_bot: TelegramBot = TelegramBotFactory.create(
+            bot_state=TelegramBot.BotState.DRAFT
+        )
         count: int = TelegramBot.objects.count()
         response: Response = self.client.delete(
             reverse("telegrambot-detail", kwargs={"pk": telegram_bot.id}),
@@ -91,7 +100,9 @@ class TestTelegramBotView(APITestCase):
 class TestTelegramBotActionView(APITestCase):
     """Набор тестов для набора представлений действий телеграм бота."""
 
-    def setUp(self) -> None:
+    def setUp(self) -> Any:
+        user = User.objects.create_user(username="test@test.ru", password="12345")
+        self.client.force_login(user)
         self.telegram_bot: TelegramBot = TelegramBotFactory.create()
         self.telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
             telegram_bot=self.telegram_bot,
@@ -149,8 +160,11 @@ class TestTelegramBotActionView(APITestCase):
 
     def test_telegram_bot_action_delete_view(self) -> None:
         """Проверка отображения удаления действия телеграм бота."""
+        telegram_bot: TelegramBot = TelegramBotFactory.create(
+            bot_state=TelegramBot.BotState.DRAFT
+        )
         telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
-            telegram_bot=self.telegram_bot,
+            telegram_bot=telegram_bot,
         )
         count: int = TelegramBotAction.objects.count()
         response: Response = self.client.delete(
@@ -158,7 +172,7 @@ class TestTelegramBotActionView(APITestCase):
                 self.url_detail,
                 kwargs={
                     "pk": telegram_action.id,
-                    "telegram_bot_pk": self.telegram_bot.id,
+                    "telegram_bot_pk": telegram_bot.id,
                 },
             ),
         )
@@ -211,8 +225,12 @@ class TestTelegramBotActionView(APITestCase):
 class TestTelegramBotFileView(APITestCase):
     """Набор тестов для набора представлений файлов действий телеграм бота."""
 
-    def setUp(self) -> None:
-        self.telegram_bot: TelegramBot = TelegramBotFactory.create()
+    def setUp(self) -> Any:
+        user = User.objects.create_user(username="test@test.ru", password="12345")
+        self.client.force_login(user)
+        self.telegram_bot: TelegramBot = TelegramBotFactory.create(
+            bot_state=TelegramBot.BotState.STOPPED
+        )
         self.telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
             telegram_bot=self.telegram_bot,
         )
@@ -222,6 +240,10 @@ class TestTelegramBotFileView(APITestCase):
         self.url_list: str = "telegram_bot_action-files-list"
         self.url_detail: str = "telegram_bot_action-files-detail"
         return super().setUp()
+
+    def tearDown(self) -> Any:
+        FILE_REGISTRY.clean_up()
+        return super().tearDown()
 
     def test_telegram_bot_file_list_view(self) -> None:
         """Проверка представления файлов действий телеграм бота в виде списка."""
@@ -243,6 +265,7 @@ class TestTelegramBotFileView(APITestCase):
         for telegram_file in telegram_files:
             self.assertContains(response, telegram_file.id)
 
+    @override_settings(MEDIA_ROOT=TEST_DIR + "/media")
     def test_telegram_bot_file_create_view(self) -> None:
         """Проверка представления создания файла действия телеграм бота."""
         count: int = TelegramBotFile.objects.count()
@@ -303,6 +326,7 @@ class TestTelegramBotFileView(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(count - 1, TelegramBotFile.objects.count())
 
+    @override_settings(MEDIA_ROOT=TEST_DIR + "/media")
     def test_telegram_bot_action_update_view(self) -> None:
         """Проверка представления обновления файла телеграм бота."""
         telegram_bot: TelegramBot = TelegramBotFactory.create(
@@ -344,6 +368,6 @@ class TestTelegramBotFileView(APITestCase):
     @classmethod
     def tearDownClass(cls) -> None:
         """Удаляет временную папку с созданными для тестов файлами после всех тестов."""
-        if os.path.exists(FS_STORAGE.root_path):
-            shutil.rmtree(FS_STORAGE.root_path, ignore_errors=True)
+        if os.path.exists(TEST_DIR):
+            shutil.rmtree(TEST_DIR, ignore_errors=True)
         super().tearDownClass()

@@ -1,7 +1,7 @@
-# type:ignore
-from apps.bot_management import constants
+from apps.bot_management import constants, regexps
 from django.core import validators
 from django.db import models
+from django.utils import timezone
 
 
 class TelegramBot(models.Model):
@@ -16,21 +16,13 @@ class TelegramBot(models.Model):
     name = models.CharField(
         verbose_name="Название бота",
         max_length=constants.BOT_NAME_LENGTH,
-        validators=(
-            validators.RegexValidator(
-                regex=rf"^[a-zA-Zа-яёА-ЯЁ]{{{constants.MIN_LETTERS}}}[\w\W]"
-                rf"{{{0},{constants.BOT_NAME_LENGTH - constants.MIN_LETTERS - 1}}}"
-                r"\S$"
-            ),
-        ),
+        unique=True,
     )
     telegram_token = models.CharField(
         verbose_name="Токен авторизации телеграм бота",
         max_length=constants.TELEGRAM_TOKEN_LENGTH,
         unique=True,
-        validators=(
-            validators.RegexValidator(regex=r"^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$"),
-        ),
+        validators=(validators.RegexValidator(regex=regexps.TELEGRAM_TOKEN_REGEXP),),
     )
     description = models.CharField(
         verbose_name="Описание бота",
@@ -52,7 +44,9 @@ class TelegramBot(models.Model):
         choices=BotState,
         default=BotState.DRAFT,
     )
-    created_at = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
+    created_at = models.DateTimeField(
+        verbose_name="Дата создания", default=timezone.now
+    )
     started_at = models.DateTimeField(
         verbose_name="Дата последнего запуска бота", blank=True, null=True
     )
@@ -99,6 +93,23 @@ class TelegramBot(models.Model):
 class TelegramBotAction(models.Model):
     """Модель действия для телеграм бота."""
 
+    # TODO разбить модель на отдельные виды
+    class ActionType(models.TextChoices):
+        MESSAGE = "MESSAGE", "Сообщение"
+        QUERY = "QUERY", "Запрос к пользователю"
+        HTTP_REQUEST = "HTTP_REQUEST", "Http запрос"
+        GetListHandler = "GetListHandler", "Получение Списка"
+        StopHandler = "StopHandler", "Остановка"
+        Handlers = "Handlers", "Старт"
+        SendMassage = "SendMassage", "Получение обьекта"
+
+    class APIMethodType(models.TextChoices):
+        GET = "GET", "Get запрос"
+        POST = "POST", "Post запрос"
+        PATCH = "PATCH", "Patch запрос"
+        DELETE = "DELETE", "Delete запрос"
+        PUT = "PUT", "Put запрос"
+
     telegram_bot = models.ForeignKey(
         to="TelegramBot",
         verbose_name="Телеграм бот",
@@ -108,14 +119,12 @@ class TelegramBotAction(models.Model):
     name = models.CharField(
         verbose_name="Название действия",
         max_length=constants.ACTION_NAME_LENGTH,
-        help_text="только латинские буквы и цифры, от 3 до 20 символов.",
-        validators=(
-            validators.RegexValidator(
-                regex=rf"^[a-zA-Zа-яёА-ЯЁ]{{{constants.MIN_LETTERS}}}[\w\W]"
-                rf"{{{0},{constants.ACTION_NAME_LENGTH - constants.MIN_LETTERS - 1}}}"
-                r"\S$"
-            ),
-        ),
+    )
+    action_type = models.CharField(
+        "Тип действия",
+        choices=ActionType,
+        max_length=constants.ACTION_TYPE_LENGTH,
+        default=ActionType.MESSAGE,
     )
     description = models.CharField(
         verbose_name="Описание действия",
@@ -124,13 +133,17 @@ class TelegramBotAction(models.Model):
     )
     command_keyword = models.CharField(
         verbose_name="Текст команды",
-        max_length=33,
+        max_length=constants.COMMAND_KEYWORD_LENGTH + 1,
         help_text="команда должна начинаться с / и содержать только латинские "
         "буквы, цифры и нижнее подчеркивание _, макс. длина 32 символа",
-        validators=(validators.RegexValidator(regex=r"^/[a-zA-Z0-9_]{1,32}$"),),
+        validators=(validators.RegexValidator(regex=regexps.COMMAND_KEYWORD_REGEXP),),
+        blank=True,
     )
     message = models.CharField(
-        verbose_name="Текст сообщения", max_length=constants.MESSAGE_LENGTH, blank=True
+        verbose_name="Текст сообщения",
+        max_length=constants.MESSAGE_LENGTH,
+        blank=True,
+        null=True,
     )
     api_url = models.URLField(
         verbose_name="Адрес API", max_length=constants.API_URL_LENGTH, blank=True
@@ -138,6 +151,14 @@ class TelegramBotAction(models.Model):
     api_key = models.CharField(
         verbose_name="Ключ API", max_length=constants.API_KEY_LENGTH, blank=True
     )
+    api_method = models.CharField(
+        "Метод запроса к API",
+        choices=APIMethodType,
+        default=APIMethodType.GET,
+        max_length=constants.METHOD_LENGTH,
+        blank=True,
+    )
+    data = models.JSONField("Данные", blank=True, null=True)
     position = models.SmallIntegerField(
         "Номер действия",
         validators=(
@@ -189,3 +210,56 @@ class TelegramBotFile(models.Model):
     def __str__(self) -> str:
         """Строковое отображение объекта модели файла действия в виде его имени."""
         return self.file.name
+
+
+class Variable(models.Model):
+    """Модель для пользовательской переменной."""
+
+    class VariableType(models.TextChoices):
+        INT = "INT", "Целое число"
+        FLOAT = "FLOAT", "Число с плавающей запятой"
+        STRING = "STRING", "Строка"
+
+    telegram_action = models.ForeignKey(
+        TelegramBotAction, on_delete=models.CASCADE, related_name="variables"
+    )
+    name = models.CharField(
+        "Название переменной",
+        validators=(validators.RegexValidator(regex=regexps.VARIABLE_REGEXP),),
+        max_length=constants.VARIABLE_LENGTH,
+        help_text="В названии используйте только латинские буквы и цифры, _ и -",
+    )
+    variable_type = models.CharField(
+        "Тип переменной",
+        choices=VariableType,
+        max_length=constants.VARIABLE_TYPE_LENGTH,
+    )
+
+    class Meta:
+        verbose_name = "Переменная"
+        verbose_name_plural = "Переменные"
+
+    def __str__(self) -> str:
+        """Строковое представление пользовательской переменной."""
+        return self.name
+
+
+class Header(models.Model):
+    """Модель для пользовательского заголовка http запроса."""
+
+    telegram_action = models.ForeignKey(
+        TelegramBotAction, on_delete=models.CASCADE, related_name="headers"
+    )
+    name = models.CharField(
+        "Наименование заголовка",
+        max_length=constants.ACTION_NAME_LENGTH,
+        validators=(validators.RegexValidator(regex=regexps.HEADER_REGEXP),),
+    )
+
+    class Meta:
+        verbose_name = "Заголовок"
+        verbose_name_plural = "Заголовки"
+
+    def __str__(self) -> str:
+        """Строковое представление заголовка для пользовательского http запроса."""
+        return self.name

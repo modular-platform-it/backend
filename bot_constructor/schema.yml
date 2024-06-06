@@ -4,12 +4,1652 @@ info:
   version: 1.0.0
   description: Платформа для создания и управления ботами.
 paths:
-  /api/login/:
+  /v1/bots/:
     get:
-      operationId: login_retrieve
+      operationId: bots_list
+      description: Набор представлений для телеграм ботов.
+      summary: Список ботов
+      parameters:
+      - in: query
+        name: bot_state
+        schema:
+          type: string
+          title: Статус бота
+          enum:
+          - DRAFT
+          - ERROR
+          - RUNNING
+          - STOPPED
+        description: |-
+          * `DRAFT` - Черновик
+          * `RUNNING` - Запущен
+          * `STOPPED` - Остановлен
+          * `ERROR` - Ошибка
+      - in: query
+        name: created_at
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: is_started
+        schema:
+          type: boolean
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - in: query
+        name: started_at
+        schema:
+          type: string
+          format: date-time
+      tags:
+      - Телеграм боты
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TelegramBot'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyBot'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+    post:
+      operationId: bots_create
+      description: Набор представлений для телеграм ботов.
+      summary: Создание бота
+      tags:
+      - Телеграм боты
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelegramBotCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TelegramBotCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TelegramBotCreateRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramBotCreate'
+          description: Телеграм бот создан
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyBot'
+          description: Ошибка в полях
+  /v1/bots/{id}/:
+    get:
+      operationId: bots_retrieve
+      description: Набор представлений для телеграм ботов.
+      summary: Получение детальной информации о боте по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Телеграм бот.
+        required: true
+      tags:
+      - Телеграм боты
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramBot'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Телеграм бот не найден
+    put:
+      operationId: bots_update
+      description: Набор представлений для телеграм ботов.
+      summary: Изменение всех полей бота по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Телеграм бот.
+        required: true
+      tags:
+      - Телеграм боты
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelegramBotCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TelegramBotCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TelegramBotCreateRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramBotCreate'
+          description: Бот обновлен
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyBot'
+          description: Ошибка в полях или остановите бота
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Телеграм бот не найден
+    patch:
+      operationId: bots_partial_update
+      description: Набор представлений для телеграм ботов.
+      summary: Частичное изменение полей бота по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Телеграм бот.
+        required: true
+      tags:
+      - Телеграм боты
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTelegramBotCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTelegramBotCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTelegramBotCreateRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramBotCreate'
+          description: Бот обновлен
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyBot'
+          description: Ошибка в полях или остановите бота
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Телеграм бот не найден
+    delete:
+      operationId: bots_destroy
+      description: Набор представлений для телеграм ботов.
+      summary: Удаление бота по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Телеграм бот.
+        required: true
+      tags:
+      - Телеграм боты
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: Телеграм бот удален
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyBot'
+          description: Ошибка в поле id
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Телеграм бот не найден
+  /v1/bots/{id}/start_bot/:
+    get:
+      operationId: bots_start_bot_retrieve
+      description: Набор представлений для телеграм ботов.
+      summary: Запуск бота
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Телеграм бот.
+        required: true
+      tags:
+      - Телеграм боты
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyStartStopBot'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyBot'
+          description: Ошибка в поле id
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: ''
+        '405':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MethodNotAlowed'
+          description: Метод не разрешен.
+  /v1/bots/{id}/stop_bot/:
+    get:
+      operationId: bots_stop_bot_retrieve
+      description: Набор представлений для телеграм ботов.
+      summary: Остановка бота
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Телеграм бот.
+        required: true
+      tags:
+      - Телеграм боты
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyStartStopBot'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyBot'
+          description: Ошибка в поле id
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: ''
+        '405':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MethodNotAlowed'
+          description: Метод не разрешен.
+  /v1/bots/{telegram_bot_pk}/actions/:
+    get:
+      operationId: bots_actions_list
+      description: Набор представлений для действий телеграм бота.
+      summary: Список действий бота
+      parameters:
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+          title: Телеграм бот
+        required: true
+      tags:
+      - Действия
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TelegramBot'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+    post:
+      operationId: bots_actions_create
+      description: Набор представлений для действий телеграм бота.
+      summary: Создание действия в боте
+      parameters:
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+          title: Телеграм бот
+        required: true
+      tags:
+      - Действия
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TelegramBotActionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TelegramBotActionRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramBotAction'
+          description: Действие создано
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyAction'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Телеграм бот не найден
+  /v1/bots/{telegram_bot_pk}/actions/{id}/:
+    get:
+      operationId: bots_actions_retrieve
+      description: Набор представлений для действий телеграм бота.
+      summary: Получение детальной информации о действии бота по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Действие.
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+          title: Телеграм бот
+        required: true
+      tags:
+      - Действия
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramBotAction'
+          description: Действие телеграм бота
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyAction'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Действие не найдено
+    put:
+      operationId: bots_actions_update
+      description: Набор представлений для действий телеграм бота.
+      summary: Изменение всех полей действия бота по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Действие.
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+          title: Телеграм бот
+        required: true
+      tags:
+      - Действия
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TelegramBotActionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TelegramBotActionRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramBotAction'
+          description: Действие обновлено
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyAction'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Телеграм бот не найден
+    patch:
+      operationId: bots_actions_partial_update
+      description: Набор представлений для действий телеграм бота.
+      summary: Частичное изменение полей действия бота по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Действие.
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+          title: Телеграм бот
+        required: true
+      tags:
+      - Действия
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTelegramBotActionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTelegramBotActionRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramBotAction'
+          description: Действие обновлено
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyAction'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Телеграм бот не найден
+    delete:
+      operationId: bots_actions_destroy
+      description: Набор представлений для действий телеграм бота.
+      summary: Удаление действия бота по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Действие.
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+          title: Телеграм бот
+        required: true
+      tags:
+      - Действия
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: Действие удалено
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Телеграм бот не найден
+  /v1/bots/{telegram_bot_pk}/actions/{telegram_action_pk}/files/:
+    get:
+      operationId: bots_actions_files_list
+      description: Набор представлений для файлов действий телеграм ботов.
+      summary: Список файлов
+      parameters:
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Файлы
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TelegramBot'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+    post:
+      operationId: bots_actions_files_create
+      description: Набор представлений для файлов действий телеграм ботов.
+      summary: Загрузка файла
+      parameters:
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Файлы
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelegramFileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TelegramFileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TelegramFileRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramFile'
+          description: Файл действия создан
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyFile'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Действие или бот не найдены
+  /v1/bots/{telegram_bot_pk}/actions/{telegram_action_pk}/files/{id}/:
+    get:
+      operationId: bots_actions_files_retrieve
+      description: Набор представлений для файлов действий телеграм ботов.
+      summary: Получение детальной информации о файле по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Файл.
+        required: true
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Файлы
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramFile'
+          description: Файл действия
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyFile'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Действие или бот не найдены
+    put:
+      operationId: bots_actions_files_update
+      description: Набор представлений для файлов действий телеграм ботов.
+      summary: Изменение всех полей файла по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Файл.
+        required: true
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Файлы
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelegramFileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TelegramFileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TelegramFileRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramFile'
+          description: Файл действия изменен
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyFile'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Действие или бот не найдены
+    patch:
+      operationId: bots_actions_files_partial_update
+      description: Набор представлений для файлов действий телеграм ботов.
+      summary: Частичное изменение полей файла по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Файл.
+        required: true
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Файлы
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTelegramFileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTelegramFileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTelegramFileRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramFile'
+          description: Файл действия изменен
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyFile'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Действие или бот не найдены
+    delete:
+      operationId: bots_actions_files_destroy
+      description: Набор представлений для файлов действий телеграм ботов.
+      summary: Удаление файла по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Файл.
+        required: true
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Файлы
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: Файл удален
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Действие или бот не найдены
+  /v1/bots/{telegram_bot_pk}/actions/{telegram_action_pk}/headers/:
+    get:
+      operationId: bots_actions_headers_list
+      summary: Получение списка заголовков
+      parameters:
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Заголовки http запросов
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TelegramBot'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+    post:
+      operationId: bots_actions_headers_create
+      summary: Создание заголовка
+      parameters:
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Заголовки http запросов
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HeaderRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HeaderRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HeaderRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Variable'
+          description: Заголовок http запроса создан
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyVariable'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Действие или бот не найдены
+  /v1/bots/{telegram_bot_pk}/actions/{telegram_action_pk}/headers/{id}/:
+    get:
+      operationId: bots_actions_headers_retrieve
+      summary: Получение детальной информации о заголовке по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Заголовок.
+        required: true
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Заголовки http запросов
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Header'
+          description: Пользовательская заголовок http запроса
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyHeader'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Заголовок, действие или бот не найдены
+    put:
+      operationId: bots_actions_headers_update
+      summary: Изменение всех полей заголовка по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Заголовок.
+        required: true
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Заголовки http запросов
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HeaderRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HeaderRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HeaderRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Variable'
+          description: Заголовок htttp запроса изменен
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyVariable'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Заголовок, действие или бот не найдены
+    patch:
+      operationId: bots_actions_headers_partial_update
+      summary: Частичное изменение полей заголовка по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Заголовок.
+        required: true
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Заголовки http запросов
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedHeaderRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedHeaderRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedHeaderRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Variable'
+          description: Заголовок http запроса изменен
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyVariable'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Заголовок, действие или бот не найдены
+    delete:
+      operationId: bots_actions_headers_destroy
+      summary: Удаление заголовка по его id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Заголовок.
+        required: true
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Заголовки http запросов
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: Заголовок удален
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Заголовок, действие или бот не найдены
+  /v1/bots/{telegram_bot_pk}/actions/{telegram_action_pk}/variables/:
+    get:
+      operationId: bots_actions_variables_list
+      summary: Список пользовательских переменных
+      parameters:
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Пользовательские переменные
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TelegramBot'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+    post:
+      operationId: bots_actions_variables_create
+      summary: Создание пользовательской переменной
+      parameters:
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Пользовательские переменные
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VariableRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VariableRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VariableRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Variable'
+          description: Переменная действия создана
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyVariable'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Действие или бот не найдены
+  /v1/bots/{telegram_bot_pk}/actions/{telegram_action_pk}/variables/{id}/:
+    get:
+      operationId: bots_actions_variables_retrieve
+      summary: Получение детальной информации о пользовательской переменной по ее
+        id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Переменная.
+        required: true
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Пользовательские переменные
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Variable'
+          description: Пользовательская переменная действия
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyVariable'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Действие или бот не найдены
+    put:
+      operationId: bots_actions_variables_update
+      summary: Изменение всех полей пользовательской переменной по ее id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Переменная.
+        required: true
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Пользовательские переменные
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VariableRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VariableRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VariableRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Variable'
+          description: Переменная действия изменена
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyVariable'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Переменная, действие или бот не найдены
+    patch:
+      operationId: bots_actions_variables_partial_update
+      summary: Частичное изменение полей пользовательской переменной по ее id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Переменная.
+        required: true
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Пользовательские переменные
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedVariableRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedVariableRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedVariableRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Variable'
+          description: Переменная действия изменена
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyVariable'
+          description: Ошибка в полях
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Переменная, действие или бот не найдены
+    delete:
+      operationId: bots_actions_variables_destroy
+      summary: Удаление пользовательской переменной по ее id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Переменная.
+        required: true
+      - in: path
+        name: telegram_action_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: telegram_bot_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Пользовательские переменные
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: Переменная удалена
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+          description: Переменная, действие или бот не найдены
+  /v1/bots/check_telegram_token/:
+    post:
+      operationId: bots_check_telegram_token_create
+      description: Эндпоинт для проверки введенного телеграм токена на валидность.
+      summary: Проверка телеграм_токена
+      tags:
+      - Телеграм боты
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyToken'
+          description: Успех
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyTokenError'
+          description: Поле содержит ошибки
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DummyToken'
+          description: Токен не существует
+        '405':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MethodNotAlowed'
+          description: Метод не разрешен.
+  /v1/users/login/:
+    get:
+      operationId: users_login_retrieve
       summary: Авторизация пользователя (GET)
       tags:
-      - Authorization
+      - Авторизация
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -21,11 +1661,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Login'
           description: ''
+        '400':
+          description: Вы уже авторизованы
     post:
-      operationId: login_create
+      operationId: users_login_create
       summary: Авторизация пользователя (POST)
       tags:
-      - Authorization
+      - Авторизация
       requestBody:
         content:
           application/json:
@@ -43,24 +1685,26 @@ paths:
       - basicAuth: []
       - {}
       responses:
-        '302':
+        '200':
           content:
             application/json:
               schema:
-                description: Успешный вход
-          description: ''
+                $ref: '#/components/schemas/LoginResponse'
+          description: Успешный вход
         '400':
+          description: Указанные вами адрес электронной почты и/или пароль неверны
+        '403':
           content:
             application/json:
               schema:
-                description: Указанные вами адрес электронной почты и/или пароль неверны
-          description: ''
-  /api/logout/:
+                $ref: '#/components/schemas/Forbidden'
+          description: Требуется авторизация
+  /v1/users/logout/:
     get:
-      operationId: logout_retrieve
+      operationId: users_logout_retrieve
       summary: Выход пользователя из системы (GET)
       tags:
-      - Authorization
+      - Авторизация
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -72,26 +1716,276 @@ paths:
               schema:
                 description: Выйти
           description: ''
+        '400':
+          description: Сначала авторизуйтесь.
     post:
-      operationId: logout_create
+      operationId: users_logout_create
       summary: Выход пользователя из системы (POST)
       tags:
-      - Authorization
+      - Авторизация
       security:
       - cookieAuth: []
       - basicAuth: []
       - {}
       responses:
         '302':
+          description: Вы вышли
+        '400':
+          description: Сначала авторизуйтесь.
+        '403':
           content:
             application/json:
               schema:
-                description: Вы вышли.
-          description: ''
+                $ref: '#/components/schemas/Forbidden'
+          description: Неверный токен.
 components:
   schemas:
+    ActionTypeEnum:
+      enum:
+      - MESSAGE
+      - QUERY
+      - HTTP_REQUEST
+      - GetListHandler
+      - StopHandler
+      - Handlers
+      - SendMassage
+      type: string
+      description: |-
+        * `MESSAGE` - Сообщение
+        * `QUERY` - Запрос к пользователю
+        * `HTTP_REQUEST` - Http запрос
+        * `GetListHandler` - Получение Списка
+        * `StopHandler` - Остановка
+        * `Handlers` - Старт
+        * `SendMassage` - Получение обьекта
+    ApiMethodEnum:
+      enum:
+      - GET
+      - POST
+      - PATCH
+      - DELETE
+      - PUT
+      type: string
+      description: |-
+        * `GET` - Get запрос
+        * `POST` - Post запрос
+        * `PATCH` - Patch запрос
+        * `DELETE` - Delete запрос
+        * `PUT` - Put запрос
+    BlankEnum:
+      enum:
+      - ''
+    BotStateEnum:
+      enum:
+      - DRAFT
+      - RUNNING
+      - STOPPED
+      - ERROR
+      type: string
+      description: |-
+        * `DRAFT` - Черновик
+        * `RUNNING` - Запущен
+        * `STOPPED` - Остановлен
+        * `ERROR` - Ошибка
+    DummyAction:
+      type: object
+      description: Сериализатор для схемы swagger для статуса 400 действия телеграм
+        бота.
+      properties:
+        name:
+          type: array
+          items:
+            type: string
+        description:
+          type: array
+          items:
+            type: string
+        command_keyword:
+          type: array
+          items:
+            type: string
+        message:
+          type: array
+          items:
+            type: string
+        api_key:
+          type: array
+          items:
+            type: string
+        api_url:
+          type: array
+          items:
+            type: string
+        position:
+          type: array
+          items:
+            type: string
+        is_active:
+          type: array
+          items:
+            type: string
+      required:
+      - api_key
+      - api_url
+      - command_keyword
+      - description
+      - is_active
+      - message
+      - name
+      - position
+    DummyBot:
+      type: object
+      description: Сериализатор для отображения схемы swagger для статуса 400 телеграм
+        бота.
+      properties:
+        name:
+          type: array
+          items:
+            type: string
+        description:
+          type: array
+          items:
+            type: string
+        telegram_token:
+          type: array
+          items:
+            type: string
+        api_key:
+          type: array
+          items:
+            type: string
+        api_url:
+          type: array
+          items:
+            type: string
+      required:
+      - api_key
+      - api_url
+      - description
+      - name
+      - telegram_token
+    DummyFile:
+      type: object
+      description: Сериализатор для схемы swagger для статуса 400 файла телеграм бота.
+      properties:
+        telegram_action:
+          type: array
+          items:
+            type: string
+        file:
+          type: array
+          items:
+            type: string
+      required:
+      - file
+      - telegram_action
+    DummyHeader:
+      type: object
+      description: Сериализатор swagger для статуса 400 заголовка http запроса телеграм
+        бота.
+      properties:
+        name:
+          type: array
+          items:
+            type: string
+        telegram_action:
+          type: array
+          items:
+            type: string
+      required:
+      - name
+      - telegram_action
+    DummyStartStopBot:
+      type: object
+      description: Сериализатор схемы swagger для статуса 400 для эндпоинта start_stop_bot.
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    DummyToken:
+      type: object
+      description: Сериализатор для отображения схемы swagger для статуса 200 токена
+        бота.
+      properties:
+        detail:
+          type: boolean
+      required:
+      - detail
+    DummyTokenError:
+      type: object
+      description: Сериализатор для отображения схемы swagger для статуса 400 токена
+        бота.
+      properties:
+        token:
+          type: array
+          items:
+            type: string
+      required:
+      - token
+    DummyVariable:
+      type: object
+      description: Сериализатор для схемы swagger для статуса 400 переменной телеграм
+        бота.
+      properties:
+        name:
+          type: array
+          items:
+            type: string
+        telegram_action:
+          type: array
+          items:
+            type: string
+        variable_type:
+          type: array
+          items:
+            type: string
+      required:
+      - name
+      - telegram_action
+      - variable_type
+    Forbidden:
+      type: object
+      description: |-
+        Базовый сериализатор для отбражения схем swagger.
+        Не использовать для сериализации данных.
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    Header:
+      type: object
+      description: Сериализатор для заголовка пользовательского http запроса.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        telegram_action:
+          type: integer
+        name:
+          type: string
+          pattern: '[a-zA-Z0-9-]{1,30}'
+      required:
+      - id
+      - name
+      - telegram_action
+    HeaderRequest:
+      type: object
+      description: Сериализатор для заголовка пользовательского http запроса.
+      properties:
+        telegram_action:
+          type: integer
+        name:
+          type: string
+          minLength: 1
+          pattern: '[a-zA-Z0-9-]{1,30}'
+      required:
+      - name
+      - telegram_action
     Login:
       type: object
+      description: Сериализатор для отображения ендпоинта логина
       properties:
         email:
           type: string
@@ -102,6 +1996,7 @@ components:
       - password
     LoginRequest:
       type: object
+      description: Сериализатор для отображения ендпоинта логина
       properties:
         email:
           type: string
@@ -112,6 +2007,451 @@ components:
       required:
       - email
       - password
+    LoginResponse:
+      type: object
+      description: Сериализатор ответа при логине
+      properties:
+        email:
+          type: string
+      required:
+      - email
+    MethodNotAlowed:
+      type: object
+      description: Сериализатор для схемы swagger для статуса 405.
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    NotFound:
+      type: object
+      description: Сериализатор для отображения схемы swagger при статусе 404.
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    PatchedHeaderRequest:
+      type: object
+      description: Сериализатор для заголовка пользовательского http запроса.
+      properties:
+        telegram_action:
+          type: integer
+        name:
+          type: string
+          minLength: 1
+          pattern: '[a-zA-Z0-9-]{1,30}'
+    PatchedTelegramBotActionRequest:
+      type: object
+      description: Сериализатор команд телеграм бота.
+      properties:
+        telegram_bot:
+          type: integer
+        name:
+          type: string
+          minLength: 1
+          title: Название действия
+          maxLength: 20
+        action_type:
+          allOf:
+          - $ref: '#/components/schemas/ActionTypeEnum'
+          title: Тип действия
+        description:
+          type: string
+          title: Описание действия
+          maxLength: 1000
+        command_keyword:
+          type: string
+          minLength: 1
+          pattern: ^/[a-zA-Z0-9_]{1,32}$
+        message:
+          type: string
+          title: Текст сообщения
+          maxLength: 1000
+        api_key:
+          type: string
+          title: Ключ API
+          maxLength: 255
+        api_url:
+          type: string
+          format: uri
+          title: Адрес API
+          maxLength: 255
+        api_method:
+          title: Метод запроса к API
+          oneOf:
+          - $ref: '#/components/schemas/ApiMethodEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        data:
+          nullable: true
+          title: Данные
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/TelegramFileRequest'
+        position:
+          type: integer
+          maximum: 30
+          minimum: 1
+        next_action:
+          type: integer
+        is_active:
+          type: boolean
+          title: Вкл/выкл
+    PatchedTelegramBotCreateRequest:
+      type: object
+      description: Сериализатор телеграм бота при создании и обновлении.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Название бота
+          maxLength: 255
+        telegram_token:
+          type: string
+          writeOnly: true
+          minLength: 1
+          pattern: ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$
+        description:
+          type: string
+          title: Описание бота
+          maxLength: 1000
+        api_key:
+          type: string
+          title: Ключ API
+          maxLength: 255
+        api_url:
+          type: string
+          format: uri
+          title: Адрес API
+          maxLength: 255
+    PatchedTelegramFileRequest:
+      type: object
+      description: Сериализатор файлов для команд телеграм бота.
+      properties:
+        telegram_action:
+          type: integer
+        file:
+          type: string
+          format: binary
+    PatchedVariableRequest:
+      type: object
+      description: Сериализатор для пользовательской переменной.
+      properties:
+        telegram_action:
+          type: integer
+        name:
+          type: string
+          minLength: 1
+          pattern: ^[a-zA-Z0-9_]{1,30}
+    TelegramBot:
+      type: object
+      description: Сериализатор для детального отображения телеграм бота.
+      properties:
+        name:
+          type: string
+          title: Название бота
+          maxLength: 255
+        description:
+          type: string
+          title: Описание бота
+          maxLength: 1000
+        bot_state:
+          allOf:
+          - $ref: '#/components/schemas/BotStateEnum'
+          title: Статус бота
+        api_key:
+          type: string
+          title: Ключ API
+          maxLength: 255
+        api_url:
+          type: string
+          format: uri
+          title: Адрес API
+          maxLength: 255
+        api_availability:
+          type: boolean
+          title: Доступность API
+        is_started:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          title: Дата создания
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+          title: Дата последнего запуска бота
+      required:
+      - is_started
+      - name
+    TelegramBotAction:
+      type: object
+      description: Сериализатор команд телеграм бота.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        telegram_bot:
+          type: integer
+        name:
+          type: string
+          title: Название действия
+          maxLength: 20
+        action_type:
+          allOf:
+          - $ref: '#/components/schemas/ActionTypeEnum'
+          title: Тип действия
+        description:
+          type: string
+          title: Описание действия
+          maxLength: 1000
+        command_keyword:
+          type: string
+          pattern: ^/[a-zA-Z0-9_]{1,32}$
+        message:
+          type: string
+          title: Текст сообщения
+          maxLength: 1000
+        api_key:
+          type: string
+          title: Ключ API
+          maxLength: 255
+        api_url:
+          type: string
+          format: uri
+          title: Адрес API
+          maxLength: 255
+        api_method:
+          title: Метод запроса к API
+          oneOf:
+          - $ref: '#/components/schemas/ApiMethodEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        headers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Header'
+          readOnly: true
+        variables:
+          type: array
+          items:
+            $ref: '#/components/schemas/Variable'
+          readOnly: true
+        data:
+          nullable: true
+          title: Данные
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/TelegramFile'
+        position:
+          type: integer
+          maximum: 30
+          minimum: 1
+        next_action:
+          type: integer
+        is_active:
+          type: boolean
+          title: Вкл/выкл
+      required:
+      - command_keyword
+      - headers
+      - id
+      - is_active
+      - name
+      - position
+      - telegram_bot
+      - variables
+    TelegramBotActionRequest:
+      type: object
+      description: Сериализатор команд телеграм бота.
+      properties:
+        telegram_bot:
+          type: integer
+        name:
+          type: string
+          minLength: 1
+          title: Название действия
+          maxLength: 20
+        action_type:
+          allOf:
+          - $ref: '#/components/schemas/ActionTypeEnum'
+          title: Тип действия
+        description:
+          type: string
+          title: Описание действия
+          maxLength: 1000
+        command_keyword:
+          type: string
+          minLength: 1
+          pattern: ^/[a-zA-Z0-9_]{1,32}$
+        message:
+          type: string
+          title: Текст сообщения
+          maxLength: 1000
+        api_key:
+          type: string
+          title: Ключ API
+          maxLength: 255
+        api_url:
+          type: string
+          format: uri
+          title: Адрес API
+          maxLength: 255
+        api_method:
+          title: Метод запроса к API
+          oneOf:
+          - $ref: '#/components/schemas/ApiMethodEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        data:
+          nullable: true
+          title: Данные
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/TelegramFileRequest'
+        position:
+          type: integer
+          maximum: 30
+          minimum: 1
+        next_action:
+          type: integer
+        is_active:
+          type: boolean
+          title: Вкл/выкл
+      required:
+      - command_keyword
+      - is_active
+      - name
+      - position
+      - telegram_bot
+    TelegramBotCreate:
+      type: object
+      description: Сериализатор телеграм бота при создании и обновлении.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Название бота
+          maxLength: 255
+        description:
+          type: string
+          title: Описание бота
+          maxLength: 1000
+        api_key:
+          type: string
+          title: Ключ API
+          maxLength: 255
+        api_url:
+          type: string
+          format: uri
+          title: Адрес API
+          maxLength: 255
+      required:
+      - id
+      - name
+    TelegramBotCreateRequest:
+      type: object
+      description: Сериализатор телеграм бота при создании и обновлении.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Название бота
+          maxLength: 255
+        telegram_token:
+          type: string
+          writeOnly: true
+          minLength: 1
+          pattern: ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$
+        description:
+          type: string
+          title: Описание бота
+          maxLength: 1000
+        api_key:
+          type: string
+          title: Ключ API
+          maxLength: 255
+        api_url:
+          type: string
+          format: uri
+          title: Адрес API
+          maxLength: 255
+      required:
+      - name
+      - telegram_token
+    TelegramFile:
+      type: object
+      description: Сериализатор файлов для команд телеграм бота.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        telegram_action:
+          type: integer
+        file:
+          type: string
+          format: uri
+      required:
+      - file
+      - id
+      - telegram_action
+    TelegramFileRequest:
+      type: object
+      description: Сериализатор файлов для команд телеграм бота.
+      properties:
+        telegram_action:
+          type: integer
+        file:
+          type: string
+          format: binary
+      required:
+      - file
+      - telegram_action
+    TokenRequest:
+      type: object
+      description: Сериализатор для телеграм токена.
+      properties:
+        telegram_token:
+          type: string
+          writeOnly: true
+          minLength: 1
+          pattern: ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$
+      required:
+      - telegram_token
+    Variable:
+      type: object
+      description: Сериализатор для пользовательской переменной.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        telegram_action:
+          type: integer
+        name:
+          type: string
+          pattern: ^[a-zA-Z0-9_]{1,30}
+      required:
+      - id
+      - name
+      - telegram_action
+    VariableRequest:
+      type: object
+      description: Сериализатор для пользовательской переменной.
+      properties:
+        telegram_action:
+          type: integer
+        name:
+          type: string
+          minLength: 1
+          pattern: ^[a-zA-Z0-9_]{1,30}
+      required:
+      - name
+      - telegram_action
   securitySchemes:
     basicAuth:
       type: http
@@ -119,4 +2459,4 @@ components:
     cookieAuth:
       type: apiKey
       in: cookie
-      name: sessionid
+      name: X-CSRFToken

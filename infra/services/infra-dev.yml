@@ -1,0 +1,47 @@
+version: '3'
+services:
+  nginx:
+    image: nginxdemos/hello:0.4
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - traefik
+
+  postgres:
+    image: postgres:16.1-alpine
+    env_file: stack.env
+    volumes:
+      - pg_multidb:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - traefik
+
+  pgadmin:
+    image: dpage/pgadmin4:8.7
+    depends_on:
+      postgres:
+        condition: service_started
+    env_file: stack.env
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - traefik
+
+volumes:
+  pg_multidb:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sihuan/modular/dockume/postgres
+      o: bind
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  traefik:
+    external: true

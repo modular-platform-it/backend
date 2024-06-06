@@ -1,10 +1,7 @@
 from apps.bot_management.models import TelegramBotAction
 from django.test import TestCase
-from factory_data.factories import (
-    TelegramBotActionFactory,
-    TelegramBotFactory,
-    TelegramBotFileFactory,
-)
+from factory_data.factories import TelegramBotActionFactory  # type: ignore
+from factory_data.factories import TelegramBotFactory, TelegramBotFileFactory
 
 
 class TestTelegramBotModel(TestCase):
@@ -23,7 +20,8 @@ class TestTelegramBotModel(TestCase):
             TelegramBotAction.objects.filter(telegram_bot=self.telegram_bot).exists()
         )
         telegram_action, created = TelegramBotAction.objects.get_or_create(
-            telegram_bot=self.telegram_bot.id, pk=1
+            telegram_bot=self.telegram_bot.id,
+            pk=1,
         )
         self.assertFalse(created)
         self.assertEqual(telegram_action.name, "Старт")
