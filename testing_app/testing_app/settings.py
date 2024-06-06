@@ -1,20 +1,23 @@
-"""Настройки проекта."""
-
 import os
+import sys
 from pathlib import Path
 
+from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SECRET_KEY = os.getenv("SECRET_KEY_DJANGO", get_random_secret_key())
 
-SECRET_KEY = os.getenv("SECRET_KEY_DJANGO", "key does not exist")
-
-DEBUG = os.getenv("DEBUG")
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1").split(",")
+
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "https://127.0.0.1").split(",")
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -27,12 +30,15 @@ INSTALLED_APPS = [
     "rest_framework",
     "djoser",
     "rest_framework.authtoken",
+    "corsheaders",
     "api",
     "purchases",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -66,7 +72,7 @@ WSGI_APPLICATION = "testing_app.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-if os.getenv("USE_SQLITE", "True") == "True":
+if os.getenv("USE_SQLITE", "False") == "True" or sys.argv[1] == "test":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -120,14 +126,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "collected_static"
+STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # STATICFILES_DIRS = ((BASE_DIR / "static/"),)
 INITIAL_DATA_DIR = BASE_DIR / "data/"
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = "/app/media"
+MEDIA_URL = "media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -151,4 +157,13 @@ SWAGGER_SETTINGS = {
         "Token": {"type": "apiKey", "name": "Authorization", "in": "header"}
     },
     "DEFAULT_INFO": "testing_app.urls.api_info",
+}
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
 }

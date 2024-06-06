@@ -14,17 +14,21 @@ services:
     volumes:
       - pg_multidb:/docker-entrypoint-initdb.d
       - postgres_data:/var/lib/postgresql/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - traefik
 
   pgadmin:
-    image: dpage/pgadmin4:8.6
+    image: dpage/pgadmin4:8.7
     depends_on:
       postgres:
         condition: service_started
     env_file: stack.env
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - traefik
 

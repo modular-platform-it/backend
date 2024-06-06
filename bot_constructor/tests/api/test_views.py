@@ -64,7 +64,9 @@ class TestTelegramBotView(APITestCase):
 
     def test_telegram_bot_delete_view(self) -> None:
         """Проверка отображения удаления телеграм бота."""
-        telegram_bot: TelegramBot = TelegramBotFactory.create()
+        telegram_bot: TelegramBot = TelegramBotFactory.create(
+            bot_state=TelegramBot.BotState.DRAFT
+        )
         count: int = TelegramBot.objects.count()
         response: Response = self.client.delete(
             reverse("telegrambot-detail", kwargs={"pk": telegram_bot.id}),
@@ -158,8 +160,11 @@ class TestTelegramBotActionView(APITestCase):
 
     def test_telegram_bot_action_delete_view(self) -> None:
         """Проверка отображения удаления действия телеграм бота."""
+        telegram_bot: TelegramBot = TelegramBotFactory.create(
+            bot_state=TelegramBot.BotState.DRAFT
+        )
         telegram_action: TelegramBotAction = TelegramBotActionFactory.create(
-            telegram_bot=self.telegram_bot,
+            telegram_bot=telegram_bot,
         )
         count: int = TelegramBotAction.objects.count()
         response: Response = self.client.delete(
@@ -167,7 +172,7 @@ class TestTelegramBotActionView(APITestCase):
                 self.url_detail,
                 kwargs={
                     "pk": telegram_action.id,
-                    "telegram_bot_pk": self.telegram_bot.id,
+                    "telegram_bot_pk": telegram_bot.id,
                 },
             ),
         )

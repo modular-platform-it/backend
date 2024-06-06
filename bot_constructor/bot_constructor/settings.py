@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 
-DEBUG = os.getenv("DEBUG", "True") == "True"
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
@@ -62,13 +62,16 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
 ]
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 ROOT_URLCONF = "bot_constructor.urls"
-
+SESSION_COOKIE_NAME = "X-CSRFToken"
 SPECTACULAR_SETTINGS = {
+    "AUTHENTICATION_EXTENSIONS": [
+        "api.drf_spectacular.drf_views",
+    ],
     "TITLE": "bot-controller",
     "DESCRIPTION": "Платформа для создания и управления ботами.",
     "VERSION": "1.0.0",
@@ -99,16 +102,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "bot_constructor.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),
-        "NAME": os.getenv("POSTGRES_DB", "postgres"),
-        "USER": os.getenv("POSTGRES_USER", "postgres"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "456852"),
-        "HOST": os.getenv("DB_HOST", "localhost"),
-        "PORT": os.getenv("DB_PORT", "5432"),
+
+if os.getenv("USE_SQLITE", "False") == "True" or sys.argv[1] == "test":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": str(BASE_DIR / "db.sqlite3"),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),
+            "NAME": os.getenv("POSTGRES_DB", "postgresdb"),
+            "USER": os.getenv("POSTGRES_USER", "postgres"),
+            "PASSWORD": os.getenv("POSTGRES_PASSWORD", "456852"),
+            "HOST": os.getenv("DB_HOST", "localhost"),
+            "PORT": os.getenv("DB_PORT", "5432"),
+        }
+    }
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -139,8 +151,6 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
-LOGIN_REDIRECT_URL = "/v1/bots/"
-ACCOUNT_LOGOUT_REDIRECT_URL = "/v1/users/login/"
 
 LANGUAGE_CODE = "ru"
 

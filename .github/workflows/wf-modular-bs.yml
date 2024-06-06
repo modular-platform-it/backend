@@ -3,7 +3,7 @@ name: bot_server container launch
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: [fix/me]
+    branches: [bot_server]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
@@ -11,21 +11,25 @@ env:
   APP_PROJECT_NAME: bot_server
   APP_IMAGE_NAME: ${{vars.BOT_SERVER_IMAGE_NAME}}
   APP_CONTAINER_NAME: ${{vars.BOT_SERVER_CONTAINER_NAME}}
+  APP_DB_NAME: ${{vars.BOT_CONSTRUCTOR_DB_NAME}}
+  # APP_DB_USER substituted to APP_DB_NAME
+  APP_DB_USER: ${{vars.BOT_CONSTRUCTOR_DB_NAME}}
+  APP_DB_PWD: ${{vars.BOT_CONSTRUCTOR_DB_PWD}}
+  APP_VOLUME: bot_server
 jobs:
   variables:
-    name: Workaround to pass env variables to rwf
+    name: Pass env variables to rwf
     runs-on: ubuntu-latest
     outputs:
       app_version: ${{env.APP_VERSION}}
       app_project_name: ${{env.APP_PROJECT_NAME}}
       app_image_name: ${{env.APP_IMAGE_NAME}}
-      app_container_name: ${{env.APP_CONTAINER_NAME}}
     steps:
       - name: Echo - fake step
         if: false
         run: echo
   build-bs:
-    needs: [variables]
+    needs: variables
     uses: ./.github/workflows/rwf-build.yml
     with:
       APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
@@ -52,10 +56,11 @@ jobs:
               --name=${{env.APP_CONTAINER_NAME}} \
               --hostname=${{env.APP_CONTAINER_NAME}} \
               --net=${{secrets.MODULAR_NETWORK_NAME}} \
+              --publish 8888:8080 \
               --restart=unless-stopped \
-              -e POSTGRES_DB=${{secrets.DJANGO_DB_NAME}} \
-              -e POSTGRES_USER=${{secrets.DJANGO_POSTGRES_USER}} \
-              -e POSTGRES_PASSWORD=${{secrets.DJANGO_POSTGRES_PASSWORD}} \
+              -e POSTGRES_DB=${{env.APP_DB_NAME}} \
+              -e POSTGRES_USER=${{env.APP_DB_USER}} \
+              -e POSTGRES_PASSWORD=${{env.APP_DB_PWD}} \
               -e DB_HOST='postgres' \
               -e DB_PORT=5432 \
               ${{secrets.DOCKERHUB_USERNAME}}/${{env.APP_IMAGE_NAME}}:latest
