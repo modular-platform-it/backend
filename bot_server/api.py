@@ -41,7 +41,7 @@ class Bot(BaseModel):
 async def check_app():
     print("_________all_tasks_________")
     for t in asyncio.all_tasks():
-        print(t, '\n')
+        print(t, "\n")
     print("_____________")
     return Response("All ok")
 
@@ -59,9 +59,7 @@ async def start_bot(bot_id):
         active_bots.pop(bot_id)
 
     bot_data = (
-        connection.session.query(
-            TelegramBot
-        ).filter(TelegramBot.id == bot_id).first()
+        connection.session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
     )
     bot = BaseTelegramBot(bot_data=bot_data)
 
@@ -82,7 +80,7 @@ async def stop_bot(bot_id):
     else:
         return HTTPException(status_code=404, detail="Bot not started")
 
-    asyncio.get_event_loop().create_task(bot.stop(), name=f'stop_{bot_id}')
+    asyncio.get_event_loop().create_task(bot.stop(), name=f"stop_{bot_id}")
 
     py_logger.info(f"Бот запущен {bot_id}")
     return "Bot stopped"
