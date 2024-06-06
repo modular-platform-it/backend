@@ -16,7 +16,6 @@ class BaseTelegramBot:
         super().__init__()
         self.bot_data = bot_data
         self.token = self.bot_data.telegram_token
-        print(self.token)
         self.bot = Bot(token=self.token)
         self.dispatcher = Dispatcher()
         self.commands = []
@@ -28,11 +27,9 @@ class BaseTelegramBot:
 
         for action in self.actions:
             handler = getattr(handlers, action.action_type)(bot_data=self.bot_data)
-            # handler = getattr(handlers, "Handlers")(bot_data=self.bot_data)
             router = handler.router
             self.commands.append(handler.command)
             self.dispatcher.include_router(router)
-        self.bot.set_my_commands(commands=self.commands)
         py_logger.info(f"Бот создан {self.bot_data.id}")
 
     async def start(self):
