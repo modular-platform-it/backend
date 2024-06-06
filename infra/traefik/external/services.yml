@@ -28,10 +28,18 @@ http:
         certResolver: letsencrypt
       service: botconstructor
 
+    to-devconstructor:
+      entryPoints:
+        - websecure
+      rule: Host(`dev.xwick.ru`)
+      tls:
+        certResolver: letsencrypt
+      service: devconstructor
+
     to-botserver:
       entryPoints:
         - websecure
-      rule: Host(`api.xwick.ru`) && PathPrefix(`/bserver`)
+      rule: Host(`bsrv.xwick.ru`)
       tls:
         certResolver: letsencrypt
       service: botserver
@@ -39,7 +47,7 @@ http:
     to-testingapp:
       entryPoints:
         - websecure
-      rule: Host(`api.xwick.ru`) && PathPrefix(`/testapp`)
+      rule: Host(`tapp.xwick.ru`)
       tls:
         certResolver: letsencrypt
       service: testingapp
@@ -80,6 +88,11 @@ http:
         servers:
         - url: http://botconstructor:8000
 
+    devconstructor:
+      loadBalancer:
+        servers:
+        - url: http://devconstructor:8000
+
     botserver:
       loadBalancer:
         servers:
@@ -88,7 +101,7 @@ http:
     testingapp:
       loadBalancer:
         servers:
-        - url: http://testing:8081
+        - url: http://testingapp:8080
 
     pgadmin:
       loadBalancer:

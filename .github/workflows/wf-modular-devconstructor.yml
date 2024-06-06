@@ -1,21 +1,21 @@
 ---
-name: testing app container launch
-run-name: ${{ github.actor }} launched 🚀 testing app 🚀 container
+name: bot_constructor dev stand launch
+run-name: ${{ github.actor }} launched 🚀 bot_constructor dev 🚀 stand
 on:
   push:
-    branches: [feat/dev-stand]
+    branches: [develop]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
-  APP_VERSION: 0.0.1
-  APP_PROJECT_NAME: testing_app
-  APP_IMAGE_NAME: ${{vars.TESTING_APP_IMAGE_NAME}}
-  APP_CONTAINER_NAME: ${{vars.TESTING_APP_CONTAINER_NAME}}
-  APP_DB_NAME: ${{vars.TESTING_APP_DB_NAME}}
+  APP_VERSION: dev1.0.1
+  APP_PROJECT_NAME: bot_constructor
+  APP_IMAGE_NAME: ${{vars.DEV_CONSTRUCTOR_IMAGE_NAME}}
+  APP_CONTAINER_NAME: ${{vars.DEV_CONSTRUCTOR_CONTAINER_NAME}}
+  APP_DB_NAME: ${{vars.DEV_CONSTRUCTOR_DB_NAME}}
   # APP_DB_USER substituted to APP_DB_NAME
-  APP_DB_USER: ${{vars.TESTING_APP_DB_NAME}}
-  APP_DB_PWD: ${{vars.TESTING_APP_DB_PWD}}
-  APP_VOLUME: testing_app
+  APP_DB_USER: ${{vars.DEV_CONSTRUCTOR_DB_NAME}}
+  APP_DB_PWD: ${{vars.DEV_CONSTRUCTOR_DB_PWD}}
+  APP_VOLUME: dev_constructor
 jobs:
   variables:
     name: Pass env variables to rwf
@@ -33,16 +33,18 @@ jobs:
       - name: Echo - fake step
         if: false
         run: echo
-  build-bs:
-    needs: [variables]
+
+  build-bc:
+    needs: variables
     uses: ./.github/workflows/rwf-build.yml
     with:
-      APP_VERSION: ${{needs.variables.outputs.app_version}}
       APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
       APP_IMAGE_NAME: ${{needs.variables.outputs.app_image_name}}
+      APP_VERSION: ${{needs.variables.outputs.app_version}}
     secrets: inherit  # pragma: allowlist secret
-  deploy-bs:
-    needs: [variables, build-bs]
+
+  deploy-bc:
+    needs: [variables, build-bc]
     uses: ./.github/workflows/rwf-deploy.yml
     with:
       APP_IMAGE_NAME: ${{needs.variables.outputs.app_image_name}}
@@ -52,7 +54,8 @@ jobs:
       APP_DB_PWD: ${{needs.variables.outputs.app_db_pwd}}
       APP_VOLUME: ${{needs.variables.outputs.app_volume}}
     secrets: inherit  # pragma: allowlist secret
+
   notify:
     uses: ./.github/workflows/rwf-notify.yml
-    needs: deploy-bs
+    needs: deploy-bc
     secrets: inherit  # pragma: allowlist secret
