@@ -1,5 +1,7 @@
 # Шина общения и управление ботом
 import asyncio
+import concurrent.futures  # для MacOS
+import multiprocessing as mp
 import os
 
 import sentry_sdk
@@ -7,14 +9,10 @@ from bots import BaseTelegramBot
 from db import Connection
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-from log import py_logger, error_logger
+from log import error_logger, py_logger
 from models import TelegramBot
 from models_api import EditBot
 from pydantic import BaseModel
-
-import multiprocessing as mp
-import concurrent.futures # для MacOS
-
 
 load_dotenv()
 sentry_sdk.init(
@@ -27,8 +25,10 @@ sentry_sdk.init(
 )
 connection = Connection()
 
+
 def run_fastapi(shared_data):
     import uvicorn
+
     app = FastAPI()
     # shared_data = shared_data
 
@@ -39,27 +39,31 @@ def run_fastapi(shared_data):
         print(shared_data.value)
         py_logger.info(f"Бот запущен {bot_id}")
         return "Бот запущен"
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
 
 
 def run_aiogram(shared_data):
     import time
+
     while True:
         time.sleep(3)
 
         if shared_data.value != 0:
             bot_id = int(shared_data.value)
             bot_data = (
-                connection.session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
+                connection.session.query(TelegramBot)
+                .filter(TelegramBot.id == bot_id)
+                .first()
             )
 
             bot = BaseTelegramBot(bot_data=bot_data)
             asyncio.run(bot.start())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
-    MAC = mp.Value('i', 0)
+    MAC = mp.Value("i", 0)
     MAC.value = 0
     # Создание процессов для FastAPI и Aiogram
     p1 = mp.Process(target=run_fastapi, args=(MAC,))

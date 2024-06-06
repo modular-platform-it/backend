@@ -5,7 +5,9 @@ from pathlib import Path
 class Logger(logging.Logger):
     def __init__(self, name):
         super().__init__(name)
-        self.setLevel(logging.DEBUG)  # Устанавливаем уровень логирования для этого логгера
+        self.setLevel(
+            logging.DEBUG
+        )  # Устанавливаем уровень логирования для этого логгера
         BASE_DIR = Path(__file__).resolve().parent.parent
         log_file = f"{BASE_DIR}/logger.log"
         formatter = logging.Formatter("%(name)s %(asctime)s %(levelname)s %(message)s")
@@ -27,6 +29,7 @@ def error_logger(func):
     Если во время выполнения декорируемой функции возникла ошибка,
     то в файл logger.log записываются ошибки
     """
+
     def wrapper(*args, **kwargs):
 
         try:
@@ -36,4 +39,3 @@ def error_logger(func):
             py_logger.error(f"An error occurred: {str(e)}")
 
     return wrapper
-
