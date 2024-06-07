@@ -10,4 +10,6 @@ fi
 
 python manage.py collectstatic --clear --noinput
 
+python manage.py importcsv
+
 gunicorn --bind 0.0.0.0:8080 testing_app.wsgi:application
