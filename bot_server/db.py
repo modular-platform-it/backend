@@ -22,6 +22,7 @@ class Connection:
             database=os.getenv("POSTGRES_DB", "postgres"),
             port=int(os.getenv("DB_PORT", "5439")),
         )
+
         self.engine = create_engine(
             self.url_object,
             echo=True,
