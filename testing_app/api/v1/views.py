@@ -98,6 +98,7 @@ from .serializers import (
         responses={
             201: openapi.Response("Карточка товара создана"),
             400: openapi.Response("Ошибка в полях", Response400Serializer),
+            401: openapi.Response("Авторизуйтесь", Response401Serializer()),
             403: openapi.Response("Требуется авторизация", Response403Serializer),
         },
     ),
@@ -184,6 +185,7 @@ class CartViewSet(ModelViewSet):
         responses={
             201: openapi.Response("Карточка товара добавлена в список покупок"),
             400: openapi.Response("Ошибка в полях", Response400Serializer),
+            400: openapi.Response("Авторизуйтесь", Response401Serializer),
             403: openapi.Response("Требуется авторизация", Response403Serializer),
         },
     ),
@@ -218,8 +220,8 @@ class ShoppingCartViewSet(ModelViewSet):
     decorator=swagger_auto_schema(
         tags=["Авторизация"],
         responses={
-            204: openapi.Response("No Content"),
-            401: openapi.Response("Unauthorized", Response401Serializer()),
+            204: openapi.Response("Вы вышли"),
+            401: openapi.Response("Авторизуйтесь", Response401Serializer()),
         },
     ),
 )
@@ -233,7 +235,10 @@ class SwaggerLogoutView(TokenDestroyView):
         tags=["Авторизация"],
         responses={
             200: openapi.Response("Ok", TokenCreateSerializer()),
-            400: openapi.Response("Bad Request", Response400Serializer),
+            400: openapi.Response(
+                "Невозможно войти с предоставленными учетными данными",
+                Response400Serializer,
+            ),
         },
     ),
 )
