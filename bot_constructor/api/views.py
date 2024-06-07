@@ -452,14 +452,14 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def get_serializer_class(self):
-        action_type = self.request.data.get("action_type")
-        if action_type == TelegramBotAction.ActionType.HTTP_REQUEST:
-            return TelegramBotActionHttpRequestSerializer
-        elif action_type in (
-            TelegramBotAction.ActionType.MESSAGE,
-            TelegramBotAction.ActionType.QUERY,
-        ):
-            return TelegramBotActionMessageSerializer
+        # action_type = self.request.data.get("action_type")
+        # if action_type == TelegramBotAction.ActionType.HTTP_REQUEST:
+        #     return TelegramBotActionHttpRequestSerializer
+        # elif action_type in (
+        #     TelegramBotAction.ActionType.MESSAGE,
+        #     TelegramBotAction.ActionType.QUERY,
+        # ):
+        #     return TelegramBotActionMessageSerializer
         return super().get_serializer_class()
 
     def get_serializer_context(self) -> dict[str, Any]:
