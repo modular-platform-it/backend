@@ -5,7 +5,7 @@ from log import py_logger
 from models import Base
 from sqlalchemy import URL, create_engine, inspect
 from sqlalchemy.engine.reflection import Inspector
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import Session, sessionmaker
 
 load_dotenv()
 
