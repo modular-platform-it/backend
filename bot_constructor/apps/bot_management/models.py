@@ -73,6 +73,7 @@ class TelegramBot(models.Model):
                 telegram_bot=self,
                 name="Старт",
                 command_keyword="/start",
+                action_type="Handlers",
                 position=1,
                 is_active=True,
             )
@@ -95,7 +96,6 @@ class TelegramBotAction(models.Model):
 
     # TODO разбить модель на отдельные виды
     class ActionType(models.TextChoices):
-        MESSAGE = "MESSAGE", "Сообщение"
         GetListHandler = "GetListHandler", "Получение Списка"
         StopHandler = "StopHandler", "Остановка"
         Handlers = "Handlers", "Старт"

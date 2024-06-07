@@ -84,14 +84,17 @@ async def start_bot(bot_id: int):
 
     with connection as session:
         bot_data = session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
-    bot = BaseTelegramBot(bot_data=bot_data)
+    if bot_data:
+        bot = BaseTelegramBot(bot_data=bot_data)
 
-    asyncio.get_event_loop().create_task(bot.start(), name=f"start_{bot_id}")
+        asyncio.get_event_loop().create_task(bot.start(), name=f"start_{bot_id}")
 
-    active_bots[bot_id] = bot
-    py_logger.info(f"Бот запущен {bot_id}")
-    return Response("Bot started")
-
+        active_bots[bot_id] = bot
+        py_logger.info(f"Бот запущен {bot_id}")
+        return Response("Bot started")
+    else:
+        py_logger.info(f"Бота нет {bot_id}")
+        return Response("бот {bot_id} не существует")
 
 @app.get("/{bot_id}/stop/")
 async def stop_bot(bot_id: int):
