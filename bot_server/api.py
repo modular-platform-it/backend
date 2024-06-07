@@ -35,7 +35,7 @@ active_bots = dict()
 async def start_bots(application: FastAPI):
     active_bots.clear()
     with connection as session:
-        bots = (session.query(TelegramBot).filter(TelegramBot.bot_state == "RUNNING"))
+        bots = session.query(TelegramBot).filter(TelegramBot.bot_state == "RUNNING")
     for bot_data in bots:
         bot = BaseTelegramBot(bot_data=bot_data)
 
@@ -83,7 +83,7 @@ async def start_bot(bot_id: int):
         active_bots.pop(bot_id)
 
     with connection as session:
-        bot_data = (session.query(TelegramBot).filter(TelegramBot.id == bot_id).first())
+        bot_data = session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
     bot = BaseTelegramBot(bot_data=bot_data)
 
     asyncio.get_event_loop().create_task(bot.start(), name=f"start_{bot_id}")
