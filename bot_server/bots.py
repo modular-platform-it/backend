@@ -38,7 +38,6 @@ class BaseTelegramBot:
         await self.dispatcher.start_polling(self.bot)
 
     async def stop(self):
-        await self.bot.set_my_commands(commands=self.commands)
         await self.dispatcher.stop_polling()
         py_logger.info(f"Бот остановлен {self.bot_data.id}")
 
