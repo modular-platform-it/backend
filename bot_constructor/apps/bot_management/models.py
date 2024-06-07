@@ -122,7 +122,7 @@ class TelegramBotAction(models.Model):
         "Тип действия",
         choices=ActionType,
         max_length=constants.ACTION_TYPE_LENGTH,
-        default=ActionType.MESSAGE,
+        default=ActionType.Handlers,
     )
     description = models.CharField(
         verbose_name="Описание действия",

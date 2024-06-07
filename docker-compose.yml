@@ -12,13 +12,13 @@ services:
     volumes: [pg_data:/var/lib/postgresql/data]
     restart: always
 
-  backend2:
+  bot_server:
     build: ./bot_server/
     env_file: .env
     ports: [8001:8000]
     depends_on: [db]
 
-  backend1:
+  bot_constructor:
     build: ./bot_constructor/
     env_file: .env
     ports: [8002:8000]
@@ -28,5 +28,5 @@ services:
     build: ./gateway/
     env_file: .env
     ports: [80:80]
-    depends_on: [backend2]
+    depends_on: [bot_constructor]
     volumes: [static:/staticfiles/, media:/app/media/]
