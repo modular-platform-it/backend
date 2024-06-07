@@ -9,33 +9,24 @@ services:
   db:
     image: postgres:13.10
     env_file: .env
-    volumes:
-      - pg_data:/var/lib/postgresql/data
+    volumes: [pg_data:/var/lib/postgresql/data]
     restart: always
 
   backend2:
     build: ./bot_server/
     env_file: .env
-    ports:
-      - 8001:8000
-    depends_on:
-      - db
+    ports: [8001:8000]
+    depends_on: [db]
 
   backend1:
     build: ./bot_constructor/
     env_file: .env
-    ports:
-      - 8002:8000
-    depends_on:
-      - db
+    ports: [8002:8000]
+    depends_on: [db]
 
   gateway:
     build: ./gateway/
     env_file: .env
-    ports:
-      - 80:80
-    depends_on:
-      - backend2
-    volumes:
-      - static:/staticfiles/
-      - media:/app/media/
+    ports: [80:80]
+    depends_on: [backend2]
+    volumes: [static:/staticfiles/, media:/app/media/]
