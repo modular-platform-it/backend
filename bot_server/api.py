@@ -1,13 +1,14 @@
 # Шина общения и управление ботом
 import asyncio
 import os
+from contextlib import asynccontextmanager
 
 import sentry_sdk
 
 from bots import BaseTelegramBot
 from db import Connection
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI, HTTPException, Response, Depends
 from log import py_logger
 from models import TelegramBot
 from models_api import EditBot
@@ -25,10 +26,33 @@ sentry_sdk.init(
     traces_sample_rate=1.0,
     profiles_sample_rate=1.0,
 )
-app = FastAPI()
-connection = Connection()
+
 
 active_bots = dict()
+
+
+@asynccontextmanager
+async def start_bots(application: FastAPI):
+    active_bots.clear()
+    with connection as session:
+        bots = session.query(TelegramBot).filter(TelegramBot.bot_state == "RUNNING")
+    for bot_data in bots:
+        bot = BaseTelegramBot(bot_data=bot_data)
+
+        asyncio.get_event_loop().create_task(bot.start(), name=f"start_{bot_data.id}")
+
+        active_bots[bot_data.id] = bot
+        py_logger.info(f"Бот запущен {bot_data.id}")
+
+    yield
+
+    for bot in active_bots:
+        asyncio.get_event_loop().create_task(bot.stop(), name=f"stop_{bot.bot_data.id}")
+    active_bots.clear()
+
+
+app = FastAPI(lifespan=start_bots)
+connection = Connection()
 
 
 class Bot(BaseModel):
@@ -39,15 +63,15 @@ class Bot(BaseModel):
 
 @app.get("/check/")
 async def check_app():
-    print("_________all_tasks_________")
-    for t in asyncio.all_tasks():
-        print(t, "\n")
-    print("_____________")
+    # print("_________all_tasks_________")
+    # for t in asyncio.all_tasks():
+    #     print(t, "\n")
+    # print("_____________")
     return Response("All ok")
 
 
 @app.get("/{bot_id}/start/")
-async def start_bot(bot_id):
+async def start_bot(bot_id: int):
 
     if active_bots.get(bot_id, None):
         tasks = asyncio.all_tasks()
@@ -58,9 +82,8 @@ async def start_bot(bot_id):
 
         active_bots.pop(bot_id)
 
-    bot_data = (
-        connection.session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
-    )
+    with connection as session:
+        bot_data = session.query(TelegramBot).filter(TelegramBot.id == bot_id).first()
     bot = BaseTelegramBot(bot_data=bot_data)
 
     asyncio.get_event_loop().create_task(bot.start(), name=f"start_{bot_id}")
@@ -71,7 +94,7 @@ async def start_bot(bot_id):
 
 
 @app.get("/{bot_id}/stop/")
-async def stop_bot(bot_id):
+async def stop_bot(bot_id: int):
     bot = active_bots.pop(bot_id, None)
     tasks = asyncio.all_tasks()
     for task in tasks:

@@ -19,11 +19,12 @@ class BaseTelegramBot:
         self.bot = Bot(token=self.token)
         self.dispatcher = Dispatcher()
         self.commands = []
-        self.actions = (
-            connection.session.query(TelegramBotAction)
-            .filter(TelegramBotAction.telegram_bot_id == bot_data.id)
-            .all()
-        )
+        with connection as session:
+            self.actions = (
+                session.query(TelegramBotAction)
+                .filter(TelegramBotAction.telegram_bot_id == bot_data.id)
+                .all()
+            )
 
         for action in self.actions:
             handler = getattr(handlers, action.action_type)(bot_data=self.bot_data)
@@ -44,6 +45,8 @@ class BaseTelegramBot:
 
 if __name__ == "__main__":
 
-    bot_data = connection.session.query(TelegramBot).filter(TelegramBot.id == 1).first()
+    with connection as session:
+        bot_data = session.query(TelegramBot).filter(TelegramBot.id == 1).first()
+
     bot = BaseTelegramBot(bot_data=bot_data)
     asyncio.run(bot.start())
