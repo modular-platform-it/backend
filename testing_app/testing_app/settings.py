@@ -2,6 +2,7 @@ import os
 import sys
 from pathlib import Path
 
+from corsheaders.defaults import default_headers
 from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
@@ -16,8 +17,13 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1").split(",")
 
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "https://127.0.0.1").split(",")
+
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = (
+    *default_headers,
+    "X-CSRFToken",
+)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
