@@ -21,6 +21,9 @@ on:
       APP_VOLUME:
         required: true
         type: string
+      BOT_SERVER_URL:
+        required: true
+        type: string
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -50,6 +53,7 @@ jobs:
               -e POSTGRES_DB=${{inputs.APP_DB_NAME}} \
               -e POSTGRES_USER=${{inputs.APP_DB_USER}} \
               -e POSTGRES_PASSWORD=${{inputs.APP_DB_PWD}} \
+              -e BOT_SERVER_URL=${{inputs.BOT_SERVER_URL}} \
               -e DB_HOST='postgres' \
               -e DB_PORT=5432 \
               -v ${{inputs.APP_VOLUME}}_static:/app/${{inputs.APP_VOLUME}}/static/ \

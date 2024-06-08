@@ -16,6 +16,7 @@ env:
   APP_DB_USER: ${{vars.DEV_CONSTRUCTOR_DB_NAME}}
   APP_DB_PWD: ${{vars.DEV_CONSTRUCTOR_DB_PWD}}
   APP_VOLUME: dev_constructor
+  BOT_SERVER_URL: ${{vars.BOT_SERVER_URL}}
 jobs:
   variables:
     name: Pass env variables to rwf
@@ -29,6 +30,7 @@ jobs:
       app_db_user: ${{env.APP_DB_USER}}
       app_db_pwd: ${{env.APP_DB_PWD}}
       app_volume: ${{env.APP_VOLUME}}
+      bot_server_url: ${{env.BOT_SERVER_URL}}
     steps:
       - name: Echo - fake step
         if: false
@@ -43,7 +45,7 @@ jobs:
       APP_VERSION: ${{needs.variables.outputs.app_version}}
     secrets: inherit  # pragma: allowlist secret
 
-  deploy-bc:
+  deploy-dc:
     needs: [variables, build-bc]
     uses: ./.github/workflows/rwf-deploy.yml
     with:
@@ -53,9 +55,10 @@ jobs:
       APP_DB_USER: ${{needs.variables.outputs.app_db_user}}
       APP_DB_PWD: ${{needs.variables.outputs.app_db_pwd}}
       APP_VOLUME: ${{needs.variables.outputs.app_volume}}
+      BOT_SERVER_URL: ${{needs.variables.outputs.bot_server_url}}
     secrets: inherit  # pragma: allowlist secret
 
   notify:
     uses: ./.github/workflows/rwf-notify.yml
-    needs: deploy-bc
+    needs: deploy-dc
     secrets: inherit  # pragma: allowlist secret
