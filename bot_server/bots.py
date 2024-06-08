@@ -32,7 +32,7 @@ class BaseTelegramBot:
             except:
                 py_logger.error(f"{action.action_type} такой команды нет")
             router = handler.router
-            self.commands.append(handler.command)
+            self.commands += handler.commands
             self.dispatcher.include_router(router)
         py_logger.info(f"Бот создан {self.bot_data.id}")
 

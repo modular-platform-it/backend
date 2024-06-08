@@ -4,6 +4,7 @@ from aiogram.filters import Command
 from aiogram.types import BotCommand, Message
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
+import random
 
 from fastapi import HTTPException
 from models_api import ItemList, Item
@@ -20,6 +21,7 @@ async def get_list(api_key, api_url) -> ItemList:
         raise HTTPException(status_code=response.status_code, detail=response.text)
     items = [value["name"] for value in response.json()]
     return ItemList(items=items)
+
 
 async def get_item(api_key, api_url) -> Item:
     """Получить список из другого приложения по API и токену."""
@@ -44,7 +46,9 @@ class GetListHandler:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
-        self.command = BotCommand(command="/get_list", description=f"get list")
+        self.commands = [
+            BotCommand(command="/get_list", description=f"get list"),
+            ]
 
         @self.router.message(Command("get_list"))
         async def get_list_handler(msg: Message):
@@ -61,9 +65,11 @@ class StopHandler:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
-        self.command = BotCommand(
-            command="/stop", description=f"stop the bot {self.bot_data.name}"
-        )
+        self.commands = [
+            BotCommand(
+                command="/stop", description=f"stop the bot {self.bot_data.name}"
+            ),
+        ]
 
         @self.router.message(Command("stop"))
         async def stop_handler(msg: Message):
@@ -77,9 +83,11 @@ class Handlers:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
-        self.command = BotCommand(
-            command="/start", description=f"start the bot {self.bot_data.name}"
-        )
+        self.commands = [
+            BotCommand(
+                command="/start", description=f"start the bot {self.bot_data.name}"
+            ),
+        ]
 
         @self.router.message(Command("start"))
         async def start_handler(msg: Message):
@@ -98,7 +106,9 @@ class GetItem:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
-        self.command = BotCommand(command="/get_item", description=f"get list")
+        self.commands = [
+            BotCommand(command="/get_item", description=f"get list")
+        ]
 
         class IDState(StatesGroup):
             id = State()
@@ -117,3 +127,52 @@ class GetItem:
             )
             gen = serialize_json_to_lines(item.item)
             await msg.answer(f"Нужный вам обьект: {gen}")
+
+
+class RandomWordLearnListHandler:
+    def __init__(self, bot_data, action):
+        self.bot_data = bot_data
+        self.router = Router()
+        self.action = action
+        self.commands = [
+            BotCommand(command="/add_word", description=f"Добавить новое слово"),
+            BotCommand(command="/get_words_list", description=f"Получить список ваших слов на сегодня")
+        ]
+        self.words = []
+        self.requirement_count_word = 5
+
+        class WordState(StatesGroup):
+            word = State()
+            translate = State()
+
+        @self.router.message(Command("add_word"))
+        async def get_id_handler(msg: Message, state: FSMContext):
+            await state.set_state(WordState.word)
+            await msg.answer("Введите слово")
+
+        @self.router.message(WordState.word)
+        async def get_item_handler(msg: Message, state: FSMContext):
+            await state.update_data(word=msg.text)
+            await state.set_state(WordState.translate)
+            await msg.answer("Введите его перевод")
+
+        @self.router.message(WordState.translate)
+        async def get_item_handler(msg: Message, state: FSMContext):
+            await state.update_data(translate=msg.text)
+            await state.set_state(WordState.translate)
+            data = await state.get_data()
+            self.words.append(data)
+            await state.clear()
+            await msg.answer("Слово добавлено")
+
+        @self.router.message(Command("get_words_list"))
+        async def get_id_handler(msg: Message):
+            text = ""
+            if self.requirement_count_word < len(self.words):
+                for item in range(len(self.words)):
+                    word = random.choice(self.words)
+                    text += word["word"] + ": " + word["translate"] + "\n"
+            else:
+                for item in self.words:
+                    text += item["word"] + ": " + item["translate"] + "\n"
+            await msg.answer(f"Список ваших слов\n{text}")
