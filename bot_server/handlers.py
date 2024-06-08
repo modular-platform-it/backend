@@ -1,14 +1,14 @@
-import requests
-from aiogram import Router, F
-from aiogram.filters import Command
-from aiogram.types import BotCommand, Message
-from aiogram.fsm.state import StatesGroup, State
-from aiogram.fsm.context import FSMContext
+import json
 import random
 
+import requests
+from aiogram import F, Router
+from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.types import BotCommand, Message
 from fastapi import HTTPException
-from models_api import ItemList, Item
-import json
+from models_api import Item, ItemList
 
 
 async def get_list(api_key, api_url) -> ItemList:
@@ -36,8 +36,9 @@ async def get_item(api_key, api_url) -> Item:
 
 def serialize_json_to_lines(data):
     serialized_data = json.dumps(data, indent=2)
-    lines = serialized_data.split('\n')
-    return '\n'.join(lines)
+    lines = serialized_data.split("\n")
+    return "\n".join(lines)
+
 
 class GetListHandler:
     """Хэндлер получения списка из стороннего приложения"""
@@ -48,7 +49,7 @@ class GetListHandler:
         self.action = action
         self.commands = [
             BotCommand(command="/get_list", description=f"get list"),
-            ]
+        ]
 
         @self.router.message(Command("get_list"))
         async def get_list_handler(msg: Message):
@@ -106,9 +107,7 @@ class GetItem:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
-        self.commands = [
-            BotCommand(command="/get_item", description=f"get list")
-        ]
+        self.commands = [BotCommand(command="/get_item", description=f"get list")]
 
         class IDState(StatesGroup):
             id = State()
@@ -123,7 +122,8 @@ class GetItem:
             await state.update_data(id=int(msg.text))
             data = await state.get_data()
             item = await get_item(
-                api_key=self.bot_data.api_key, api_url=f"{self.action.api_url}{data["id"]}"
+                api_key=self.bot_data.api_key,
+                api_url=f"{self.action.api_url}{data["id"]}",
             )
             gen = serialize_json_to_lines(item.item)
             await state.clear()
@@ -138,7 +138,10 @@ class RandomWordLearnListHandler:
         self.action = action
         self.commands = [
             BotCommand(command="/add_word", description=f"Добавить новое слово"),
-            BotCommand(command="/get_words_list", description=f"Получить список ваших слов на сегодня")
+            BotCommand(
+                command="/get_words_list",
+                description=f"Получить список ваших слов на сегодня",
+            ),
         ]
         self.words = []
         self.requirement_count_word = 5

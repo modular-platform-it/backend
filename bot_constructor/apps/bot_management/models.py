@@ -99,7 +99,10 @@ class TelegramBotAction(models.Model):
         GetListHandler = "GetListHandler", "Получение Списка"
         StopHandler = "StopHandler", "Остановка"
         Handlers = "Handlers", "Старт"
-        RandomWordLearnListHandler = "RandomWordLearnListHandler", "Словарик слов с переводом"
+        RandomWordLearnListHandler = (
+            "RandomWordLearnListHandler",
+            "Словарик слов с переводом",
+        )
         GetItem = "GetItem", "Получение обьекта"
 
     class APIMethodType(models.TextChoices):
@@ -145,10 +148,16 @@ class TelegramBotAction(models.Model):
         null=True,
     )
     api_url = models.URLField(
-        verbose_name="Адрес API", max_length=constants.API_URL_LENGTH, blank=True
+        verbose_name="Адрес API",
+        max_length=constants.API_URL_LENGTH,
+        blank=True,
+        null=True,
     )
     api_key = models.CharField(
-        verbose_name="Ключ API", max_length=constants.API_KEY_LENGTH, blank=True
+        verbose_name="Ключ API",
+        max_length=constants.API_KEY_LENGTH,
+        blank=True,
+        null=True,
     )
     api_method = models.CharField(
         "Метод запроса к API",
@@ -156,6 +165,7 @@ class TelegramBotAction(models.Model):
         default=APIMethodType.GET,
         max_length=constants.METHOD_LENGTH,
         blank=True,
+        null=True,
     )
     data = models.JSONField("Данные", blank=True, null=True)
     position = models.SmallIntegerField(
@@ -164,8 +174,14 @@ class TelegramBotAction(models.Model):
             validators.MinValueValidator(1),
             validators.MaxValueValidator(constants.MAX_POSITIONS),
         ),
+        blank=True,
+        null=True,
     )
-    is_active = models.BooleanField(verbose_name="Вкл/выкл")
+    is_active = models.BooleanField(
+        verbose_name="Вкл/выкл",
+        blank=True,
+        null=True,
+    )
     next_action = models.ForeignKey(
         to="self",
         on_delete=models.SET_NULL,
