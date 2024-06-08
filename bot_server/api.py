@@ -93,7 +93,7 @@ async def start_bot(bot_id: int):
         return Response("Bot started")
     else:
         py_logger.info(f"Бота нет {bot_id}")
-        return Response("бот {bot_id} не существует")
+        return Response(f"бот {bot_id} не существует")
 
 
 @app.get("/{bot_id}/stop/")

@@ -27,7 +27,10 @@ class BaseTelegramBot:
             )
 
         for action in self.actions:
-            handler = getattr(handlers, action.action_type)(bot_data=self.bot_data)
+            try:
+                handler = getattr(handlers, action.action_type)(bot_data=self.bot_data, action=action)
+            except:
+                py_logger.error(f"{action.action_type} такой команды нет")
             router = handler.router
             self.commands.append(handler.command)
             self.dispatcher.include_router(router)
