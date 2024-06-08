@@ -126,6 +126,7 @@ class GetItem:
                 api_key=self.bot_data.api_key, api_url=f"{self.action.api_url}{data["id"]}"
             )
             gen = serialize_json_to_lines(item.item)
+            await state.clear()
             await msg.answer(f"Нужный вам обьект: {gen}")
 
 
