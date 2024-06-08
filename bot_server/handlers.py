@@ -132,6 +132,7 @@ class GetItem:
 
 class RandomWordLearnListHandler:
     def __init__(self, bot_data, action):
+        """Словарик для запоминания слов"""
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
@@ -148,6 +149,7 @@ class RandomWordLearnListHandler:
 
         @self.router.message(Command("add_word"))
         async def get_start_add_handler(msg: Message, state: FSMContext):
+            """Добавление нового слова и его перевод в словарик"""
             await state.set_state(WordState.word)
             await msg.answer("Введите слово")
 
@@ -168,6 +170,7 @@ class RandomWordLearnListHandler:
 
         @self.router.message(Command("get_words_list"))
         async def get_word_list_handler(msg: Message):
+            """Получение списка из 5 случайных слов"""
             text = ""
             if self.requirement_count_word < len(self.words):
                 for item in range(len(self.words)):
