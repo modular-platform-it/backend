@@ -23,14 +23,16 @@ data2 = {
 }
 
 data_action1 = {
-"telegram_bot_id": 7,
+"telegram_bot_id": 12,
 "action_type": "GetItem",
 "description": "dsadasd"
 }
 data_action2 = {
-"telegram_bot_id": 8,
+"telegram_bot_id": 12,
 "action_type": "GetItem",
-"description": "dsadasd"
+"description": "dsadasd",
+"api_url": "https://api.zippopotam.us/us/",
+"api_key": None,
 }
 bot1 = TelegramBot(**data1)
 bot2 = TelegramBot(**data2)
