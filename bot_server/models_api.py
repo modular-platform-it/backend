@@ -1,10 +1,11 @@
-from typing import List, Any
+from typing import Any, List
 
 from pydantic import BaseModel
 
 
 class ItemList(BaseModel):
     items: List[str]
+
 
 class Item(BaseModel):
     item: dict[str, Any]

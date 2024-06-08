@@ -23,16 +23,18 @@ data2 = {
 }
 
 data_action1 = {
-"telegram_bot_id": 12,
-"action_type": "GetItem",
-"description": "dsadasd"
+    "telegram_bot_id": 12,
+    "action_type": "GetItem",
+    "description": "dsadasd",
 }
 data_action2 = {
-"telegram_bot_id": 12,
-"action_type": "RandomWordLearnListHandler",
-"description": "dsadasd",
-"api_url": "https://api.zippopotam.us/us/",
-"api_key": None,
+    "telegram_bot_id": 2,
+    "name": "Словарь",
+    "command_keyword": "get_list",
+    "action_type": "RandomWordLearnListHandler",
+    "description": "dsadasd",
+    "api_url": "https://api.zippopotam.us/us/",
+    "api_key": "",
 }
 bot1 = TelegramBot(**data1)
 bot2 = TelegramBot(**data2)
