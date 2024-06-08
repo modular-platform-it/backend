@@ -14,7 +14,7 @@ data1 = {
 }
 data2 = {
     "name": "bot4",
-    "telegram_token": "5887317990:AAH9l1nK1J8UPolkr03luFxBt5xTNtdUU1A",
+    "telegram_token": "7183394983:AAEzdAGDlbIoN4U129juaaUa7TdTu0SFEuU",
     "description": "sadsad",
     "api_key": "sadsad",  # pragma: allowlist secret
     "api_url": "http://api.sadsad.ru/",
@@ -24,6 +24,7 @@ data2 = {
 
 bot1 = TelegramBot(**data1)
 bot2 = TelegramBot(**data2)
-connection.session.add(bot1)
-connection.session.add(bot2)
-connection.session.commit()
+with connection as session:
+    session.add(bot1)
+    session.add(bot2)
+    session.commit()
