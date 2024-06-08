@@ -29,7 +29,7 @@ data_action1 = {
 }
 data_action2 = {
 "telegram_bot_id": 12,
-"action_type": "GetItem",
+"action_type": "RandomWordLearnListHandler",
 "description": "dsadasd",
 "api_url": "https://api.zippopotam.us/us/",
 "api_key": None,
@@ -42,6 +42,6 @@ with connection as session:
     # session.add(bot1)
     # session.add(bot2)
     # session.commit()
-    session.add(action1)
+    # session.add(action1)
     session.add(action2)
     session.commit()
