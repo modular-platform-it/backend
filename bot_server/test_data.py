@@ -1,5 +1,5 @@
 from db import Connection
-from models import TelegramBot
+from models import TelegramBot, TelegramBotAction
 
 """Добавление первого бота-тестогого"""
 connection = Connection()
@@ -22,9 +22,24 @@ data2 = {
     "bot_state": "RUNNING",
 }
 
+data_action1 = {
+"telegram_bot_id": 7,
+"action_type": "GetItem",
+"description": "dsadasd"
+}
+data_action2 = {
+"telegram_bot_id": 8,
+"action_type": "GetItem",
+"description": "dsadasd"
+}
 bot1 = TelegramBot(**data1)
 bot2 = TelegramBot(**data2)
+action1 = TelegramBotAction(**data_action1)
+action2 = TelegramBotAction(**data_action2)
 with connection as session:
-    session.add(bot1)
-    session.add(bot2)
+    # session.add(bot1)
+    # session.add(bot2)
+    # session.commit()
+    session.add(action1)
+    session.add(action2)
     session.commit()
