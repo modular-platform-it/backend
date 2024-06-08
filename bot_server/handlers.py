@@ -171,8 +171,8 @@ class RandomWordLearnListHandler:
             if self.requirement_count_word < len(self.words):
                 for item in range(len(self.words)):
                     word = random.choice(self.words)
-                    text += word["word"] + ": " + word["translate"] + "\n"
+                    text += word["word"] + " : " + word["translate"] + "\n"
             else:
                 for item in self.words:
-                    text += item["word"] + ": " + item["translate"] + "\n"
+                    text += item["word"] + " : " + item["translate"] + "\n"
             await msg.answer(f"Список ваших слов\n{text}")
