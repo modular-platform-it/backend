@@ -147,18 +147,18 @@ class RandomWordLearnListHandler:
             translate = State()
 
         @self.router.message(Command("add_word"))
-        async def get_id_handler(msg: Message, state: FSMContext):
+        async def get_start_add_handler(msg: Message, state: FSMContext):
             await state.set_state(WordState.word)
             await msg.answer("Введите слово")
 
         @self.router.message(WordState.word)
-        async def get_item_handler(msg: Message, state: FSMContext):
+        async def get_word_handler(msg: Message, state: FSMContext):
             await state.update_data(word=msg.text)
             await state.set_state(WordState.translate)
             await msg.answer("Введите его перевод")
 
         @self.router.message(WordState.translate)
-        async def get_item_handler(msg: Message, state: FSMContext):
+        async def get_translate_handler(msg: Message, state: FSMContext):
             await state.update_data(translate=msg.text)
             await state.set_state(WordState.translate)
             data = await state.get_data()
@@ -167,7 +167,7 @@ class RandomWordLearnListHandler:
             await msg.answer("Слово добавлено")
 
         @self.router.message(Command("get_words_list"))
-        async def get_id_handler(msg: Message):
+        async def get_word_list_handler(msg: Message):
             text = ""
             if self.requirement_count_word < len(self.words):
                 for item in range(len(self.words)):
