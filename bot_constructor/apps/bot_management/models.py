@@ -77,16 +77,15 @@ class TelegramBot(models.Model):
         """
         created: bool = not self.pk
         super().save(*args, **kwargs)
-        # if created:
-        #     TelegramBotAction.objects.create(
-        #         telegram_bot=self,
-        #         name="Старт",
-        #         command_keyword="/start",
-        #         action_type="Handlers",
-        #         position=1,
-        #         is_active=True,
-        #         description='s',
-        #     )
+        if created:
+            TelegramBotAction.objects.create(
+                telegram_bot=self,
+                name="Старт",
+                command_keyword="/start",
+                action_type="Handlers",
+                position=1,
+                is_active=True,
+            )
 
     @property
     def is_started(self) -> bool:
@@ -109,10 +108,7 @@ class TelegramBotAction(models.Model):
         GetListHandler = "GetListHandler", "Получение Списка"
         StopHandler = "StopHandler", "Остановка"
         Handlers = "Handlers", "Старт"
-        RandomWordLearnListHandler = (
-            "RandomWordLearnListHandler",
-            "Словарик слов с переводом",
-        )
+        RandomWordLearnListHandler = "RandomWordLearnListHandler", "Словарик слов с переводом"
         GetItem = "GetItem", "Получение обьекта"
 
     class APIMethodType(models.TextChoices):

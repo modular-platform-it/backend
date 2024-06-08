@@ -33,11 +33,13 @@ class BaseTelegramBot:
                 py_logger.error(f"{action.action_type} такой команды нет")
             router = handler.router
             self.commands += handler.commands
+
             self.dispatcher.include_router(router)
         py_logger.info(f"Бот создан {self.bot_data.id}")
 
     async def start(self):
         py_logger.info(f"Бот стартовал {self.bot_data.id}")
+        print(self.commands)
         await self.bot.set_my_commands(commands=self.commands)
         await self.dispatcher.start_polling(self.bot)
 
