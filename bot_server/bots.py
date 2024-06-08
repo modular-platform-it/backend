@@ -28,7 +28,9 @@ class BaseTelegramBot:
 
         for action in self.actions:
             try:
-                handler = getattr(handlers, action.action_type)(bot_data=self.bot_data, action=action)
+                handler = getattr(handlers, action.action_type)(
+                    bot_data=self.bot_data, action=action
+                )
             except:
                 py_logger.error(f"{action.action_type} такой команды нет")
             router = handler.router
