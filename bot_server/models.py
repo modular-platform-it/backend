@@ -10,6 +10,7 @@ from sqlalchemy import (
     ForeignKeyConstraint,
     Integer,
     PrimaryKeyConstraint,
+    ARRAY,
     String,
 )
 from sqlalchemy.orm import declarative_base, relationship
