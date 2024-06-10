@@ -310,7 +310,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         telegram_bot.bot_state = TelegramBot.BotState.RUNNING
         telegram_bot.started_at = timezone.now()
         telegram_bot.save()
-        requests.get(f"http://bot_server:8001/{id_bot}/start/")
+        requests.get(f"http://bot_server:8080/{id_bot}/start/")
         return Response(
             data={"detail": "Бот успешно запущен"}, status=status.HTTP_200_OK
         )
@@ -329,7 +329,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         if telegram_bot.is_started:
             telegram_bot.bot_state = TelegramBot.BotState.STOPPED
             telegram_bot.save()
-            requests.get(f"http://bot_server:8001/{id_bot}/stop/")
+            requests.get(f"http://bot_server:8080/{id_bot}/stop/")
             return Response(
                 data={"detail": "Бот успешно остановлен"}, status=status.HTTP_200_OK
             )
