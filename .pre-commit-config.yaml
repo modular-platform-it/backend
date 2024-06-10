@@ -12,7 +12,8 @@ repos:
         exclude: |
           (?x)^(
               uml/.*|
-              .idea/.*
+              .idea/.*|
+              docker-compose.yml
           )$
   - repo: https://github.com/lyz-code/yamlfix/
     rev: 1.16.0
@@ -23,14 +24,15 @@ repos:
               ^infra/|
               ^.github/|
               testing_app_swagger.yml|
-              schema.yml
+              schema.yml|
+              docker-compose.yml
           )
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.35.1
     hooks:
       - id: yamllint
         args: ['-d {extends: relaxed, rules: {line-length: disable}}', -s]
-        exclude: ^infra/.*
+        exclude: (?x)( ^infra/.* | docker-compose\.yml )
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.4.0
     hooks:
@@ -39,7 +41,8 @@ repos:
     rev: 5.13.2
     hooks:
       - id: isort
-        exclude: (?x)( ^.*\b(migrations)\b.*$ | ^testing_app | ^bot_server )
+        exclude: (?x)( ^.*\b(migrations)\b.*$ | ^testing_app | ^bot_server | docker-compose.yml
+          )
         args: [--profile, black, --filter-files]
   - repo: https://github.com/psf/black-pre-commit-mirror
     rev: 24.1.1
