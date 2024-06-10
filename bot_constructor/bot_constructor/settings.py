@@ -105,10 +105,10 @@ WSGI_APPLICATION = "bot_constructor.wsgi.application"
 
 if os.getenv("USE_SQLITE", "False") == "True" or sys.argv[1] == "test":
     DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": str(BASE_DIR / "db.sqlite3"),
-        }
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": str(BASE_DIR / "db.sqlite3"),
+    }
     }
 else:
     DATABASES = {
