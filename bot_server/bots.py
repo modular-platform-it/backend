@@ -29,15 +29,15 @@ class BaseTelegramBot:
         for action in self.actions:
             try:
                 handler = getattr(handlers, action.action_type)(
-                    bot_data=self.bot_data, action=action
+                    bot_data=self.bot_data, action=action, connection=connection
                 )
+                router = handler.router
+                self.commands += handler.commands
+                self.dispatcher.include_router(router)
+                py_logger.info(f"Бот создан {self.bot_data.id}")
             except:
                 py_logger.error(f"{action.action_type} такой команды нет")
-            router = handler.router
-            self.commands += handler.commands
 
-            self.dispatcher.include_router(router)
-        py_logger.info(f"Бот создан {self.bot_data.id}")
 
     async def start(self):
         py_logger.info(f"Бот стартовал {self.bot_data.id}")

@@ -9,6 +9,8 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import BotCommand, Message
 from fastapi import HTTPException
 from models_api import Item, ItemList
+from models import Base, TelegramBotAction
+from log import py_logger
 
 
 async def get_list(api_key, api_url) -> ItemList:
@@ -43,7 +45,7 @@ def serialize_json_to_lines(data):
 class GetListHandler:
     """Хэндлер получения списка из стороннего приложения"""
 
-    def __init__(self, bot_data, action):
+    def __init__(self, bot_data, action, connection):
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
@@ -62,7 +64,7 @@ class GetListHandler:
 class StopHandler:
     """Хэндлер остановки бота"""
 
-    def __init__(self, bot_data, action):
+    def __init__(self, bot_data, action, connection):
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
@@ -80,7 +82,7 @@ class StopHandler:
 class Handlers:
     """Хэндлер запуска бота"""
 
-    def __init__(self, bot_data, action):
+    def __init__(self, bot_data, action, connection):
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
@@ -96,14 +98,14 @@ class Handlers:
 
 
 class SendMassage:
-    def __init__(self, bot_data, action):
+    def __init__(self, bot_data, action, connection):
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
 
 
 class GetItem:
-    def __init__(self, bot_data, action):
+    def __init__(self, bot_data, action, connection):
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
@@ -131,11 +133,12 @@ class GetItem:
 
 
 class RandomWordLearnListHandler:
-    def __init__(self, bot_data, action):
+    def __init__(self, bot_data, action, connection):
         """Словарик для запоминания слов"""
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
+        self.connection = connection
         self.commands = [
             BotCommand(command="/add_word", description=f"Добавить новое слово"),
             BotCommand(
@@ -143,8 +146,11 @@ class RandomWordLearnListHandler:
                 description=f"Получить список ваших слов на сегодня",
             ),
         ]
-        self.words = []
+        self.words = self.action.data or []
         self.requirement_count_word = 5
+        with self.connection as session:
+            self.action.data = {"words": "self.words",}
+            session.commit()
 
         class WordState(StatesGroup):
             word = State()
@@ -168,6 +174,7 @@ class RandomWordLearnListHandler:
             await state.set_state(WordState.translate)
             data = await state.get_data()
             self.words.append(data)
+            self.action.data = self.words
             await state.clear()
             await msg.answer("Слово добавлено")
 
