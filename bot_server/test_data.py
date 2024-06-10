@@ -28,13 +28,14 @@ data_action1 = {
     "description": "dsadasd",
 }
 data_action2 = {
-    "telegram_bot_id": 2,
+    "telegram_bot_id": 3,
     "name": "Словарь",
     "command_keyword": "get_list",
     "action_type": "RandomWordLearnListHandler",
     "description": "dsadasd",
     "api_url": "https://api.zippopotam.us/us/",
     "api_key": "",
+    "data": {"name": 1}
 }
 bot1 = TelegramBot(**data1)
 bot2 = TelegramBot(**data2)
