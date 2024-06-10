@@ -1,9 +1,9 @@
 ---
 name: testing app container launch
-run-name: ${{ github.actor }} started 🚀 GitHub Actions
+run-name: ${{ github.actor }} launched 🚀 testing app 🚀 container
 on:
   push:
-    branches: ['**/testing-app**']
+    branches: [testing-app]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
@@ -12,12 +12,13 @@ env:
   APP_IMAGE_NAME: ${{vars.TESTING_APP_IMAGE_NAME}}
   APP_CONTAINER_NAME: ${{vars.TESTING_APP_CONTAINER_NAME}}
   APP_DB_NAME: ${{vars.TESTING_APP_DB_NAME}}
-  APP_DB_USER: ${{vars.TESTING_APP_DB_USER}}
+  # APP_DB_USER substituted to APP_DB_NAME
+  APP_DB_USER: ${{vars.TESTING_APP_DB_NAME}}
   APP_DB_PWD: ${{vars.TESTING_APP_DB_PWD}}
   APP_VOLUME: testing_app
 jobs:
   variables:
-    name: Workaround to pass env variables to rwf
+    name: Pass env variables to rwf
     runs-on: ubuntu-latest
     outputs:
       app_version: ${{env.APP_VERSION}}

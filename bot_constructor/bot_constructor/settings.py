@@ -2,8 +2,18 @@ import os
 import sys
 from pathlib import Path
 
+import sentry_sdk
 from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
+
+sentry_sdk.init(
+    dsn=os.getenv(
+        "DNS_SENTRY",
+        "https://23e6d5f2732c51c6e2fcae66eb80c996@o4507328929398784.ingest.de.sentry.io/4507328931364944",
+    ),
+    traces_sample_rate=1.0,
+    profiles_sample_rate=1.0,
+)
 
 load_dotenv()
 
@@ -11,9 +21,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 
-DEBUG = os.getenv("DEBUG", "True") == "True"
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "https://127.0.0.1").split(",")
 
@@ -52,13 +62,16 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
 ]
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 ROOT_URLCONF = "bot_constructor.urls"
-
+SESSION_COOKIE_NAME = "X-CSRFToken"
 SPECTACULAR_SETTINGS = {
+    "AUTHENTICATION_EXTENSIONS": [
+        "api.drf_spectacular.drf_views",
+    ],
     "TITLE": "bot-controller",
     "DESCRIPTION": "Платформа для создания и управления ботами.",
     "VERSION": "1.0.0",
@@ -138,8 +151,6 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
-LOGIN_REDIRECT_URL = "/v1/bots/"
-ACCOUNT_LOGOUT_REDIRECT_URL = "/v1/users/login/"
 
 LANGUAGE_CODE = "ru"
 

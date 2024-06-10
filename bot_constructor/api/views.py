@@ -71,54 +71,66 @@ def check_bot_started(telegram_bot_pk) -> None:
 @extend_schema(tags=["Телеграм боты"])
 @extend_schema_view(
     list=extend_schema(
+        summary="Список ботов",
         responses={
             status.HTTP_200_OK: OpenApiResponse(response=TelegramBotSerializer),
-            status.HTTP_403_FORBIDDEN: OpenApiResponse(
-                response=ForbiddenSerializer, description="Требуется авторизация"
-            ),
-        }
-    ),
-    retrieve=extend_schema(
-        responses={
-            status.HTTP_200_OK: OpenApiResponse(response=TelegramBotSerializer),
-            status.HTTP_403_FORBIDDEN: OpenApiResponse(
-                response=ForbiddenSerializer, description="Требуется авторизация"
-            ),
-            status.HTTP_404_NOT_FOUND: OpenApiResponse(
-                response=NotFoundSerializer, description="Телеграм бот не найден"
-            ),
-        }
-    ),
-    destroy=extend_schema(
-        responses={
-            status.HTTP_204_NO_CONTENT: OpenApiResponse(
-                description="Телеграм бот удален"
-            ),
-            status.HTTP_403_FORBIDDEN: OpenApiResponse(
-                response=ForbiddenSerializer, description="Требуется авторизация"
-            ),
-            status.HTTP_404_NOT_FOUND: OpenApiResponse(
-                response=NotFoundSerializer, description="Телеграм бот не найден"
-            ),
-        }
-    ),
-    update=extend_schema(
-        responses={
-            status.HTTP_200_OK: OpenApiResponse(
-                response=TelegramBotCreateSerializer, description="Бот обновлен"
-            ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyBotSerializer, description="Ошибка в полях"
             ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
             ),
+        },
+    ),
+    retrieve=extend_schema(
+        summary="Получение детальной информации о боте по его id",
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(response=TelegramBotSerializer),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Телеграм бот не найден"
             ),
-        }
+        },
+    ),
+    destroy=extend_schema(
+        summary="Удаление бота по его id",
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(
+                description="Телеграм бот удален"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyBotSerializer, description="Ошибка в поле id"
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Телеграм бот не найден"
+            ),
+        },
+    ),
+    update=extend_schema(
+        summary="Изменение всех полей бота по его id",
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=TelegramBotCreateSerializer, description="Бот обновлен"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyBotSerializer,
+                description="Ошибка в полях или остановите бота",
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Телеграм бот не найден"
+            ),
+        },
     ),
     create=extend_schema(
+        summary="Создание бота",
         responses={
             status.HTTP_201_CREATED: OpenApiResponse(
                 response=TelegramBotCreateSerializer, description="Телеграм бот создан"
@@ -129,15 +141,17 @@ def check_bot_started(telegram_bot_pk) -> None:
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=DummyBotSerializer, description="Ошибка в полях"
             ),
-        }
+        },
     ),
     partial_update=extend_schema(
+        summary="Частичное изменение полей бота по его id",
         responses={
             status.HTTP_200_OK: OpenApiResponse(
                 response=TelegramBotCreateSerializer, description="Бот обновлен"
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
-                response=DummyBotSerializer, description="Ошибка в полях"
+                response=DummyBotSerializer,
+                description="Ошибка в полях или остановите бота",
             ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
@@ -145,9 +159,10 @@ def check_bot_started(telegram_bot_pk) -> None:
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Телеграм бот не найден"
             ),
-        }
+        },
     ),
     check_telegram_token=extend_schema(
+        summary="Проверка телеграм_токена",
         responses={
             status.HTTP_200_OK: OpenApiResponse(
                 response=DummyTokenSerializer, description="Успех"
@@ -165,12 +180,16 @@ def check_bot_started(telegram_bot_pk) -> None:
             status.HTTP_405_METHOD_NOT_ALLOWED: OpenApiResponse(
                 response=MethodNotAlowedSerializer, description="Метод не разрешен."
             ),
-        }
+        },
     ),
-    start_stop_bot=extend_schema(
+    stop_bot=extend_schema(
+        summary="Остановка бота",
         responses={
             status.HTTP_200_OK: OpenApiResponse(
                 response=DummyStartStopBotSerializer,
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyBotSerializer, description="Ошибка в поле id"
             ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
@@ -179,7 +198,25 @@ def check_bot_started(telegram_bot_pk) -> None:
             status.HTTP_405_METHOD_NOT_ALLOWED: OpenApiResponse(
                 response=MethodNotAlowedSerializer, description="Метод не разрешен."
             ),
-        }
+        },
+    ),
+    start_bot=extend_schema(
+        summary="Запуск бота",
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=DummyStartStopBotSerializer,
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=DummyBotSerializer, description="Ошибка в поле id"
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=ForbiddenSerializer, description="Требуется авторизация"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(response=NotFoundSerializer),
+            status.HTTP_405_METHOD_NOT_ALLOWED: OpenApiResponse(
+                response=MethodNotAlowedSerializer, description="Метод не разрешен."
+            ),
+        },
     ),
 )
 class TelegramBotViewSet(viewsets.ModelViewSet):
@@ -261,7 +298,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         permission_classes=(AllowAny,),
     )
     def start_bot(self, request, *args, **kwargs) -> Response:
-        BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8080/")
+        BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8001/")
         id_bot = self.kwargs.get("pk")
         telegram_bot = get_object_or_404(TelegramBot, id=id_bot)
         if telegram_bot.is_started:
@@ -284,7 +321,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         permission_classes=(AllowAny,),
     )
     def stop_bot(self, request, *args, **kwargs) -> Response:
-        BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8080/")
+        BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8001/")
         id_bot = self.kwargs.get("pk")
         telegram_bot = get_object_or_404(TelegramBot, id=id_bot)
         if telegram_bot.is_started:
@@ -299,14 +336,16 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
 @extend_schema(tags=["Действия"])
 @extend_schema_view(
     list=extend_schema(
+        summary="Список действий бота",
         responses={
             status.HTTP_200_OK: OpenApiResponse(response=TelegramBotSerializer),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
             ),
-        }
+        },
     ),
     retrieve=extend_schema(
+        summary="Получение детальной информации о действии бота по его id",
         responses={
             status.HTTP_200_OK: OpenApiResponse(
                 response=TelegramBotActionSerializer,
@@ -321,9 +360,10 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Действие не найдено"
             ),
-        }
+        },
     ),
     create=extend_schema(
+        summary="Создание действия в боте",
         responses={
             status.HTTP_201_CREATED: OpenApiResponse(
                 response=TelegramBotActionSerializer, description="Действие создано"
@@ -337,9 +377,10 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Телеграм бот не найден"
             ),
-        }
+        },
     ),
     update=extend_schema(
+        summary="Изменение всех полей действия бота по его id",
         responses={
             status.HTTP_200_OK: OpenApiResponse(
                 response=TelegramBotActionSerializer, description="Действие обновлено"
@@ -353,9 +394,10 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Телеграм бот не найден"
             ),
-        }
+        },
     ),
     partial_update=extend_schema(
+        summary="Частичное изменение полей действия бота по его id",
         responses={
             status.HTTP_200_OK: OpenApiResponse(
                 response=TelegramBotActionSerializer, description="Действие обновлено"
@@ -369,9 +411,10 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Телеграм бот не найден"
             ),
-        }
+        },
     ),
     destroy=extend_schema(
+        summary="Удаление действия бота по его id",
         responses={
             status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Действие удалено"),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
@@ -380,7 +423,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=NotFoundSerializer, description="Телеграм бот не найден"
             ),
-        }
+        },
     ),
 )
 class TelegramBotActionViewSet(viewsets.ModelViewSet):
@@ -452,6 +495,7 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
 @extend_schema(tags=["Файлы"])
 @extend_schema_view(
     list=extend_schema(
+        summary="Список файлов",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -465,6 +509,7 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         },
     ),
     retrieve=extend_schema(
+        summary="Получение детальной информации о файле по его id",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -486,6 +531,7 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         },
     ),
     destroy=extend_schema(
+        summary="Удаление файла по его id",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -502,6 +548,7 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         },
     ),
     update=extend_schema(
+        summary="Изменение всех полей файла по его id",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -523,6 +570,7 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         },
     ),
     create=extend_schema(
+        summary="Загрузка файла",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -544,6 +592,7 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         },
     ),
     partial_update=extend_schema(
+        summary="Частичное изменение полей файла по его id",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -627,6 +676,7 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
 @extend_schema(tags=["Пользовательские переменные"])
 @extend_schema_view(
     list=extend_schema(
+        summary="Список пользовательских переменных",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -640,6 +690,7 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
         },
     ),
     retrieve=extend_schema(
+        summary="Получение детальной информации о пользовательской переменной по ее id",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -662,6 +713,7 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
         },
     ),
     destroy=extend_schema(
+        summary="Удаление пользовательской переменной по ее id",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -681,6 +733,7 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
         },
     ),
     update=extend_schema(
+        summary="Изменение всех полей пользовательской переменной по ее id",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -703,6 +756,7 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
         },
     ),
     create=extend_schema(
+        summary="Создание пользовательской переменной",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -724,6 +778,7 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
         },
     ),
     partial_update=extend_schema(
+        summary="Частичное изменение полей пользовательской переменной по ее id",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -771,6 +826,7 @@ class VariableViewSet(viewsets.ModelViewSet):
 @extend_schema(tags=["Заголовки http запросов"])
 @extend_schema_view(
     list=extend_schema(
+        summary="Получение списка заголовков",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -784,6 +840,7 @@ class VariableViewSet(viewsets.ModelViewSet):
         },
     ),
     retrieve=extend_schema(
+        summary="Получение детальной информации о заголовке по его id",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -807,6 +864,7 @@ class VariableViewSet(viewsets.ModelViewSet):
         },
     ),
     destroy=extend_schema(
+        summary="Удаление заголовка по его id",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -824,6 +882,7 @@ class VariableViewSet(viewsets.ModelViewSet):
         },
     ),
     update=extend_schema(
+        summary="Изменение всех полей заголовка по его id",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -847,6 +906,7 @@ class VariableViewSet(viewsets.ModelViewSet):
         },
     ),
     create=extend_schema(
+        summary="Создание заголовка",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH
@@ -868,6 +928,7 @@ class VariableViewSet(viewsets.ModelViewSet):
         },
     ),
     partial_update=extend_schema(
+        summary="Частичное изменение полей заголовка по его id",
         parameters=[
             OpenApiParameter(
                 name="telegram_bot_pk", type=int, location=OpenApiParameter.PATH

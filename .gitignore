@@ -54,6 +54,7 @@ cover/
 # Translations
 *.mo
 *.pot
+*.lock
 
 # Django stuff:
 *.log
@@ -171,5 +172,6 @@ media/
 static/
 .github/workflows/temp*.*
 .github/workflows/*.sh
+infra/bot_constructor/manual-launch.yml
 
 .DS_Store

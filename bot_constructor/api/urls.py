@@ -40,10 +40,8 @@ headers_router_v1.register(
 )
 
 urlpatterns = [
-    path("users/login/", LoginView.as_view(), name="account_login"),
-    path("users/logout/", LogoutView.as_view(), name="account_logout"),
-    path("users/login/", swagger_login, name="swagger_login"),
-    path("users/logout/", swagger_logout, name="swagger_logout"),
+    path("users/login/", swagger_login, name="login"),
+    path("users/logout/", swagger_logout, name="logout"),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "schema/swagger/",

@@ -10,4 +10,6 @@ fi
 
 python manage.py collectstatic --clear --noinput
 
-gunicorn --bind 0.0.0.0:8081 bot_constructor.wsgi:application
+python manage.py importcsv
+
+gunicorn --bind 0.0.0.0:8080 testing_app.wsgi:application

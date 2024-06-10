@@ -1,21 +1,21 @@
 ---
-name: bot_constructor production
-run-name: ${{ github.actor }} launched 🚀 bot_constructor prod 🚀 stand
+name: bot_constructor dev stand launch
+run-name: ${{ github.actor }} launched 🚀 bot_constructor dev 🚀 stand
 on:
   push:
-    branches: [production]
+    branches: [develop]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
-  APP_VERSION: 1.0.1
+  APP_VERSION: dev1.0.1
   APP_PROJECT_NAME: bot_constructor
-  APP_IMAGE_NAME: ${{vars.BOT_CONSTRUCTOR_IMAGE_NAME}}
-  APP_CONTAINER_NAME: ${{vars.BOT_CONSTRUCTOR_CONTAINER_NAME}}
-  APP_DB_NAME: ${{vars.BOT_CONSTRUCTOR_DB_NAME}}
+  APP_IMAGE_NAME: ${{vars.DEV_CONSTRUCTOR_IMAGE_NAME}}
+  APP_CONTAINER_NAME: ${{vars.DEV_CONSTRUCTOR_CONTAINER_NAME}}
+  APP_DB_NAME: ${{vars.DEV_CONSTRUCTOR_DB_NAME}}
   # APP_DB_USER substituted to APP_DB_NAME
-  APP_DB_USER: ${{vars.BOT_CONSTRUCTOR_DB_NAME}}
-  APP_DB_PWD: ${{vars.BOT_CONSTRUCTOR_DB_PWD}}
-  APP_VOLUME: bot_constructor
+  APP_DB_USER: ${{vars.DEV_CONSTRUCTOR_DB_NAME}}
+  APP_DB_PWD: ${{vars.DEV_CONSTRUCTOR_DB_PWD}}
+  APP_VOLUME: dev_constructor
 jobs:
   variables:
     name: Pass env variables to rwf
