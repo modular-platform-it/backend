@@ -322,7 +322,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         permission_classes=(AllowAny,),
     )
     def stop_bot(self, request, *args, **kwargs) -> Response:
-        BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://bot_server:8001") # Для докера
+        BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://bot_server:8080") # Для докера
         #BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8001") # Для локального запуска
         id_bot = self.kwargs.get("pk")
         telegram_bot = get_object_or_404(TelegramBot, id=id_bot)
