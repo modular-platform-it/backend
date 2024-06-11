@@ -20,13 +20,13 @@ services:
   bot_constructor:
     build: ./bot_constructor/
     env_file: .env
-    ports: [8002:8002]
+    ports: [8000:8000]
     depends_on: [db]
     networks: [my_network]
   gateway:
     build: ./gateway/
     env_file: .env
-    ports: [8000:80]
+    ports: [8001:80]
     depends_on: [bot_constructor]
     volumes: [static:/staticfiles/, media:/app/media/]
     networks: [my_network]
