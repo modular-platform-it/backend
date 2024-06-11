@@ -35,7 +35,7 @@ data_action2 = {
     "description": "dsadasd",
     "api_url": "https://api.zippopotam.us/us/",
     "api_key": "",
-    "data": {"name": 1}
+    "data": {"name": 1},
 }
 bot1 = TelegramBot(**data1)
 bot2 = TelegramBot(**data2)
