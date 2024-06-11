@@ -125,7 +125,7 @@ class GetItem:
             data = await state.get_data()
             item = await get_item(
                 api_key=self.bot_data.api_key,
-                api_url=f"{self.action.api_url}/{data["id"]}",
+                api_url=f"{self.action.api_url}/{data["id"]}/",
             )
             gen = serialize_json_to_lines(item.item)
             await state.clear()
