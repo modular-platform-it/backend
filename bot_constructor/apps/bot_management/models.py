@@ -76,7 +76,7 @@ class TelegramBot(models.Model):
                 action_type="Handlers",
                 position=1,
                 is_active=True,
-                description='s',
+                description="Что то описано",
             )
 
     @property
