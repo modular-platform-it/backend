@@ -110,20 +110,7 @@ Django приложение, которое принимает запросы о
     docker compose up --build
 ```
 
-### Выполнить миграции:
-```bash
-    docker compose exec backend python manage.py migrate
-```
-
 ### Выполнить создание суперпользователя:
 ```bash
     docker compose exec backend python manage.py createsuperuser
-```
-
-
-## Запуск докер контейнеров на удаленной машине:
-
-### Выполнить обновление apt:
-```bash
-    sudo apt update
 ```
