@@ -8,9 +8,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import BotCommand, Message
 from fastapi import HTTPException
-from models_api import Item, ItemList
-from models import Base, TelegramBotAction
 from log import py_logger
+from models import Base, TelegramBotAction
+from models_api import Item, ItemList
 
 
 async def get_list(api_key, api_url) -> ItemList:
@@ -149,7 +149,9 @@ class RandomWordLearnListHandler:
         self.words = self.action.data or []
         self.requirement_count_word = 5
         with self.connection as session:
-            self.action.data = {"words": "self.words",}
+            self.action.data = {
+                "words": "self.words",
+            }
             session.commit()
 
         class WordState(StatesGroup):
