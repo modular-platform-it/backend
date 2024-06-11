@@ -38,7 +38,6 @@ class BaseTelegramBot:
             except:
                 py_logger.error(f"{action.action_type} такой команды нет")
 
-
     async def start(self):
         py_logger.info(f"Бот стартовал {self.bot_data.id}")
         print(self.commands)

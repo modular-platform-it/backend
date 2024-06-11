@@ -2,6 +2,7 @@
 from datetime import datetime
 
 from sqlalchemy import (
+    ARRAY,
     JSON,
     Boolean,
     Column,
@@ -10,7 +11,6 @@ from sqlalchemy import (
     ForeignKeyConstraint,
     Integer,
     PrimaryKeyConstraint,
-    ARRAY,
     String,
 )
 from sqlalchemy.orm import declarative_base, relationship

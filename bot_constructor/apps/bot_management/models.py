@@ -28,21 +28,24 @@ class TelegramBot(models.Model):
         verbose_name="Описание бота",
         max_length=constants.DESCRIPTION_LENGTH,
         null=True,
-        blank=True
+        blank=True,
     )
     api_key = models.CharField(
-        verbose_name="Ключ API", max_length=constants.API_KEY_LENGTH,
+        verbose_name="Ключ API",
+        max_length=constants.API_KEY_LENGTH,
         null=True,
-        blank=True
+        blank=True,
     )
     api_url = models.URLField(
-        verbose_name="Адрес API", max_length=constants.API_URL_LENGTH,
+        verbose_name="Адрес API",
+        max_length=constants.API_URL_LENGTH,
         null=True,
-        blank=True
+        blank=True,
     )
     api_availability = models.BooleanField(
         verbose_name="Доступность API",
-        null=True, default=False,
+        null=True,
+        default=False,
     )
     bot_state = models.CharField(
         verbose_name="Статус бота",
@@ -139,7 +142,7 @@ class TelegramBotAction(models.Model):
         verbose_name="Описание действия",
         max_length=constants.DESCRIPTION_LENGTH,
         null=True,
-        blank=True
+        blank=True,
     )
     command_keyword = models.CharField(
         verbose_name="Текст команды",
@@ -148,25 +151,25 @@ class TelegramBotAction(models.Model):
         "буквы, цифры и нижнее подчеркивание _, макс. длина 32 символа",
         validators=(validators.RegexValidator(regex=regexps.COMMAND_KEYWORD_REGEXP),),
         null=True,
-        blank=True
+        blank=True,
     )
     message = models.CharField(
         verbose_name="Текст сообщения",
         max_length=constants.MESSAGE_LENGTH,
         null=True,
-        blank=True
+        blank=True,
     )
     api_url = models.URLField(
         verbose_name="Адрес API",
         max_length=constants.API_URL_LENGTH,
         null=True,
-        blank=True
+        blank=True,
     )
     api_key = models.CharField(
         verbose_name="Ключ API",
         max_length=constants.API_KEY_LENGTH,
         null=True,
-        blank=True
+        blank=True,
     )
     api_method = models.CharField(
         "Метод запроса к API",
@@ -174,7 +177,7 @@ class TelegramBotAction(models.Model):
         default=APIMethodType.GET,
         max_length=constants.METHOD_LENGTH,
         null=True,
-        blank=True
+        blank=True,
     )
     data = models.JSONField("Данные", blank=True, null=True)
     position = models.SmallIntegerField(
@@ -184,19 +187,15 @@ class TelegramBotAction(models.Model):
             validators.MaxValueValidator(constants.MAX_POSITIONS),
         ),
         null=True,
-        blank=True
+        blank=True,
     )
-    is_active = models.BooleanField(
-        verbose_name="Вкл/выкл",
-        null=True,
-        blank=True
-    )
+    is_active = models.BooleanField(verbose_name="Вкл/выкл", null=True, blank=True)
     next_action = models.ForeignKey(
         to="self",
         on_delete=models.SET_NULL,
         related_name="previous_actions",
         null=True,
-        blank=True
+        blank=True,
     )
 
     class Meta:
