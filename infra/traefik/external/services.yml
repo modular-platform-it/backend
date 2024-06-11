@@ -83,6 +83,11 @@ http:
         servers:
         - url: http://nginx:80
 
+    nginx:
+      loadBalancer:
+        servers:
+        - url: http://frontend:80
+
     botconstructor:
       loadBalancer:
         servers:

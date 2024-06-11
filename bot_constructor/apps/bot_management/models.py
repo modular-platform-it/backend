@@ -73,8 +73,10 @@ class TelegramBot(models.Model):
                 telegram_bot=self,
                 name="Старт",
                 command_keyword="/start",
+                action_type="Handlers",
                 position=1,
                 is_active=True,
+                description="Что то описано",
             )
 
     @property
@@ -95,11 +97,14 @@ class TelegramBotAction(models.Model):
 
     # TODO разбить модель на отдельные виды
     class ActionType(models.TextChoices):
-        MESSAGE = "MESSAGE", "Сообщение"
         GetListHandler = "GetListHandler", "Получение Списка"
         StopHandler = "StopHandler", "Остановка"
         Handlers = "Handlers", "Старт"
-        SendMassage = "SendMassage", "Получение обьекта"
+        RandomWordLearnListHandler = (
+            "RandomWordLearnListHandler",
+            "Словарик слов с переводом",
+        )
+        GetItem = "GetItem", "Получение обьекта"
 
     class APIMethodType(models.TextChoices):
         GET = "GET", "Get запрос"
@@ -122,7 +127,7 @@ class TelegramBotAction(models.Model):
         "Тип действия",
         choices=ActionType,
         max_length=constants.ACTION_TYPE_LENGTH,
-        default=ActionType.MESSAGE,
+        default=ActionType.Handlers,
     )
     description = models.CharField(
         verbose_name="Описание действия",

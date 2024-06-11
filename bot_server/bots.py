@@ -19,32 +19,40 @@ class BaseTelegramBot:
         self.bot = Bot(token=self.token)
         self.dispatcher = Dispatcher()
         self.commands = []
-        self.actions = (
-            connection.session.query(TelegramBotAction)
-            .filter(TelegramBotAction.telegram_bot_id == bot_data.id)
-            .all()
-        )
+        with connection as session:
+            self.actions = (
+                session.query(TelegramBotAction)
+                .filter(TelegramBotAction.telegram_bot_id == bot_data.id)
+                .all()
+            )
 
         for action in self.actions:
-            handler = getattr(handlers, action.action_type)(bot_data=self.bot_data)
-            router = handler.router
-            self.commands.append(handler.command)
-            self.dispatcher.include_router(router)
-        py_logger.info(f"Бот создан {self.bot_data.id}")
+            try:
+                handler = getattr(handlers, action.action_type)(
+                    bot_data=self.bot_data, action=action, connection=connection
+                )
+                router = handler.router
+                self.commands += handler.commands
+                self.dispatcher.include_router(router)
+                py_logger.info(f"Бот создан {self.bot_data.id}")
+            except:
+                py_logger.error(f"{action.action_type} такой команды нет")
 
     async def start(self):
         py_logger.info(f"Бот стартовал {self.bot_data.id}")
+        print(self.commands)
         await self.bot.set_my_commands(commands=self.commands)
         await self.dispatcher.start_polling(self.bot)
 
     async def stop(self):
-        await self.bot.set_my_commands(commands=self.commands)
         await self.dispatcher.stop_polling()
         py_logger.info(f"Бот остановлен {self.bot_data.id}")
 
 
 if __name__ == "__main__":
 
-    bot_data = connection.session.query(TelegramBot).filter(TelegramBot.id == 1).first()
+    with connection as session:
+        bot_data = session.query(TelegramBot).filter(TelegramBot.id == 1).first()
+
     bot = BaseTelegramBot(bot_data=bot_data)
     asyncio.run(bot.start())

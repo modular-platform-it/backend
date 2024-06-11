@@ -2,6 +2,8 @@
 from datetime import datetime
 
 from sqlalchemy import (
+    ARRAY,
+    JSON,
     Boolean,
     Column,
     DateTime,
@@ -72,6 +74,12 @@ class TelegramBotAction(Base):
     )
     api_key = Column(
         String(200),
+    )
+    api_method = Column(
+        String(200),
+    )
+    data = Column(
+        JSON,
     )
     position = Column(
         Integer,

@@ -298,7 +298,10 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         permission_classes=(AllowAny,),
     )
     def start_bot(self, request, *args, **kwargs) -> Response:
-        BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8080/")
+        BOT_SERVER_URL: str = os.getenv(
+            "BOT_SERVER_URL", "http://bot_server:8001/"
+        )  # Для докера
+        # BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8001/") # Для локального запуска
         id_bot = self.kwargs.get("pk")
         telegram_bot = get_object_or_404(TelegramBot, id=id_bot)
         if telegram_bot.is_started:
@@ -321,7 +324,10 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         permission_classes=(AllowAny,),
     )
     def stop_bot(self, request, *args, **kwargs) -> Response:
-        BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8080/")
+        BOT_SERVER_URL: str = os.getenv(
+            "BOT_SERVER_URL", "http://bot_server:8080/"
+        )  # Для докера
+        # BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8001/") # Для локального запуска
         id_bot = self.kwargs.get("pk")
         telegram_bot = get_object_or_404(TelegramBot, id=id_bot)
         if telegram_bot.is_started:
@@ -452,14 +458,14 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def get_serializer_class(self):
-        action_type = self.request.data.get("action_type")
-        if action_type == TelegramBotAction.ActionType.HTTP_REQUEST:
-            return TelegramBotActionHttpRequestSerializer
-        elif action_type in (
-            TelegramBotAction.ActionType.MESSAGE,
-            TelegramBotAction.ActionType.QUERY,
-        ):
-            return TelegramBotActionMessageSerializer
+        # action_type = self.request.data.get("action_type")
+        # if action_type == TelegramBotAction.ActionType.HTTP_REQUEST:
+        #     return TelegramBotActionHttpRequestSerializer
+        # elif action_type in (
+        #     TelegramBotAction.ActionType.MESSAGE,
+        #     TelegramBotAction.ActionType.QUERY,
+        # ):
+        #     return TelegramBotActionMessageSerializer
         return super().get_serializer_class()
 
     def get_serializer_context(self) -> dict[str, Any]:

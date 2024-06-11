@@ -46,5 +46,9 @@ class Response401Serializer(ResponseErrorSerializer):
     """Сериализатор для ответа с кодом ошибки 401."""
 
 
+class Response403Serializer(ResponseErrorSerializer):
+    """Сериализатор для ответа с кодом ошибки 403."""
+
+
 class Response404Serializer(ResponseErrorSerializer):
     """Сериализатор для ответа с кодом ошибки 404."""

@@ -11,6 +11,7 @@ from .serializers import (
     CartSerializer,
     Response400Serializer,
     Response401Serializer,
+    Response403Serializer,
     Response404Serializer,
     ShoppingCartReadSerializer,
     ShoppingCartWriteSerializer,
@@ -20,10 +21,13 @@ from .serializers import (
 @method_decorator(
     name="list",
     decorator=swagger_auto_schema(
+        operation_description="Список карточек товара",
         tags=["Карточки товаров"],
         responses={
             200: openapi.Response("OK", CartSerializer(many=True)),
-            404: openapi.Response("Not Found", Response404Serializer()),
+            404: openapi.Response(
+                "Список карточек товара не найден", Response404Serializer()
+            ),
         },
     ),
 )
@@ -31,10 +35,70 @@ from .serializers import (
     name="retrieve",
     decorator=swagger_auto_schema(
         tags=["Карточки товаров"],
+        operation_description="Детальная информация о карточке товара по ее id",
         responses={
             200: openapi.Response("OK", CartSerializer(many=True)),
-            400: openapi.Response("Bad Request", Response400Serializer),
-            404: openapi.Response("Not Found", Response404Serializer()),
+            400: openapi.Response("Ошибка в поле id", Response400Serializer),
+            404: openapi.Response(
+                "Карточка товара не найдена", Response404Serializer()
+            ),
+        },
+    ),
+)
+@method_decorator(
+    name="destroy",
+    decorator=swagger_auto_schema(
+        tags=["Карточки товаров"],
+        operation_description="Удаление карточки товара по ее id",
+        responses={
+            204: openapi.Response("Карточка товара удалена"),
+            400: openapi.Response("Ошибка в поле id", Response400Serializer),
+            403: openapi.Response("Требуется авторизация", Response403Serializer),
+            404: openapi.Response(
+                "Карточка товара не найдена", Response404Serializer()
+            ),
+        },
+    ),
+)
+@method_decorator(
+    name="update",
+    decorator=swagger_auto_schema(
+        tags=["Карточки товаров"],
+        operation_description="Изменение всех полей карточки товара по ее id",
+        responses={
+            200: openapi.Response("Карточка товара обновлена"),
+            400: openapi.Response("Ошибка в полях", Response400Serializer),
+            403: openapi.Response("Требуется авторизация", Response403Serializer),
+            404: openapi.Response(
+                "Карточка товара не найдена", Response404Serializer()
+            ),
+        },
+    ),
+)
+@method_decorator(
+    name="partial_update",
+    decorator=swagger_auto_schema(
+        tags=["Карточки товаров"],
+        operation_description="Частичное изменение полей карточки товара по ее id",
+        responses={
+            200: openapi.Response("Карточка товара обновлена"),
+            400: openapi.Response("Ошибка в полях", Response400Serializer),
+            403: openapi.Response("Требуется авторизация", Response403Serializer),
+            404: openapi.Response(
+                "Карточка товара не найдена", Response404Serializer()
+            ),
+        },
+    ),
+)
+@method_decorator(
+    name="create",
+    decorator=swagger_auto_schema(
+        tags=["Карточки товаров"],
+        operation_description="Создание карточки товара",
+        responses={
+            201: openapi.Response("Карточка товара создана"),
+            400: openapi.Response("Ошибка в полях", Response400Serializer),
+            403: openapi.Response("Требуется авторизация", Response403Serializer),
         },
     ),
 )
@@ -52,10 +116,11 @@ class CartViewSet(ModelViewSet):
     name="list",
     decorator=swagger_auto_schema(
         tags=["Список покупок"],
+        operation_description="Список покупок",
         responses={
             200: openapi.Response("OK", ShoppingCartReadSerializer(many=True)),
-            401: openapi.Response("Unauthorized", Response401Serializer()),
-            404: openapi.Response("Not Found", Response404Serializer()),
+            403: openapi.Response("Требуется авторизация", Response403Serializer),
+            404: openapi.Response("Список покупок не найден", Response404Serializer()),
         },
     ),
 )
@@ -63,11 +128,63 @@ class CartViewSet(ModelViewSet):
     name="retrieve",
     decorator=swagger_auto_schema(
         tags=["Список покупок"],
+        operation_description="Детальная информация о списке покупок по id",
         responses={
             200: openapi.Response("OK", ShoppingCartReadSerializer(many=True)),
-            400: openapi.Response("Bad Request", Response400Serializer),
-            401: openapi.Response("Unauthorized", Response401Serializer()),
-            404: openapi.Response("Not Found", Response404Serializer()),
+            400: openapi.Response("Ошибка в поле id", Response400Serializer),
+            403: openapi.Response("Требуется авторизация", Response403Serializer),
+            404: openapi.Response("Список покупок не найден", Response404Serializer()),
+        },
+    ),
+)
+@method_decorator(
+    name="destroy",
+    decorator=swagger_auto_schema(
+        tags=["Список покупок"],
+        operation_description="Удаление списка покупок из корзины по его id",
+        responses={
+            204: openapi.Response("Список покупок удален"),
+            400: openapi.Response("Ошибка в поле id", Response400Serializer),
+            403: openapi.Response("Требуется авторизация", Response403Serializer),
+            404: openapi.Response("Список покупок не найден", Response404Serializer()),
+        },
+    ),
+)
+@method_decorator(
+    name="update",
+    decorator=swagger_auto_schema(
+        tags=["Список покупок"],
+        operation_description="Изменение списка покупок по id",
+        responses={
+            200: openapi.Response("Список покупок обновлен"),
+            400: openapi.Response("Ошибка в полях", Response400Serializer),
+            403: openapi.Response("Требуется авторизация", Response403Serializer),
+            404: openapi.Response("Список покупок не найден", Response404Serializer()),
+        },
+    ),
+)
+@method_decorator(
+    name="partial_update",
+    decorator=swagger_auto_schema(
+        tags=["Список покупок"],
+        operation_description="Изменение списка покупок по id",
+        responses={
+            200: openapi.Response("Список покупок обновлен"),
+            400: openapi.Response("Ошибка в полях", Response400Serializer),
+            403: openapi.Response("Требуется авторизация", Response403Serializer),
+            404: openapi.Response("Список покупок не найден", Response404Serializer()),
+        },
+    ),
+)
+@method_decorator(
+    name="create",
+    decorator=swagger_auto_schema(
+        tags=["Список покупок"],
+        operation_description="Добавление карточки товара по id в список покупок",
+        responses={
+            201: openapi.Response("Карточка товара добавлена в список покупок"),
+            400: openapi.Response("Ошибка в полях", Response400Serializer),
+            403: openapi.Response("Требуется авторизация", Response403Serializer),
         },
     ),
 )
