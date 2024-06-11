@@ -3,7 +3,7 @@ name: testing app container launch
 run-name: ${{ github.actor }} launched 🚀 testing app 🚀 container
 on:
   push:
-    branches: [feat/dev-stand]
+    branches: [testing-app]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
@@ -16,6 +16,7 @@ env:
   APP_DB_USER: ${{vars.TESTING_APP_DB_NAME}}
   APP_DB_PWD: ${{vars.TESTING_APP_DB_PWD}}
   APP_VOLUME: testing_app
+  BOT_SERVER_URL: ${{vars.BOT_SERVER_URL}}
 jobs:
   variables:
     name: Pass env variables to rwf
@@ -29,11 +30,12 @@ jobs:
       app_db_user: ${{env.APP_DB_USER}}
       app_db_pwd: ${{env.APP_DB_PWD}}
       app_volume: ${{env.APP_VOLUME}}
+      bot_server_url: ${{env.BOT_SERVER_URL}}
     steps:
       - name: Echo - fake step
         if: false
         run: echo
-  build-bs:
+  build-tapp:
     needs: [variables]
     uses: ./.github/workflows/rwf-build.yml
     with:
@@ -41,8 +43,8 @@ jobs:
       APP_PROJECT_NAME: ${{needs.variables.outputs.app_project_name}}
       APP_IMAGE_NAME: ${{needs.variables.outputs.app_image_name}}
     secrets: inherit  # pragma: allowlist secret
-  deploy-bs:
-    needs: [variables, build-bs]
+  deploy-tapp:
+    needs: [variables, build-tapp]
     uses: ./.github/workflows/rwf-deploy.yml
     with:
       APP_IMAGE_NAME: ${{needs.variables.outputs.app_image_name}}
@@ -51,8 +53,9 @@ jobs:
       APP_DB_USER: ${{needs.variables.outputs.app_db_user}}
       APP_DB_PWD: ${{needs.variables.outputs.app_db_pwd}}
       APP_VOLUME: ${{needs.variables.outputs.app_volume}}
+      BOT_SERVER_URL: ${{needs.variables.outputs.bot_server_url}}
     secrets: inherit  # pragma: allowlist secret
   notify:
     uses: ./.github/workflows/rwf-notify.yml
-    needs: deploy-bs
+    needs: deploy-tapp
     secrets: inherit  # pragma: allowlist secret
