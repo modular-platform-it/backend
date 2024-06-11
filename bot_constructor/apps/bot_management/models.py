@@ -77,16 +77,16 @@ class TelegramBot(models.Model):
         """
         created: bool = not self.pk
         super().save(*args, **kwargs)
-        # if created:
-        #     TelegramBotAction.objects.create(
-        #         telegram_bot=self,
-        #         name="Старт",
-        #         command_keyword="/start",
-        #         action_type="Handlers",
-        #         position=1,
-        #         is_active=True,
-        #         description='s',
-        #     )
+        if created:
+            TelegramBotAction.objects.create(
+                telegram_bot=self,
+                name="Старт",
+                command_keyword="/start",
+                action_type="Handlers",
+                position=1,
+                is_active=True,
+                description='s',
+            )
 
     @property
     def is_started(self) -> bool:
