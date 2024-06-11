@@ -19,7 +19,7 @@ class Connection:
             username=os.getenv("POSTGRES_USER", "postgres"),
             password=os.getenv("POSTGRES_PASSWORD", "456852"),
             host=os.getenv("DB_HOST", "localhost"),
-            database=os.getenv("POSTGRES_DB", "postgresdb"),
+            database=os.getenv("POSTGRES_DB", "postgres"),
             port=int(os.getenv("DB_PORT", "5432")),
         )
 

@@ -298,7 +298,10 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         permission_classes=(AllowAny,),
     )
     def start_bot(self, request, *args, **kwargs) -> Response:
-        BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8001/")
+        BOT_SERVER_URL: str = os.getenv(
+            "BOT_SERVER_URL", "http://bot_server:8001/"
+        )  # Для докера
+        # BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8001/") # Для локального запуска
         id_bot = self.kwargs.get("pk")
         telegram_bot = get_object_or_404(TelegramBot, id=id_bot)
         if telegram_bot.is_started:
@@ -309,7 +312,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         telegram_bot.bot_state = TelegramBot.BotState.RUNNING
         telegram_bot.started_at = timezone.now()
         telegram_bot.save()
-        requests.get(f"{BOT_SERVER_URL}/{id_bot}/start/")
+        requests.get(f"{BOT_SERVER_URL}{id_bot}/start/")
         return Response(
             data={"detail": "Бот успешно запущен"}, status=status.HTTP_200_OK
         )
@@ -321,13 +324,16 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         permission_classes=(AllowAny,),
     )
     def stop_bot(self, request, *args, **kwargs) -> Response:
-        BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8001/")
+        BOT_SERVER_URL: str = os.getenv(
+            "BOT_SERVER_URL", "http://bot_server:8080/"
+        )  # Для докера
+        # BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8001/") # Для локального запуска
         id_bot = self.kwargs.get("pk")
         telegram_bot = get_object_or_404(TelegramBot, id=id_bot)
         if telegram_bot.is_started:
             telegram_bot.bot_state = TelegramBot.BotState.STOPPED
             telegram_bot.save()
-            requests.get(f"{BOT_SERVER_URL}/{id_bot}/stop/")
+            requests.get(f"{BOT_SERVER_URL}{id_bot}/stop/")
             return Response(
                 data={"detail": "Бот успешно остановлен"}, status=status.HTTP_200_OK
             )

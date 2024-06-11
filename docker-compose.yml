@@ -10,19 +10,26 @@ services:
     env_file: .env
     volumes: [pg_data:/var/lib/postgresql/data]
     restart: always
+    networks: [my_network]
   bot_server:
     build: ./bot_server/
     env_file: .env
-    ports: [8001:8080]
+    ports: [8080:8080]
     depends_on: [db]
+    networks: [my_network]
   bot_constructor:
     build: ./bot_constructor/
     env_file: .env
-    ports: [8002:8000]
+    ports: [8000:8000]
     depends_on: [db]
+    networks: [my_network]
   gateway:
     build: ./gateway/
     env_file: .env
-    ports: [80:80]
+    ports: [8001:80]
     depends_on: [bot_constructor]
     volumes: [static:/staticfiles/, media:/app/media/]
+    networks: [my_network]
+networks:
+  my_network:
+    driver: bridge

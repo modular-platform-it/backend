@@ -4,6 +4,7 @@ import os
 from contextlib import asynccontextmanager
 
 import sentry_sdk
+from bots import BaseTelegramBot
 from db import Connection
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Response
@@ -11,8 +12,6 @@ from log import py_logger
 from models import TelegramBot
 from models_api import EditBot
 from pydantic import BaseModel
-
-from bots import BaseTelegramBot
 
 # import concurrent.futures # для MacOS
 
@@ -94,7 +93,7 @@ async def start_bot(bot_id: int):
         return Response("Bot started")
     else:
         py_logger.info(f"Бота нет {bot_id}")
-        return Response("бот {bot_id} не существует")
+        return Response(f"бот {bot_id} не существует")
 
 
 @app.get("/{bot_id}/stop/")

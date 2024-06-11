@@ -76,6 +76,7 @@ class TelegramBot(models.Model):
                 action_type="Handlers",
                 position=1,
                 is_active=True,
+                description="Что то описано",
             )
 
     @property
@@ -99,7 +100,11 @@ class TelegramBotAction(models.Model):
         GetListHandler = "GetListHandler", "Получение Списка"
         StopHandler = "StopHandler", "Остановка"
         Handlers = "Handlers", "Старт"
-        SendMassage = "SendMassage", "Получение обьекта"
+        RandomWordLearnListHandler = (
+            "RandomWordLearnListHandler",
+            "Словарик слов с переводом",
+        )
+        GetItem = "GetItem", "Получение обьекта"
 
     class APIMethodType(models.TextChoices):
         GET = "GET", "Get запрос"
