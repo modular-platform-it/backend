@@ -113,7 +113,6 @@ class TelegramBotAction(models.Model):
         DELETE = "DELETE", "Delete запрос"
         PUT = "PUT", "Put запрос"
 
-
     telegram_bot = models.ForeignKey(
         to="TelegramBot",
         verbose_name="Телеграм бот",
