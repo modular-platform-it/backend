@@ -4,6 +4,7 @@ import os
 from contextlib import asynccontextmanager
 
 import sentry_sdk
+from bots import BaseTelegramBot
 from db import Connection
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Response
@@ -11,8 +12,6 @@ from log import py_logger
 from models import TelegramBot
 from models_api import EditBot
 from pydantic import BaseModel
-
-from bots import BaseTelegramBot
 
 # import concurrent.futures # для MacOS
 
