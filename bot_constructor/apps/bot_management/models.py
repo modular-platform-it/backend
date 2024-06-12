@@ -105,6 +105,10 @@ class TelegramBotAction(models.Model):
             "Словарик слов с переводом",
         )
         GetItem = "GetItem", "Получение обьекта"
+        RandomListHandler = (
+            "RandomListHandler",
+            "Список обьеков и получение рендомного n Обьектов",
+        )
 
     class APIMethodType(models.TextChoices):
         GET = "GET", "Get запрос"

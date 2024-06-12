@@ -220,7 +220,7 @@ class RandomWordLearnListHandler:
             await msg.answer(f"Список ваших слов\n{text}")
 
 
-class RandomListLearnListHandler:
+class RandomListHandler:
     def __init__(self, bot_data, action, connection):
         """Список обьеков и получение рендомного n Обьектов"""
         self.bot_data = bot_data
