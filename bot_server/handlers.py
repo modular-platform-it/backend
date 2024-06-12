@@ -218,3 +218,73 @@ class RandomWordLearnListHandler:
                 for item in self.words:
                     text += item["word"] + " : " + item["translate"] + "\n"
             await msg.answer(f"Список ваших слов\n{text}")
+
+
+class RandomListLearnListHandler:
+    def __init__(self, bot_data, action, connection):
+        """Список обьеков и получение рендомного n Обьектов"""
+        self.bot_data = bot_data
+        self.router = Router()
+        self.action = action
+        self.connection = connection
+        self.commands = [
+            BotCommand(
+                command="/add_word",
+                description=f"Добавить новое обьект"
+            ),
+            BotCommand(
+                command="/get_words_list",
+                description=f"Получить случайных обьект",
+            ),
+            BotCommand(
+                command="/change_length_list",
+                description=f"Изменить количество выдаваемых слов",
+            ),
+        ]
+        self.words = []
+        self.requirement_count_word = 1
+
+        class WordState(StatesGroup):
+            item = State()
+            length_list = State()
+
+        @self.router.message(Command("change_length_list"))
+        async def change_lengh(msg: Message, state: FSMContext):
+            """Изменение длины списка обьектов"""
+            await state.set_state(WordState.length_list)
+            await msg.answer(f"Сейчас количество = {self.requirement_count_word}\nВведите необходимое количество обьктов для выдачи при команде get_words_list")
+
+        @self.router.message(WordState.length_list)
+        async def get_change_lengh(msg: Message, state: FSMContext):
+            await state.update_data(length_list=msg.text)
+            self.requirement_count_word = int(msg.text)
+            await state.clear()
+            await msg.answer("Длина списка изменена")
+
+        @self.router.message(Command("add_item"))
+        async def start_add_item(msg: Message, state: FSMContext):
+            """Добавление нового Обьекта"""
+            await state.set_state(WordState.item)
+            await msg.answer("Введите что добавить нужно")
+
+        @self.router.message(WordState.item)
+        async def get_new_item(msg: Message, state: FSMContext):
+            await state.update_data(item=msg.text)
+            data = await state.get_data()
+            self.words.append(data)
+            self.action.data = self.words
+            await state.clear()
+            await msg.answer("Обьект добавлен")
+
+        @self.router.message(Command("get_item_list"))
+        async def get_word_list_handler(msg: Message):
+            """Получение списка из n Обьектов"""
+            text = ""
+            if self.requirement_count_word < len(self.words):
+                for item in range(len(self.words)):
+                    word = random.choice(self.words)
+                    text += word + "\n"
+            else:
+                for item in self.words:
+                    text += item + "\n"
+            await msg.answer(f"Список ваших слов\n{text}")
