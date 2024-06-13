@@ -1,0 +1,10 @@
+@baseUrl = https://dev.xwick.ru/v1
+
+###
+POST {{baseUrl}}/users/login/
+Content-Type: application/json
+
+{
+  "email": "6509588@mail.ru",
+  "password": "!234qwer"
+}
