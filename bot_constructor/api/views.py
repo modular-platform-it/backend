@@ -342,7 +342,6 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         )
 
 
-
 @extend_schema(tags=["Действия"])
 @extend_schema_view(
     list=extend_schema(
