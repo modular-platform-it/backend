@@ -309,10 +309,10 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             return Response(
                 data={"detail": "Бот уже запущен"}, status=status.HTTP_200_OK
             )
+        requests.get(f"{BOT_SERVER_URL}{id_bot}/start/")
         telegram_bot.bot_state = TelegramBot.BotState.RUNNING
         telegram_bot.started_at = timezone.now()
         telegram_bot.save()
-        requests.get(f"{BOT_SERVER_URL}{id_bot}/start/")
         return Response(
             data={"detail": "Бот успешно запущен"}, status=status.HTTP_200_OK
         )
@@ -331,12 +331,16 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         id_bot = self.kwargs.get("pk")
         telegram_bot = get_object_or_404(TelegramBot, id=id_bot)
         if telegram_bot.is_started:
-            telegram_bot.bot_state = TelegramBot.BotState.STOPPED
-            telegram_bot.save()
-            requests.get(f"{BOT_SERVER_URL}{id_bot}/stop/")
             return Response(
-                data={"detail": "Бот успешно остановлен"}, status=status.HTTP_200_OK
+                data={"detail": "Бот не запущен"}, status=status.HTTP_200_OK
             )
+        requests.get(f"{BOT_SERVER_URL}{id_bot}/stop/")
+        telegram_bot.bot_state = TelegramBot.BotState.STOPPED
+        telegram_bot.save()
+        return Response(
+            data={"detail": "Бот успешно остановлен"}, status=status.HTTP_200_OK
+        )
+
 
 
 @extend_schema(tags=["Действия"])
