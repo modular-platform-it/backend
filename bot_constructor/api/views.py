@@ -277,33 +277,32 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         return Response(data={"detail": False}, status=status.HTTP_404_NOT_FOUND)
 
     def update(self, request, *args, **kwargs):
-        telegram_bot_pk = self.kwargs.get("pk")
-        check_bot_started(telegram_bot_pk)
+        telegram_bot = self.get_object()
+        check_bot_started(telegram_bot.pk)
         return super().update(request, *args, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
-        telegram_bot_pk = self.kwargs.get("pk")
-        check_bot_started(telegram_bot_pk)
+        telegram_bot = self.get_object()
+        check_bot_started(telegram_bot.pk)
         return super().partial_update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
-        telegram_bot_pk = self.kwargs.get("pk")
-        check_bot_started(telegram_bot_pk)
+        telegram_bot = self.get_object()
+        check_bot_started(telegram_bot.pk)
         return super().destroy(request, *args, **kwargs)
 
     @action(
         methods=["GET"],
         detail=True,
         url_name="start_bot",
-        permission_classes=(AllowAny,),
+        permission_classes=(IsAuthenticated,),
     )
     def start_bot(self, request, *args, **kwargs) -> Response:
         BOT_SERVER_URL: str = os.getenv(
             "BOT_SERVER_URL", "http://bot_server:8001/"
         )  # Для докера
         # BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8001/") # Для локального запуска
-        id_bot = self.kwargs.get("pk")
-        telegram_bot = get_object_or_404(TelegramBot, id=id_bot)
+        telegram_bot = self.get_object()
         if telegram_bot.is_started:
 
             return Response(
@@ -312,7 +311,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         telegram_bot.bot_state = TelegramBot.BotState.RUNNING
         telegram_bot.started_at = timezone.now()
         telegram_bot.save()
-        requests.get(f"{BOT_SERVER_URL}{id_bot}/start/")
+        requests.get(f"{BOT_SERVER_URL}{telegram_bot.pk}/start/")
         return Response(
             data={"detail": "Бот успешно запущен"}, status=status.HTTP_200_OK
         )
@@ -321,19 +320,18 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         methods=["GET"],
         detail=True,
         url_name="stop",
-        permission_classes=(AllowAny,),
+        permission_classes=(IsAuthenticated,),
     )
     def stop_bot(self, request, *args, **kwargs) -> Response:
         BOT_SERVER_URL: str = os.getenv(
             "BOT_SERVER_URL", "http://bot_server:8080/"
         )  # Для докера
         # BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8001/") # Для локального запуска
-        id_bot = self.kwargs.get("pk")
-        telegram_bot = get_object_or_404(TelegramBot, id=id_bot)
+        telegram_bot = self.get_object()
         if telegram_bot.is_started:
             telegram_bot.bot_state = TelegramBot.BotState.STOPPED
             telegram_bot.save()
-            requests.get(f"{BOT_SERVER_URL}{id_bot}/stop/")
+            requests.get(f"{BOT_SERVER_URL}{telegram_bot.pk}/stop/")
             return Response(
                 data={"detail": "Бот успешно остановлен"}, status=status.HTTP_200_OK
             )
