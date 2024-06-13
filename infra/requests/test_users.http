@@ -6,6 +6,7 @@
 POST {{baseUrl}}/users/login/
 Content-Type: application/json
 # Authorization: Bearer {{authToken}}
+csrftoken: tvZjX8NnpbmXwOuNFyUC2IDpI32NU0XN
 
 {
   "email": "6509588@mail.ru",
@@ -16,3 +17,22 @@ Content-Type: application/json
 GET {{baseUrl}}/users/login
 Content-Type: application/json
 # Authorization: Bearer {{authToken}}
+
+###
+HTTP/1.1 200 OK
+Allow: POST, GET, OPTIONS
+Content-Length: 27
+Content-Type: application/json
+Cross-Origin-Opener-Policy: same-origin
+Date: Thu, 13 Jun 2024 13:17:15 GMT
+Referrer-Policy: same-origin
+Server: gunicorn
+Set-Cookie: csrftoken=tvZjX8NnpbmXwOuNFyUC2IDpI32NU0XN; expires=Thu, 12 Jun 2025 13:17:15 GMT; Max-Age=31449600; Path=/; SameSite=Lax,X-CSRFToken=274ef8w7grwkt5hpmkwnf0ydo6vcrc51; expires=Thu, 27 Jun 2024 13:17:15 GMT; HttpOnly; Max-Age=1209600; Path=/; Secure
+Vary: Accept, Cookie, origin
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+Connection: close
+
+{
+  "email": "6509588@mail.ru"
+}
