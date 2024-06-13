@@ -244,7 +244,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
     )
     ordering = ("-created_at",)
     lookup_field = "pk"
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(
         self,
