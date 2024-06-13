@@ -19,14 +19,14 @@ Content-Type: application/json
 
 ###
 HTTP/1.1 200 OK
-Allow: OPTIONS, POST, GET
+Allow: POST, GET, OPTIONS
 Content-Length: 27
 Content-Type: application/json
 Cross-Origin-Opener-Policy: same-origin
-Date: Thu, 13 Jun 2024 14:13:39 GMT
+Date: Thu, 13 Jun 2024 14:20:31 GMT
 Referrer-Policy: same-origin
 Server: gunicorn
-Set-Cookie: csrftoken=HGaxeupnX28HHJQH81sVzJjTEVxBDHtH; expires=Thu, 12 Jun 2025 14:13:39 GMT; Max-Age=31449600; Path=/; SameSite=None; Secure,X-CSRFToken=4klpoiihkb0nd1rjgyicpx60chaqhlqt; expires=Thu, 27 Jun 2024 14:13:39 GMT; HttpOnly; Max-Age=1209600; Path=/; SameSite=Lax
+Set-Cookie: csrftoken=KvcIGGDGW7NrFkPhLWUusX39TT7dAz4z; expires=Thu, 12 Jun 2025 14:20:31 GMT; Max-Age=31449600; Path=/; SameSite=None; Secure,X-CSRFToken=2dv1b5304cf310o2ka2dmwr9b7mztf18; expires=Thu, 27 Jun 2024 14:20:31 GMT; HttpOnly; Max-Age=1209600; Path=/; SameSite=Lax
 Vary: Accept, Cookie, origin
 X-Content-Type-Options: nosniff
 X-Frame-Options: DENY
