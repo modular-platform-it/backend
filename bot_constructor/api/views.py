@@ -3,6 +3,9 @@ from datetime import datetime as dt
 from typing import Any, Type
 
 import requests
+from django.core.exceptions import ValidationError
+from django.http import Http404
+
 from api.drf_spectacular.drf_serializers import (
     DummyActionSerializer,
     DummyBotSerializer,
@@ -58,12 +61,11 @@ from rest_framework.response import Response
 load_dotenv()
 
 
-def check_bot_started(telegram_bot_pk) -> None:
+def check_bot_started(telegram_bot) -> None:
     """
     Проверяет запущен ли бот во время попытки изменения настроек.
     Вызывает ошибку со статусом 400 при положительном результате.
     """
-    telegram_bot = get_object_or_404(TelegramBot, id=telegram_bot_pk)
     if telegram_bot.is_started:
         raise BotIsRunningException
 
@@ -277,42 +279,48 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         return Response(data={"detail": False}, status=status.HTTP_404_NOT_FOUND)
 
     def update(self, request, *args, **kwargs):
-        telegram_bot_pk = self.kwargs.get("pk")
-        check_bot_started(telegram_bot_pk)
+        telegram_bot = self.get_object()
+        check_bot_started(telegram_bot)
         return super().update(request, *args, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
-        telegram_bot_pk = self.kwargs.get("pk")
-        check_bot_started(telegram_bot_pk)
+        telegram_bot = self.get_object()
+        check_bot_started(telegram_bot)
         return super().partial_update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
-        telegram_bot_pk = self.kwargs.get("pk")
-        check_bot_started(telegram_bot_pk)
+        telegram_bot = self.get_object()
+        check_bot_started(telegram_bot)
         return super().destroy(request, *args, **kwargs)
 
     @action(
         methods=["GET"],
         detail=True,
         url_name="start_bot",
-        permission_classes=(AllowAny,),
+        permission_classes=(IsAuthenticated,),
     )
     def start_bot(self, request, *args, **kwargs) -> Response:
         BOT_SERVER_URL: str = os.getenv(
             "BOT_SERVER_URL", "http://bot_server:8001/"
         )  # Для докера
         # BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8001/") # Для локального запуска
-        id_bot = self.kwargs.get("pk")
-        telegram_bot = get_object_or_404(TelegramBot, id=id_bot)
+        telegram_bot = self.get_object()
         if telegram_bot.is_started:
 
             return Response(
                 data={"detail": "Бот уже запущен"}, status=status.HTTP_200_OK
             )
+
+        response = requests.get(f"{BOT_SERVER_URL}{telegram_bot.pk}/start/")
+        if response.status_code != 200:
+            return Response(
+                {"error": "Не удалось запустить бота"},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
         telegram_bot.bot_state = TelegramBot.BotState.RUNNING
         telegram_bot.started_at = timezone.now()
         telegram_bot.save()
-        requests.get(f"{BOT_SERVER_URL}{id_bot}/start/")
         return Response(
             data={"detail": "Бот успешно запущен"}, status=status.HTTP_200_OK
         )
@@ -321,22 +329,32 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         methods=["GET"],
         detail=True,
         url_name="stop",
-        permission_classes=(AllowAny,),
+        permission_classes=(IsAuthenticated,),
     )
     def stop_bot(self, request, *args, **kwargs) -> Response:
         BOT_SERVER_URL: str = os.getenv(
             "BOT_SERVER_URL", "http://bot_server:8080/"
         )  # Для докера
         # BOT_SERVER_URL: str = os.getenv("BOT_SERVER_URL", "http://localhost:8001/") # Для локального запуска
-        id_bot = self.kwargs.get("pk")
-        telegram_bot = get_object_or_404(TelegramBot, id=id_bot)
+        telegram_bot = self.get_object()
+        response = requests.get(f"{BOT_SERVER_URL}{telegram_bot.pk}/stop/")
+
         if telegram_bot.is_started:
+            if response.status_code != 200:
+                return Response(
+                    {"error": "Не удалось остановить бота"},
+                    status=status.HTTP_503_SERVICE_UNAVAILABLE,
+                )
             telegram_bot.bot_state = TelegramBot.BotState.STOPPED
             telegram_bot.save()
-            requests.get(f"{BOT_SERVER_URL}{id_bot}/stop/")
             return Response(
                 data={"detail": "Бот успешно остановлен"}, status=status.HTTP_200_OK
             )
+
+        return Response(
+            {"detail": "Бот уже остановлен."},
+            status=status.HTTP_200_OK,
+        )
 
 
 @extend_schema(tags=["Действия"])
@@ -486,15 +504,15 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         )
 
     def update(self, request, *args, **kwargs):
-        check_bot_started(self.kwargs.get("telegram_bot_pk"))
+        check_bot_started(self.get_bot())
         return super().update(request, *args, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
-        check_bot_started(self.kwargs.get("telegram_bot_pk"))
+        check_bot_started(self.get_bot())
         return super().partial_update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
-        check_bot_started(self.kwargs.get("telegram_bot_pk"))
+        check_bot_started(self.get_bot())
         return super().destroy(request, *args, **kwargs)
 
 

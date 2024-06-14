@@ -1,0 +1,38 @@
+@baseUrl = https://dev.xwick.ru/v1
+@authToken = {{tokenAPI.response.headers.Set-Cookie}}
+
+###
+# @name tokenAPI
+POST {{baseUrl}}/users/login/
+Content-Type: application/json
+# Authorization: Bearer {{authToken}}
+
+{
+  "email": "6509588@mail.ru",
+  "password": "!234qwer"
+}
+
+### Get my user profile
+GET {{baseUrl}}/users/login
+Content-Type: application/json
+# Authorization: Bearer {{authToken}}
+
+###
+HTTP/1.1 200 OK
+Allow: GET, OPTIONS, POST
+Content-Length: 27
+Content-Type: application/json
+Cross-Origin-Opener-Policy: same-origin
+Date: Fri, 14 Jun 2024 09:03:02 GMT
+Referrer-Policy: same-origin
+Server: gunicorn
+Set-Cookie: csrftoken=b1MbSCaiXLBrIZbpbgFJtRq4Vt1TtEMu; expires=Fri, 13 Jun 2025 09:03:02 GMT; Max-Age=31449600; Path=/; SameSite=None; Secure,
+  sessionid=2nfcny399mnark4xijejnxyi4udvn3pg; expires=Fri, 28 Jun 2024 09:03:02 GMT; HttpOnly; Max-Age=1209600; Path=/; SameSite=Lax
+Vary: Accept, Cookie, origin
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+Connection: close
+
+{
+  "email": "6509588@mail.ru"
+}

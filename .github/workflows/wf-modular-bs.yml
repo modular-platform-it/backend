@@ -3,7 +3,7 @@ name: bot_server container launch
 run-name: ${{ github.actor }} started 🚀 GitHub Actions
 on:
   push:
-    branches: [bot_server, fix/manual-launch]
+    branches: [bot_server]
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
@@ -57,7 +57,6 @@ jobs:
               --name=${{env.APP_CONTAINER_NAME}} \
               --hostname=${{env.APP_CONTAINER_NAME}} \
               --net=${{secrets.MODULAR_NETWORK_NAME}} \
-              --publish 8888:8080 \
               --restart=unless-stopped \
               -e POSTGRES_DB=${{env.APP_DB_NAME}} \
               -e POSTGRES_USER=${{env.APP_DB_USER}} \
