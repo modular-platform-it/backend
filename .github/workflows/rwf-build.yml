@@ -35,4 +35,6 @@ jobs:
           context: ./${{inputs.APP_PROJECT_NAME}}
           file: ${{inputs.APP_PROJECT_NAME}}/${{inputs.DOCKERFILE_NAME}}
           push: true
-          tags: ${{secrets.DOCKERHUB_USERNAME}}/${{inputs.APP_IMAGE_NAME}}:${{inputs.APP_VERSION}}
+          tags: |
+            ${{secrets.DOCKERHUB_USERNAME}}/${{inputs.APP_IMAGE_NAME}}:latest
+            ${{secrets.DOCKERHUB_USERNAME}}/${{inputs.APP_IMAGE_NAME}}:${{inputs.APP_VERSION}}
