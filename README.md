@@ -21,6 +21,7 @@
 - [Орленко Олеся](https://github.com/olees-orlenko)
 - [Рябов Игорь](https://github.com/Geroy4ik)
 - [Кузин Сергей](https://github.com/sihuannewrise)
+- [Ибрагимов Рабадан](https://github.com/Rabadan-Ibr)
 
 ## Основная логика
 Описана в uml-диаграмме, которая находится в папке uml\uml.puml. Диаграмму можно открыть плагином PlantUML или использовать онлайн ресурсы, Например:
