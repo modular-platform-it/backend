@@ -26,7 +26,8 @@ Cross-Origin-Opener-Policy: same-origin
 Date: Fri, 14 Jun 2024 08:38:34 GMT
 Referrer-Policy: same-origin
 Server: gunicorn
-Set-Cookie: csrftoken=MSskOXA9Nk19Ehq0GOCVIow3Hrvu8M9O; expires=Fri, 13 Jun 2025 08:38:34 GMT; Max-Age=31449600; Path=/; SameSite=None; Secure,X-CSRFToken=6k0xwfl8fc3rw3weyske8wituy1f3afv; expires=Fri, 28 Jun 2024 08:38:34 GMT; HttpOnly; Max-Age=1209600; Path=/; SameSite=Lax
+Set-Cookie: csrftoken=MSskOXA9Nk19Ehq0GOCVIow3Hrvu8M9O; expires=Fri, 13 Jun 2025 08:38:34 GMT; Max-Age=31449600; Path=/; SameSite=None; Secure,
+X-CSRFToken=6k0xwfl8fc3rw3weyske8wituy1f3afv; expires=Fri, 28 Jun 2024 08:38:34 GMT; HttpOnly; Max-Age=1209600; Path=/; SameSite=Lax
 Vary: Accept, Cookie, origin
 X-Content-Type-Options: nosniff
 X-Frame-Options: DENY
