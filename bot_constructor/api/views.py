@@ -376,7 +376,8 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
                 description="Действие телеграм бота",
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
-                response=DummyActionSerializer, description="Ошибка в полях"
+                response=DummyActionSerializer,
+                description="Ошибка в полях или остановите бота",
             ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
@@ -393,7 +394,8 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
                 response=TelegramBotActionSerializer, description="Действие создано"
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
-                response=DummyActionSerializer, description="Ошибка в полях"
+                response=DummyActionSerializer,
+                description="Ошибка в полях или остановите бота",
             ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
@@ -410,7 +412,8 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
                 response=TelegramBotActionSerializer, description="Действие обновлено"
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
-                response=DummyActionSerializer, description="Ошибка в полях"
+                response=DummyActionSerializer,
+                description="Ошибка в полях или остановите бота",
             ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
@@ -427,7 +430,8 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
                 response=TelegramBotActionSerializer, description="Действие обновлено"
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
-                response=DummyActionSerializer, description="Ошибка в полях"
+                response=DummyActionSerializer,
+                description="Ошибка в полях или остановите бота",
             ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
