@@ -7,7 +7,7 @@ on:
     paths-ignore: ['**/pyproject.toml']
   workflow_dispatch:
 env:
-  APP_VERSION: dev1.0.2
+  APP_VERSION: dev1.0.1
   APP_PROJECT_NAME: bot_constructor
   APP_IMAGE_NAME: ${{vars.DEV_CONSTRUCTOR_IMAGE_NAME}}
   APP_CONTAINER_NAME: ${{vars.DEV_CONSTRUCTOR_CONTAINER_NAME}}
