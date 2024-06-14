@@ -460,18 +460,20 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return self.get_bot().actions.all()
+        return TelegramBotAction.objects.filter(
+            telegram_bot=self.kwargs["telegram_bot_pk"]
+        ).prefetch_related("files")
 
-    # def list(self, request: Request, telegram_bot_pk: int) -> Response:
-    #     queryset = TelegramBotAction.objects.filter(telegram_bot_id=telegram_bot_pk)
-    #     serializer = TelegramBotActionSerializer(queryset, many=True)
-    #     return Response(serializer.data)
-    #
-    # def retrieve(self, request: Request, pk: int, telegram_bot_pk: int) -> Response:
-    #     queryset = TelegramBotAction.objects.filter(pk=pk, telegram_bot=telegram_bot_pk)
-    #     telegram_action = get_object_or_404(queryset, pk=pk)
-    #     serializer = TelegramBotActionSerializer(telegram_action)
-    #     return Response(serializer.data)
+    def list(self, request: Request, telegram_bot_pk: int) -> Response:
+        queryset = TelegramBotAction.objects.filter(telegram_bot_id=telegram_bot_pk)
+        serializer = TelegramBotActionSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request: Request, pk: int, telegram_bot_pk: int) -> Response:
+        queryset = TelegramBotAction.objects.filter(pk=pk, telegram_bot=telegram_bot_pk)
+        telegram_action = get_object_or_404(queryset, pk=pk)
+        serializer = TelegramBotActionSerializer(telegram_action)
+        return Response(serializer.data)
 
     def get_serializer_class(self):
         # action_type = self.request.data.get("action_type")
