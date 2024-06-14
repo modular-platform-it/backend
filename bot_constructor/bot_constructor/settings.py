@@ -30,7 +30,6 @@ CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "https://127.0.0.1").sp
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SECURE = True
 
@@ -71,7 +70,7 @@ REST_FRAMEWORK = {
 }
 
 ROOT_URLCONF = "bot_constructor.urls"
-SESSION_COOKIE_NAME = "X-CSRFToken"
+# SESSION_COOKIE_NAME = "X-CSRFToken"
 SPECTACULAR_SETTINGS = {
     "AUTHENTICATION_EXTENSIONS": [
         "api.drf_spectacular.drf_views",
