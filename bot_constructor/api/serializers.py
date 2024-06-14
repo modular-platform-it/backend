@@ -25,6 +25,16 @@ class TelegramBotCreateSerializer(serializers.ModelSerializer):
         write_only=True,
     )
 
+    name = serializers.CharField(
+        validators=(
+            validators.UniqueValidator(
+                TelegramBot.objects.all(),
+                message="Такое имя уже используется",
+                lookup='iexact',
+            ),
+        ),
+    )
+
     class Meta:
         model = TelegramBot
         fields = ("id", "name", "telegram_token", "description", "api_key", "api_url")
