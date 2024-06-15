@@ -66,8 +66,12 @@ def check_bot_started(telegram_bot) -> None:
     Проверяет запущен ли бот во время попытки изменения настроек.
     Вызывает ошибку со статусом 400 при положительном результате.
     """
-    if telegram_bot.is_started:
+    if isinstance(telegram_bot, int):
+        telegram_bot = get_object_or_404(TelegramBot, pk=telegram_bot)
+
+    if isinstance(telegram_bot, TelegramBot) and telegram_bot.is_started:
         raise BotIsRunningException
+
 
 
 @extend_schema(tags=["Телеграм боты"])
@@ -246,7 +250,19 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
     )
     ordering = ("-created_at",)
     lookup_field = "pk"
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
+
+    def get_start_checked_object(self):
+        obj = self.get_object()
+        check_bot_started(obj)
+        return obj
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, args, kwargs)
+
+        checking_actions = {"update", "partial_update", "destroy"}
+        if self.action in checking_actions:
+            self.get_object = self.get_start_checked_object()
 
     def get_serializer_class(
         self,
@@ -277,21 +293,6 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         if response.ok:
             return Response(data={"detail": True}, status=status.HTTP_200_OK)
         return Response(data={"detail": False}, status=status.HTTP_404_NOT_FOUND)
-
-    def update(self, request, *args, **kwargs):
-        telegram_bot = self.get_object()
-        check_bot_started(telegram_bot)
-        return super().update(request, *args, **kwargs)
-
-    def partial_update(self, request, *args, **kwargs):
-        telegram_bot = self.get_object()
-        check_bot_started(telegram_bot)
-        return super().partial_update(request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        telegram_bot = self.get_object()
-        check_bot_started(telegram_bot)
-        return super().destroy(request, *args, **kwargs)
 
     @action(
         methods=["GET"],
@@ -504,15 +505,15 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         )
 
     def update(self, request, *args, **kwargs):
-        check_bot_started(self.get_bot())
+        check_bot_started(self.kwargs["telegram_bot_pk"])
         return super().update(request, *args, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
-        check_bot_started(self.get_bot())
+        check_bot_started(self.kwargs["telegram_bot_pk"])
         return super().partial_update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
-        check_bot_started(self.get_bot())
+        check_bot_started(self.kwargs["telegram_bot_pk"])
         return super().destroy(request, *args, **kwargs)
 
 
