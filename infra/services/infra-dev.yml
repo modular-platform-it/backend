@@ -1,11 +1,10 @@
 version: '3'
 services:
   nginx:
-    image: nginx:latest
+    image: nginx:1.27.0
     volumes:
       - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-      - /front_data:/usr/share/nginx/html:ro
+      - front_data:/usr/share/nginx/html:ro
     networks:
       - traefik
 
@@ -42,6 +41,7 @@ volumes:
       o: bind
   postgres_data:
   pgadmin_data:
+  front_data:
 
 networks:
   traefik:
