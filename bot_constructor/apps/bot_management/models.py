@@ -1,8 +1,7 @@
-from django.db.models.functions import Upper
-
 from apps.bot_management import constants, regexps
 from django.core import validators
 from django.db import models
+from django.db.models.functions import Upper
 from django.utils import timezone
 
 
@@ -57,9 +56,7 @@ class TelegramBot(models.Model):
         ordering = ("-created_at",)
         verbose_name = "Телеграм бот"
         verbose_name_plural = "Телеграм боты"
-        constraints = [
-            models.UniqueConstraint(Upper('name'), name='unique_name')
-        ]
+        constraints = [models.UniqueConstraint(Upper("name"), name="unique_name")]
 
     def __str__(self) -> str:
         """Строковое отображение объекта модели телеграм бота в виде его имени."""

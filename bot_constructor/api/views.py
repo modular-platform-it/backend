@@ -3,9 +3,6 @@ from datetime import datetime as dt
 from typing import Any, Type
 
 import requests
-from django.core.exceptions import ValidationError
-from django.http import Http404
-
 from api.drf_spectacular.drf_serializers import (
     DummyActionSerializer,
     DummyBotSerializer,
@@ -40,6 +37,8 @@ from apps.bot_management.models import (
     TelegramBotFile,
     Variable,
 )
+from django.core.exceptions import ValidationError
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django_filters import rest_framework as df_filters
@@ -71,7 +70,6 @@ def check_bot_started(telegram_bot) -> None:
 
     if isinstance(telegram_bot, TelegramBot) and telegram_bot.is_started:
         raise BotIsRunningException
-
 
 
 @extend_schema(tags=["Телеграм боты"])
