@@ -1,13 +1,5 @@
-version: '3'
+version: "3.3"
 services:
-  nginx:
-    image: nginx:1.27.0
-    volumes:
-      - /etc/timezone:/etc/timezone:ro
-      - front_data:/usr/share/nginx/html:ro
-    networks:
-      - traefik
-
   postgres:
     image: postgres:16.1-alpine
     env_file: stack.env
@@ -41,7 +33,6 @@ volumes:
       o: bind
   postgres_data:
   pgadmin_data:
-  front_data:
 
 networks:
   traefik:
