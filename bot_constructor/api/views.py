@@ -3,9 +3,6 @@ from datetime import datetime as dt
 from typing import Any, Type
 
 import requests
-from django.core.exceptions import ValidationError
-from django.http import Http404
-
 from api.drf_spectacular.drf_serializers import (
     DummyActionSerializer,
     DummyBotSerializer,
@@ -40,6 +37,8 @@ from apps.bot_management.models import (
     TelegramBotFile,
     Variable,
 )
+from django.core.exceptions import ValidationError
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django_filters import rest_framework as df_filters
@@ -71,7 +70,6 @@ def check_bot_started(telegram_bot) -> None:
 
     if isinstance(telegram_bot, TelegramBot) and telegram_bot.is_started:
         raise BotIsRunningException
-
 
 
 @extend_schema(tags=["Телеграм боты"])
@@ -298,7 +296,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         methods=["GET"],
         detail=True,
         url_name="start_bot",
-        permission_classes=(IsAuthenticated,),
+        permission_classes=(AllowAny,),
     )
     def start_bot(self, request, *args, **kwargs) -> Response:
         BOT_SERVER_URL: str = os.getenv(
@@ -330,7 +328,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         methods=["GET"],
         detail=True,
         url_name="stop",
-        permission_classes=(IsAuthenticated,),
+        permission_classes=(AllowAny,),
     )
     def stop_bot(self, request, *args, **kwargs) -> Response:
         BOT_SERVER_URL: str = os.getenv(
@@ -462,7 +460,7 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
     serializer_class = TelegramBotActionSerializer
     parser_classes = (FormParser, MultiPartParser)
     lookup_field = "pk"
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         return TelegramBotAction.objects.filter(
@@ -648,7 +646,7 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
 
     queryset = TelegramBotFile.objects.all()
     serializer_class = TelegramFileSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         return TelegramBotFile.objects.filter(
@@ -833,7 +831,7 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
 class VariableViewSet(viewsets.ModelViewSet):
     queryset = Variable.objects.all()
     serializer_class = VariableSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
     def update(self, request, *args, **kwargs):
         check_bot_started(self.kwargs.get("telegram_bot_pk"))
@@ -984,7 +982,7 @@ class VariableViewSet(viewsets.ModelViewSet):
 class HeaderViewSet(viewsets.ModelViewSet):
     queryset = Header.objects.all()
     serializer_class = HeaderSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         return Header.objects.filter(
