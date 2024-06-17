@@ -365,6 +365,9 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
             ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Действие не найдено"
+            ),
         },
     ),
     retrieve=extend_schema(
