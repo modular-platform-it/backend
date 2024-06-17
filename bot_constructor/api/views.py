@@ -296,7 +296,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         methods=["GET"],
         detail=True,
         url_name="start_bot",
-        permission_classes=(AllowAny,),
+        permission_classes=(IsAuthenticated,),
     )
     def start_bot(self, request, *args, **kwargs) -> Response:
         BOT_SERVER_URL: str = os.getenv(
@@ -328,7 +328,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         methods=["GET"],
         detail=True,
         url_name="stop",
-        permission_classes=(AllowAny,),
+        permission_classes=(IsAuthenticated,),
     )
     def stop_bot(self, request, *args, **kwargs) -> Response:
         BOT_SERVER_URL: str = os.getenv(
@@ -460,7 +460,7 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
     serializer_class = TelegramBotActionSerializer
     parser_classes = (FormParser, MultiPartParser)
     lookup_field = "pk"
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return TelegramBotAction.objects.filter(
@@ -646,7 +646,7 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
 
     queryset = TelegramBotFile.objects.all()
     serializer_class = TelegramFileSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return TelegramBotFile.objects.filter(
@@ -831,7 +831,7 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
 class VariableViewSet(viewsets.ModelViewSet):
     queryset = Variable.objects.all()
     serializer_class = VariableSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def update(self, request, *args, **kwargs):
         check_bot_started(self.kwargs.get("telegram_bot_pk"))
@@ -982,7 +982,7 @@ class VariableViewSet(viewsets.ModelViewSet):
 class HeaderViewSet(viewsets.ModelViewSet):
     queryset = Header.objects.all()
     serializer_class = HeaderSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return Header.objects.filter(
