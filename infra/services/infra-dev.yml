@@ -1,10 +1,11 @@
 version: '3'
 services:
   nginx:
-    image: nginxdemos/hello:0.4
+    image: nginx:latest
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+      - /front_data:/usr/share/nginx/html:ro
     networks:
       - traefik
 
