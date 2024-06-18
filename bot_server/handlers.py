@@ -152,7 +152,7 @@ class GetItems:
 
         @self.router.message(Command(self.command[1:]))
         async def start_get_method(msg: Message):
-            await msg.reply("Каким способ искать", reply_markup=self.keyboard)
+            await msg.reply("Каким способом искать", reply_markup=self.keyboard)
 
         @self.router.callback_query(F.data == "search_id")
         async def get_id_handler(callback: CallbackQuery, state: FSMContext):

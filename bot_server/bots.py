@@ -25,7 +25,6 @@ class BaseTelegramBot:
                 .filter(TelegramBotAction.telegram_bot_id == bot_data.id)
                 .all()
             )
-        print(self.actions[0])
         for action in self.actions:
             try:
                 handler = getattr(handlers, action.action_type)(
@@ -41,7 +40,6 @@ class BaseTelegramBot:
 
     async def start(self):
         py_logger.info(f"Бот стартовал {self.bot_data.id}")
-        print(self.commands)
         await self.bot.set_my_commands(commands=self.commands)
         await self.dispatcher.start_polling(self.bot)
 
