@@ -274,7 +274,7 @@ class RandomListHandler:
             """Изменение длины списка объектов"""
             await state.set_state(WordState.length_list)
             await msg.answer(
-                f"Сейчас количество = {self.requirement_count_word}\nВведите необходимое количество объктов для выдачи при команде get_words_list"
+                f"Сейчас количество = {self.requirement_count_word}\nВведите необходимое количество объектов для выдачи при команде get_words_list"
             )
 
         @self.router.message(WordState.length_list)
