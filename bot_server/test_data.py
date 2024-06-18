@@ -23,12 +23,17 @@ data2 = {
 }
 
 data_action1 = {
-    "telegram_bot_id": 12,
+    "telegram_bot_id": 1,
+    "name": "Получить итем",
+    "command_keyword": "/get_item",
     "action_type": "GetItem",
     "description": "dsadasd",
+    "api_url": "https://api.zippopotam.us/us/",
+    "api_key": "",
+    "data": {"name": 1},
 }
 data_action2 = {
-    "telegram_bot_id": 3,
+    "telegram_bot_id": 1,
     "name": "Словарь",
     "command_keyword": "get_list",
     "action_type": "RandomWordLearnListHandler",
@@ -38,13 +43,13 @@ data_action2 = {
     "data": {"name": 1},
 }
 bot1 = TelegramBot(**data1)
-bot2 = TelegramBot(**data2)
+# bot2 = TelegramBot(**data2)
 action1 = TelegramBotAction(**data_action1)
 action2 = TelegramBotAction(**data_action2)
 with connection as session:
     # session.add(bot1)
     # session.add(bot2)
     # session.commit()
-    # session.add(action1)
+    session.add(action1)
     session.add(action2)
     session.commit()

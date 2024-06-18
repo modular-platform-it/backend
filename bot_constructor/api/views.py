@@ -235,18 +235,18 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
     search_fields = (
         "^name",
         "is_started",
-        "bot_status",
+        "bot_state",
         "created_at",
         "started_at",
     )
     ordering_fields = (
         "name",
         "is_started",
-        "bot_status",
+        "bot_state",
         "created_at",
         "started_at",
     )
-    ordering = ("-created_at",)
+    ordering = ("bot_state",)
     lookup_field = "pk"
     permission_classes = (AllowAny,)
 
@@ -349,6 +349,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             return Response(
                 data={"detail": "Бот успешно остановлен"}, status=status.HTTP_200_OK
             )
+        return Response(data={"detail": "Бот не запущен"}, status=status.HTTP_200_OK)
 
         return Response(
             {"detail": "Бот уже остановлен."},
