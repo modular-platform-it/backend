@@ -106,14 +106,13 @@ class TelegramBotAction(models.Model):
             "RandomWordLearnListHandler",
             "Словарик слов с переводом",
         )
-        GetItem = "GetItem", "Получение обьекта"
+        GetItem = "GetItem", "Получение объекта"
         RandomListHandler = (
             "RandomListHandler",
-            "Список обьеков и получение рендомного n Обьектов",
+            "Список объектов и получение рандомного n Объектов",
         )
         GetJoke = "GetJoke", "Получить шутку"
         PostItem = "PostItem", "Отправить запрос"
-
 
     class APIMethodType(models.TextChoices):
         GET = "GET", "Get запрос"

@@ -15,8 +15,6 @@ from aiogram.types import (
     Message,
 )
 from fastapi import HTTPException
-from log import py_logger
-from models import Base, TelegramBotAction
 from models_api import Item, ItemList
 
 
@@ -170,11 +168,11 @@ class GetItems:
             data = await state.get_data()
             item = await get_item(
                 api_key=self.bot_data.api_key,
-                api_url=f"{self.action.api_url}/{data["id"]}/",
+                api_url=f"{self.action.api_url}/{data['id']}/",
             )
             gen = serialize_json_to_lines(item.item)
             await state.clear()
-            await msg.answer(f"Нужный вам обьект: {gen}")
+            await msg.answer(f"Нужный вам объект: {gen}")
 
         @self.router.message(IDState.name)
         async def get_item_handler(msg: Message, state: FSMContext):
@@ -182,11 +180,11 @@ class GetItems:
             data = await state.get_data()
             item = await get_item(
                 api_key=self.bot_data.api_key,
-                api_url=f"{self.action.api_url}/search?name={data["name"]}&contains=true/",
+                api_url=f"{self.action.api_url}/search?name={data['name']}&contains=true/",
             )
             gen = serialize_json_to_lines(item.item)
             await state.clear()
-            await msg.answer(f"Нужный вам обьект: {gen}")
+            await msg.answer(f"Нужный вам объект: {gen}")
 
 
 class RandomWordLearnListHandler:
@@ -248,16 +246,16 @@ class RandomWordLearnListHandler:
 
 class RandomListHandler:
     def __init__(self, bot_data, action, connection):
-        """Список обьеков и получение рендомного n Обьектов"""
+        """Список объектов и получение рандомного n Обьектов"""
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
         self.connection = connection
         self.commands = [
-            BotCommand(command="/add_word", description=f"Добавить новое обьект"),
+            BotCommand(command="/add_word", description=f"Добавить новое объект"),
             BotCommand(
                 command="/get_words_list",
-                description=f"Получить случайных обьект",
+                description=f"Получить случайных объект",
             ),
             BotCommand(
                 command="/change_length_list",
@@ -273,10 +271,10 @@ class RandomListHandler:
 
         @self.router.message(Command("change_length_list"))
         async def change_lengh(msg: Message, state: FSMContext):
-            """Изменение длины списка обьектов"""
+            """Изменение длины списка объектов"""
             await state.set_state(WordState.length_list)
             await msg.answer(
-                f"Сейчас количество = {self.requirement_count_word}\nВведите необходимое количество обьктов для выдачи при команде get_words_list"
+                f"Сейчас количество = {self.requirement_count_word}\nВведите необходимое количество объектов для выдачи при команде get_words_list"
             )
 
         @self.router.message(WordState.length_list)
@@ -288,9 +286,9 @@ class RandomListHandler:
 
         @self.router.message(Command("add_item"))
         async def start_add_item(msg: Message, state: FSMContext):
-            """Добавление нового Обьекта"""
+            """Добавление нового Объекта"""
             await state.set_state(WordState.item)
-            await msg.answer("Введите что добавить нужно")
+            await msg.answer("Введите, что добавить нужно")
 
         @self.router.message(WordState.item)
         async def get_new_item(msg: Message, state: FSMContext):
@@ -299,11 +297,11 @@ class RandomListHandler:
             self.words.append(data)
             self.action.data = self.words
             await state.clear()
-            await msg.answer("Обьект добавлен")
+            await msg.answer("Объект добавлен")
 
         @self.router.message(Command("get_item_list"))
         async def get_word_list_handler(msg: Message):
-            """Получение списка из n Обьектов"""
+            """Получение списка из n Объектов"""
             text = ""
             if self.requirement_count_word < len(self.words):
                 for item in range(len(self.words)):
