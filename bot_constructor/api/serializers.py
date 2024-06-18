@@ -18,7 +18,7 @@ class CurrentBot:
         return serializer_field.context.get("view").get_bot()
 
     def __repr__(self):
-        return '%s()' % self.__class__.__name__
+        return "%s()" % self.__class__.__name__
 
 
 class TelegramBotCreateSerializer(serializers.ModelSerializer):
