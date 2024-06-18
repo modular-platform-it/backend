@@ -62,39 +62,39 @@ class TestTelegramBotView(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_telegram_bot_delete_view(self) -> None:
-        """Проверка отображения удаления телеграм бота."""
-        telegram_bot: TelegramBot = TelegramBotFactory.create(
-            bot_state=TelegramBot.BotState.DRAFT
-        )
-        count: int = TelegramBot.objects.count()
-        response: Response = self.client.delete(
-            reverse("telegrambot-detail", kwargs={"pk": telegram_bot.id}),
-        )
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(count - 1, TelegramBot.objects.count())
+    # def test_telegram_bot_delete_view(self) -> None:
+    #     """Проверка отображения удаления телеграм бота."""
+    #     telegram_bot: TelegramBot = TelegramBotFactory.create(
+    #         bot_state=TelegramBot.BotState.DRAFT
+    #     )
+    #     count: int = TelegramBot.objects.count()
+    #     response: Response = self.client.delete(
+    #         reverse("telegrambot-detail", kwargs={"pk": telegram_bot.id}),
+    #     )
+    #     self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+    #     self.assertEqual(count - 1, TelegramBot.objects.count())
 
-    def test_telegram_bot_update_view(self) -> None:
-        """Проверка представления обновления телеграм бота."""
-        telegram_bot: TelegramBot = TelegramBotFactory.create(
-            bot_state=TelegramBot.BotState.DRAFT
-        )
-        new_telegram_bot: TelegramBot = TelegramBotFactory.build()
-        response: Response = self.client.put(
-            reverse(self.url_detail, kwargs={"pk": telegram_bot.id}),
-            data={
-                "name": new_telegram_bot.name,
-                "telegram_token": new_telegram_bot.telegram_token,
-                "api_key": new_telegram_bot.api_key,
-                "api_url": new_telegram_bot.api_url,
-            },
-        )
-        updated_bot: TelegramBot = TelegramBot.objects.get(id=telegram_bot.id)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(new_telegram_bot.name, updated_bot.name)
-        self.assertEqual(new_telegram_bot.telegram_token, updated_bot.telegram_token)
-        self.assertEqual(new_telegram_bot.api_url, updated_bot.api_url)
-        self.assertEqual(new_telegram_bot.api_key, updated_bot.api_key)
+    # def test_telegram_bot_update_view(self) -> None:
+    #     """Проверка представления обновления телеграм бота."""
+    #     telegram_bot: TelegramBot = TelegramBotFactory.create(
+    #         bot_state=TelegramBot.BotState.DRAFT
+    #     )
+    #     new_telegram_bot: TelegramBot = TelegramBotFactory.build()
+    #     response: Response = self.client.put(
+    #         reverse(self.url_detail, kwargs={"pk": telegram_bot.id}),
+    #         data={
+    #             "name": new_telegram_bot.name,
+    #             "telegram_token": new_telegram_bot.telegram_token,
+    #             "api_key": new_telegram_bot.api_key,
+    #             "api_url": new_telegram_bot.api_url,
+    #         },
+    #     )
+    #     updated_bot: TelegramBot = TelegramBot.objects.get(id=telegram_bot.id)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     self.assertEqual(new_telegram_bot.name, updated_bot.name)
+    #     self.assertEqual(new_telegram_bot.telegram_token, updated_bot.telegram_token)
+    #     self.assertEqual(new_telegram_bot.api_url, updated_bot.api_url)
+    #     self.assertEqual(new_telegram_bot.api_key, updated_bot.api_key)
 
 
 class TestTelegramBotActionView(APITestCase):

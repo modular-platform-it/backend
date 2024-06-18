@@ -33,8 +33,7 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SECURE = True
 
-SESSION_COOKIE_NAME = "X-CSRFToken"
-
+# SESSION_COOKIE_NAME = "X-CSRFToken"
 SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SECURE = True
 
@@ -122,7 +121,7 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),
-            "NAME": os.getenv("POSTGRES_DB", "postgresdb"),
+            "NAME": os.getenv("POSTGRES_DB", "postgres"),
             "USER": os.getenv("POSTGRES_USER", "postgres"),
             "PASSWORD": os.getenv("POSTGRES_PASSWORD", "456852"),
             "HOST": os.getenv("DB_HOST", "localhost"),
@@ -154,7 +153,7 @@ AUTHENTICATION_BACKENDS = [
 ACCOUNT_ADAPTER = "bot_constructor.allauth.adapters.SignupAdapter"
 
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_MAX_LENGTH = 64
+ACCOUNT_EMAIL_MAX_LENGTH = 256
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False

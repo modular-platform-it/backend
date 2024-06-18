@@ -3,9 +3,6 @@ from datetime import datetime as dt
 from typing import Any, Type
 
 import requests
-from django.core.exceptions import ValidationError
-from django.http import Http404
-
 from api.drf_spectacular.drf_serializers import (
     DummyActionSerializer,
     DummyBotSerializer,
@@ -40,6 +37,8 @@ from apps.bot_management.models import (
     TelegramBotFile,
     Variable,
 )
+from django.core.exceptions import ValidationError
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django_filters import rest_framework as df_filters
@@ -66,7 +65,10 @@ def check_bot_started(telegram_bot) -> None:
     Проверяет запущен ли бот во время попытки изменения настроек.
     Вызывает ошибку со статусом 400 при положительном результате.
     """
-    if telegram_bot.is_started:
+    if isinstance(telegram_bot, int):
+        telegram_bot = get_object_or_404(TelegramBot, pk=telegram_bot)
+
+    if isinstance(telegram_bot, TelegramBot) and telegram_bot.is_started:
         raise BotIsRunningException
 
 
@@ -233,20 +235,32 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
     search_fields = (
         "^name",
         "is_started",
-        "bot_status",
+        "bot_state",
         "created_at",
         "started_at",
     )
     ordering_fields = (
         "name",
         "is_started",
-        "bot_status",
+        "bot_state",
         "created_at",
         "started_at",
     )
-    ordering = ("-created_at",)
+    ordering = ("bot_state",)
     lookup_field = "pk"
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
+
+    def get_start_checked_object(self):
+        obj = self.get_object()
+        check_bot_started(obj)
+        return obj
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, args, kwargs)
+
+        checking_actions = {"update", "partial_update", "destroy"}
+        if self.action in checking_actions:
+            self.get_object = self.get_start_checked_object()
 
     def get_serializer_class(
         self,
@@ -278,26 +292,11 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             return Response(data={"detail": True}, status=status.HTTP_200_OK)
         return Response(data={"detail": False}, status=status.HTTP_404_NOT_FOUND)
 
-    def update(self, request, *args, **kwargs):
-        telegram_bot = self.get_object()
-        check_bot_started(telegram_bot)
-        return super().update(request, *args, **kwargs)
-
-    def partial_update(self, request, *args, **kwargs):
-        telegram_bot = self.get_object()
-        check_bot_started(telegram_bot)
-        return super().partial_update(request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        telegram_bot = self.get_object()
-        check_bot_started(telegram_bot)
-        return super().destroy(request, *args, **kwargs)
-
     @action(
         methods=["GET"],
         detail=True,
         url_name="start_bot",
-        permission_classes=(IsAuthenticated,),
+        permission_classes=(AllowAny,),
     )
     def start_bot(self, request, *args, **kwargs) -> Response:
         BOT_SERVER_URL: str = os.getenv(
@@ -329,7 +328,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         methods=["GET"],
         detail=True,
         url_name="stop",
-        permission_classes=(IsAuthenticated,),
+        permission_classes=(AllowAny,),
     )
     def stop_bot(self, request, *args, **kwargs) -> Response:
         BOT_SERVER_URL: str = os.getenv(
@@ -350,6 +349,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             return Response(
                 data={"detail": "Бот успешно остановлен"}, status=status.HTTP_200_OK
             )
+        return Response(data={"detail": "Бот не запущен"}, status=status.HTTP_200_OK)
 
         return Response(
             {"detail": "Бот уже остановлен."},
@@ -366,6 +366,9 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
             ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=NotFoundSerializer, description="Действие не найдено"
+            ),
         },
     ),
     retrieve=extend_schema(
@@ -376,7 +379,8 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
                 description="Действие телеграм бота",
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
-                response=DummyActionSerializer, description="Ошибка в полях"
+                response=DummyActionSerializer,
+                description="Ошибка в полях или остановите бота",
             ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
@@ -393,7 +397,8 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
                 response=TelegramBotActionSerializer, description="Действие создано"
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
-                response=DummyActionSerializer, description="Ошибка в полях"
+                response=DummyActionSerializer,
+                description="Ошибка в полях или остановите бота",
             ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
@@ -410,7 +415,8 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
                 response=TelegramBotActionSerializer, description="Действие обновлено"
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
-                response=DummyActionSerializer, description="Ошибка в полях"
+                response=DummyActionSerializer,
+                description="Ошибка в полях или остановите бота",
             ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
@@ -427,7 +433,8 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
                 response=TelegramBotActionSerializer, description="Действие обновлено"
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
-                response=DummyActionSerializer, description="Ошибка в полях"
+                response=DummyActionSerializer,
+                description="Ошибка в полях или остановите бота",
             ),
             status.HTTP_403_FORBIDDEN: OpenApiResponse(
                 response=ForbiddenSerializer, description="Требуется авторизация"
@@ -457,7 +464,7 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
     serializer_class = TelegramBotActionSerializer
     parser_classes = (FormParser, MultiPartParser)
     lookup_field = "pk"
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         return TelegramBotAction.objects.filter(
@@ -504,15 +511,15 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         )
 
     def update(self, request, *args, **kwargs):
-        check_bot_started(self.get_bot())
+        check_bot_started(self.kwargs["telegram_bot_pk"])
         return super().update(request, *args, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
-        check_bot_started(self.get_bot())
+        check_bot_started(self.kwargs["telegram_bot_pk"])
         return super().partial_update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
-        check_bot_started(self.get_bot())
+        check_bot_started(self.kwargs["telegram_bot_pk"])
         return super().destroy(request, *args, **kwargs)
 
 
@@ -643,7 +650,7 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
 
     queryset = TelegramBotFile.objects.all()
     serializer_class = TelegramFileSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         return TelegramBotFile.objects.filter(
@@ -828,7 +835,7 @@ class TelegramBotActionFileViewSet(viewsets.ModelViewSet):
 class VariableViewSet(viewsets.ModelViewSet):
     queryset = Variable.objects.all()
     serializer_class = VariableSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
     def update(self, request, *args, **kwargs):
         check_bot_started(self.kwargs.get("telegram_bot_pk"))
@@ -979,7 +986,7 @@ class VariableViewSet(viewsets.ModelViewSet):
 class HeaderViewSet(viewsets.ModelViewSet):
     queryset = Header.objects.all()
     serializer_class = HeaderSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         return Header.objects.filter(

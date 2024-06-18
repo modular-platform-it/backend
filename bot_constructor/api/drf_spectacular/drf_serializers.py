@@ -17,7 +17,8 @@ class LoginSerializer(serializers.Serializer):
             return user
         else:
             raise serializers.ValidationError(
-                "Указанные вами адрес электронной почты и/или пароль неверны."
+                "Указанные вами адрес электронной почты и/или пароль неверны,/"
+                "или такого пользователя не существует."
             )
 
 

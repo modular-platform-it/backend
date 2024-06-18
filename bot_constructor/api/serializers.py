@@ -30,7 +30,7 @@ class TelegramBotCreateSerializer(serializers.ModelSerializer):
             validators.UniqueValidator(
                 TelegramBot.objects.all(),
                 message="Такое имя уже используется",
-                lookup='iexact',
+                lookup="iexact",
             ),
         ),
     )

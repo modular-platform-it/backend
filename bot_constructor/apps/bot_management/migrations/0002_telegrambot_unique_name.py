@@ -7,12 +7,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bot_management', '0001_initial'),
+        ("bot_management", "0001_initial"),
     ]
 
     operations = [
         migrations.AddConstraint(
-            model_name='telegrambot',
-            constraint=models.UniqueConstraint(django.db.models.functions.text.Upper('name'), name='unique_name'),
+            model_name="telegrambot",
+            constraint=models.UniqueConstraint(
+                django.db.models.functions.text.Upper("name"), name="unique_name"
+            ),
         ),
     ]
