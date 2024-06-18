@@ -349,6 +349,10 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             return Response(
                 data={"detail": "Бот успешно остановлен"}, status=status.HTTP_200_OK
             )
+        return Response(
+            data={"detail": "Бот не запущен"}, status=status.HTTP_200_OK
+        )
+
 
         return Response(
             {"detail": "Бот уже остановлен."},
