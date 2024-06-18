@@ -104,12 +104,12 @@ async def stop_bot(bot_id: int):
         if task.get_name() == f"start_{bot_id}":
             break
     else:
-        return HTTPException(status_code=404, detail="Bot not started")
+        return Response("Bot not started", status_code=200)
 
     asyncio.get_event_loop().create_task(bot.stop(), name=f"stop_{bot_id}")
 
     py_logger.info(f"Бот запущен {bot_id}")
-    return "Bot stopped"
+    return Response("Bot stopped", status_code=200)
 
 
 if __name__ == "__main__":
