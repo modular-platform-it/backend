@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bot_management', '0002_telegrambot_unique_name'),
+        ("bot_management", "0002_telegrambot_unique_name"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='telegrambotaction',
-            name='message',
-            field=models.CharField(blank=True, default='', max_length=1000, verbose_name='Текст сообщения'),
+            model_name="telegrambotaction",
+            name="message",
+            field=models.CharField(
+                blank=True, default="", max_length=1000, verbose_name="Текст сообщения"
+            ),
         ),
     ]
