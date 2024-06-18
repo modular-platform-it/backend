@@ -11,6 +11,16 @@ from apps.bot_management.models import (
 from rest_framework import serializers, validators
 
 
+class CurrentBot:
+    requires_context = True
+
+    def __call__(self, serializer_field):
+        return serializer_field.context.get("view").get_bot()
+
+    def __repr__(self):
+        return "%s()" % self.__class__.__name__
+
+
 class TelegramBotCreateSerializer(serializers.ModelSerializer):
     """Сериализатор телеграм бота при создании и обновлении."""
 
@@ -76,23 +86,10 @@ class TelegramBotActionsPKField(serializers.PrimaryKeyRelatedField):
 
     def get_queryset(self):
         view = self.context.get("view")
-        telegram_bot_pk = view.kwargs.get("telegram_bot_pk")
-        telegram_bot = TelegramBot.objects.get(id=telegram_bot_pk)
+        queryset = view.get_queryset()
         if view.kwargs.get("pk"):
-            return telegram_bot.actions.exclude(pk=view.kwargs.get("pk")).all()
-        return telegram_bot.actions.all()
-
-
-class TelegramBotPKField(serializers.PrimaryKeyRelatedField):
-    """
-    Поле сериализатора для телеграм бота.
-    выводит только бота, к которому принадлежит действие.
-    """
-
-    def get_queryset(self) -> TelegramBot:
-        view = self.context.get("view")
-        telegram_bot_pk = view.kwargs.get("telegram_bot_pk")
-        return TelegramBot.objects.filter(id=telegram_bot_pk)
+            return queryset.exclude(pk=view.kwargs.get("pk")).all()
+        return queryset.all()
 
 
 class TelegramActionVariablesPKField(serializers.PrimaryKeyRelatedField):
@@ -145,13 +142,38 @@ class HeaderSerializer(serializers.ModelSerializer):
 
 
 class TelegramBotActionSerializer(serializers.ModelSerializer):
+    """Сериализатор отображения команд телеграм бота."""
+
+    class Meta:
+        model = TelegramBotAction
+        fields = (
+            "id",
+            "telegram_bot",
+            "name",
+            "action_type",
+            "description",
+            "command_keyword",
+            "message",
+            "api_key",
+            "api_url",
+            "api_method",
+            "data",
+            "files",
+            "position",
+            "next_action",
+            "is_active",
+        )
+
+
+class TelegramBotCreateActionSerializer(serializers.ModelSerializer):
     """Сериализатор команд телеграм бота."""
 
-    telegram_bot = TelegramBotPKField()
+    telegram_bot = serializers.HiddenField(default=CurrentBot())
     command_keyword = serializers.RegexField(regex=regexps.COMMAND_KEYWORD_REGEXP)
     position = serializers.IntegerField(min_value=1, max_value=constants.MAX_POSITIONS)
     files = TelegramFileSerializer(many=True, required=False)
     next_action = TelegramBotActionsPKField(required=False)
+    data = serializers.JSONField(required=False)
 
     def create(self, validated_data: dict[str, Any]):
         """
@@ -159,7 +181,6 @@ class TelegramBotActionSerializer(serializers.ModelSerializer):
         Добавлена возможность обработки сразу нескольких файлов одним пакетом.
 
         """
-
         action_instance = TelegramBotAction.objects.create(**validated_data)
         if "files" in self.context:
             files: list[IO] = self.context.get("files")
@@ -212,7 +233,7 @@ class TokenSerializer(serializers.Serializer):
 class TelegramBotActionBaseSerializer(serializers.ModelSerializer):
     """Базовый сериализатор для действий телеграм бота."""
 
-    telegram_bot = TelegramBotPKField()
+    telegram_bot = serializers.PrimaryKeyRelatedField(read_only=True)
     position = serializers.IntegerField(min_value=1, max_value=constants.MAX_POSITIONS)
     next_action = TelegramBotActionsPKField(required=False)
 
