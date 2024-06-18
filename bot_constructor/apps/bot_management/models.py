@@ -109,6 +109,8 @@ class TelegramBotAction(models.Model):
             "RandomListHandler",
             "Список обьеков и получение рендомного n Обьектов",
         )
+        GetJoke = "GetJoke", "Получить шутку"
+        PostItem = "PostItem", "Отправить запрос"
 
     class APIMethodType(models.TextChoices):
         GET = "GET", "Get запрос"

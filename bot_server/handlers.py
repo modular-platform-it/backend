@@ -1,12 +1,19 @@
 import json
 import random
+import time
 
 import requests
 from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import (BotCommand, CallbackQuery,Message, InlineKeyboardMarkup, InlineKeyboardButton)
+from aiogram.types import (
+    BotCommand,
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+)
 from fastapi import HTTPException
 from log import py_logger
 from models import Base, TelegramBotAction
@@ -17,7 +24,7 @@ async def get_list(api_key, api_url) -> ItemList:
     """Получить список из другого приложения по API и токену."""
     response = requests.get(
         api_url,
-        headers={"Authorization": f"{api_key}"},
+        headers={"Token": f"{api_key}"},
     )
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)
@@ -25,11 +32,26 @@ async def get_list(api_key, api_url) -> ItemList:
     return ItemList(items=items)
 
 
-async def get_item(api_key, api_url) -> Item:
+async def get_item(api_key: str = "", api_url: str = "http://localhost:8000/") -> Item:
     """Получить список из другого приложения по API и токену."""
     response = requests.get(
         api_url,
-        headers={"Authorization": f"{api_key}"},
+        headers={"X-Api-Key": f"{api_key}"},
+    )
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+    return Item(item=response.json())
+
+
+async def post_item(
+    api_key: str = "", api_url: str = "http://localhost:8000/", data: dict = {}
+) -> Item:
+    """Получить список из другого приложения по API и токену."""
+    json_data = json.loads(data["data"])
+    response = requests.post(
+        url=api_url,
+        headers={"Token": f"{api_key}"},
+        json=json_data,
     )
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)
@@ -37,6 +59,12 @@ async def get_item(api_key, api_url) -> Item:
 
 
 def serialize_json_to_lines(data):
+    serialized_data = json.dumps(data, indent=2)
+    lines = serialized_data.split("\n")
+    return "\n".join(lines)
+
+
+def serialize_lines_to_json(data):
     serialized_data = json.dumps(data, indent=2)
     lines = serialized_data.split("\n")
     return "\n".join(lines)
@@ -50,10 +78,10 @@ class GetListHandler:
         self.router = Router()
         self.action = action
         self.commands = [
-            BotCommand(command="/get_list", description=f"get list"),
+            BotCommand(command=self.action.command_keyword, description=f"get list"),
         ]
 
-        @self.router.message(Command("get_list"))
+        @self.router.message(Command(self.command[1:]))
         async def get_list_handler(msg: Message):
             item_list = await get_list(
                 api_key=self.bot_data.api_key, api_url=self.bot_data.api_url
@@ -70,11 +98,12 @@ class StopHandler:
         self.action = action
         self.commands = [
             BotCommand(
-                command="/stop", description=f"stop the bot {self.bot_data.name}"
+                command=self.action.command_keyword,
+                description=f"stop the bot {self.bot_data.name}",
             ),
         ]
 
-        @self.router.message(Command("stop"))
+        @self.router.message(Command(self.command[1:]))
         async def stop_handler(msg: Message):
             await msg.answer("До новых встреч!")
 
@@ -86,25 +115,20 @@ class Handlers:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
+        self.command = self.action.command_keyword
         self.commands = [
             BotCommand(
-                command="/start", description=f"start the bot {self.bot_data.name}"
+                command=self.action.command_keyword,
+                description=f"start the bot {self.bot_data.name}",
             ),
         ]
 
-        @self.router.message(Command("start"))
+        @self.router.message(Command(self.command[1:]))
         async def start_handler(msg: Message):
             await msg.answer("Привет!")
 
 
-class SendMassage:
-    def __init__(self, bot_data, action, connection):
-        self.bot_data = bot_data
-        self.router = Router()
-        self.action = action
-
-
-class GetItem:
+class GetItems:
     def __init__(self, bot_data, action, connection):
 
         self.bot_data = bot_data
@@ -113,8 +137,12 @@ class GetItem:
         self.command = self.action.command_keyword
         self.description = self.action.description
         self.commands = [BotCommand(command=self.command, description=self.description)]
-        self.keyboard = InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text="id", callback_data='search_id'), InlineKeyboardButton(text="name", callback_data='search_name')],
+        self.keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(text="id", callback_data="search_id"),
+                    InlineKeyboardButton(text="name", callback_data="search_name"),
+                ],
             ]
         )
 
@@ -126,12 +154,12 @@ class GetItem:
         async def start_get_method(msg: Message):
             await msg.reply("Каким способ искать", reply_markup=self.keyboard)
 
-        @self.router.callback_query (F.data == "search_id")
+        @self.router.callback_query(F.data == "search_id")
         async def get_id_handler(callback: CallbackQuery, state: FSMContext):
             await state.set_state(IDState.id)
             await callback.message.answer("Введите код продукта")
 
-        @self.router.callback_query (F.data == "search_name")
+        @self.router.callback_query(F.data == "search_name")
         async def get_id_handler(callback: CallbackQuery, state: FSMContext):
             await state.set_state(IDState.name)
             await callback.message.answer("Введите имя продукта")
@@ -160,6 +188,7 @@ class GetItem:
             await state.clear()
             await msg.answer(f"Нужный вам обьект: {gen}")
 
+
 class RandomWordLearnListHandler:
     def __init__(self, bot_data, action, connection):
         """Словарик для запоминания слов"""
@@ -168,10 +197,7 @@ class RandomWordLearnListHandler:
         self.action = action
         self.connection = connection
         self.commands = [
-            BotCommand(
-                command="/add_word",
-                description=f"Добавить новое слово"
-            ),
+            BotCommand(command="/add_word", description=f"Добавить новое слово"),
             BotCommand(
                 command="/get_words_list",
                 description=f"Получить список ваших слов на сегодня",
@@ -228,10 +254,7 @@ class RandomListHandler:
         self.action = action
         self.connection = connection
         self.commands = [
-            BotCommand(
-                command="/add_word",
-                description=f"Добавить новое обьект"
-            ),
+            BotCommand(command="/add_word", description=f"Добавить новое обьект"),
             BotCommand(
                 command="/get_words_list",
                 description=f"Получить случайных обьект",
@@ -252,7 +275,9 @@ class RandomListHandler:
         async def change_lengh(msg: Message, state: FSMContext):
             """Изменение длины списка обьектов"""
             await state.set_state(WordState.length_list)
-            await msg.answer(f"Сейчас количество = {self.requirement_count_word}\nВведите необходимое количество обьктов для выдачи при команде get_words_list")
+            await msg.answer(
+                f"Сейчас количество = {self.requirement_count_word}\nВведите необходимое количество обьктов для выдачи при команде get_words_list"
+            )
 
         @self.router.message(WordState.length_list)
         async def get_change_lengh(msg: Message, state: FSMContext):
@@ -288,3 +313,78 @@ class RandomListHandler:
                 for item in self.words:
                     text += item + "\n"
             await msg.answer(f"Список ваших слов\n{text}")
+
+
+class GetJoke:
+    def __init__(self, bot_data, action, connection):
+
+        self.bot_data = bot_data
+        self.router = Router()
+        self.action = action
+        self.command = self.action.command_keyword
+        self.description = self.action.description
+        self.commands = [BotCommand(command=self.command, description=self.description)]
+        self.keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(text="Гиковские шутки", callback_data="chack"),
+                    InlineKeyboardButton(text="От папы", callback_data="father"),
+                    InlineKeyboardButton(text="сетап-панчлайн", callback_data="setup"),
+                ],
+            ]
+        )
+
+        @self.router.message(Command(self.command[1:]))
+        async def start_get_method(msg: Message):
+            await msg.reply("Какую шутка рассказать", reply_markup=self.keyboard)
+
+        @self.router.callback_query(F.data == "chack")
+        async def get_chack_joke(callback: CallbackQuery, state: FSMContext):
+            item = await get_item(
+                api_key="",
+                api_url=f"https://geek-jokes.sameerkumar.website/api?format=json",
+            )
+            await callback.message.answer(item.item["joke"], reply_markup=self.keyboard)
+
+        @self.router.callback_query(F.data == "setup")
+        async def get_setup_joke(callback: CallbackQuery, state: FSMContext):
+            item = await get_item(
+                api_key="",
+                api_url="https://official-joke-api.appspot.com/random_joke",
+            )
+            await callback.message.answer(item.item["setup"])
+            time.sleep(1)
+            await callback.message.answer(
+                item.item["punchline"], reply_markup=self.keyboard
+            )
+
+
+class PostItem:
+    def __init__(self, bot_data, action, connection):
+
+        self.bot_data = bot_data
+        self.router = Router()
+        self.action = action
+        self.command = self.action.command_keyword
+        self.description = self.action.description
+        self.commands = [BotCommand(command=self.command, description=self.description)]
+
+        class PostState(StatesGroup):
+            data = State()
+
+        @self.router.message(Command(self.command[1:]))
+        async def start_post_item(msg: Message, state: FSMContext):
+            await state.set_state(PostState.data)
+            await msg.answer(
+                'Введите json, пример: {"name":"asdasdas","telegram_token":"sadsadasdas"}'
+            )
+
+        @self.router.message(PostState.data)
+        async def post_data_item_(msg: Message, state: FSMContext):
+            await state.update_data(data=msg.text)
+            data = await state.get_data()
+            await state.clear()
+            item = await post_item(
+                api_key=self.bot_data.api_key, api_url=self.bot_data.api_url, data=data
+            )
+            await msg.answer(f"Ответ:\n{item.items}")
