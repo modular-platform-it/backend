@@ -516,6 +516,7 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         serializer.save(telegram_bot=self.get_bot())
 
     def create(self, request: Request, *args, **kwargs) -> Response:
+        check_bot_started(self.get_bot())
         file_serializer = TelegramFileSerializer(data=request.FILES, many=True)
         file_serializer.is_valid(raise_exception=True)
         serializer = self.get_serializer(data=request.data)

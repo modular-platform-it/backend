@@ -11,6 +11,10 @@ from apps.bot_management.models import (
 from rest_framework import serializers, validators
 
 
+class RequiredBooleanFiled(serializers.BooleanField):
+    default_empty_html = serializers.empty
+
+
 class CurrentBot:
     requires_context = True
 
@@ -174,6 +178,7 @@ class TelegramBotCreateActionSerializer(serializers.ModelSerializer):
     files = TelegramFileSerializer(many=True, required=False)
     next_action = TelegramBotActionsPKField(required=False)
     data = serializers.JSONField(required=False)
+    is_active = RequiredBooleanFiled(required=True)
 
     def create(self, validated_data: dict[str, Any]):
         """
