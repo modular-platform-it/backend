@@ -23,11 +23,11 @@ Allow: POST, OPTIONS, GET
 Content-Length: 27
 Content-Type: application/json
 Cross-Origin-Opener-Policy: same-origin
-Date: Sat, 15 Jun 2024 19:22:07 GMT
+Date: Wed, 19 Jun 2024 09:57:40 GMT
 Referrer-Policy: same-origin
 Server: gunicorn
-Set-Cookie: csrftoken=2uxaqmQVgRUJUlI0yeccolellnXQjKZ1; expires=Sat, 14 Jun 2025 19:22:07 GMT; Max-Age=31449600; Path=/; SameSite=None; Secure,
- X-CSRFToken=66haa401vd9bykogqn5hhdg8jwfz0dqz; expires=Sat, 29 Jun 2024 19:22:07 GMT; HttpOnly; Max-Age=1209600; Path=/; SameSite=None; Secure
+Set-Cookie: csrftoken=8HKWEPUDWpcUPasUbDVOexeBgh5eWbL6; expires=Wed, 18 Jun 2025 09:57:40 GMT; Max-Age=31449600; Path=/; SameSite=None; Secure,
+             sessionid=mf871t4055uq2pbpx80jgu3y8p87ti8v; expires=Wed, 03 Jul 2024 09:57:40 GMT; Max-Age=1209600; Path=/; SameSite=None; Secure
 Vary: Accept, Cookie, origin
 X-Content-Type-Options: nosniff
 X-Frame-Options: DENY
