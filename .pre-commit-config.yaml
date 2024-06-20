@@ -57,3 +57,10 @@ repos:
         exclude: (?x)( ^.*\b(migrations)\b.*$ | manage\.py$ )
         args: [--explicit-package-bases]
         additional_dependencies: [types-requests]
+  - repo: local
+    hooks:
+      - id: test-cases
+        name: Run tests
+        entry: python bot_constructor/manage.py test
+        language: system
+        pass_filenames: false
