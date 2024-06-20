@@ -75,8 +75,9 @@ class GetListHandler:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
+        self.command = self.action.command_keyword
         self.commands = [
-            BotCommand(command=self.action.command_keyword, description=f"get list"),
+            BotCommand(command=self.command, description=f"get list"),
         ]
 
         @self.router.message(Command(self.command[1:]))
@@ -94,9 +95,10 @@ class StopHandler:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
+        self.command = self.action.command_keyword
         self.commands = [
             BotCommand(
-                command=self.action.command_keyword,
+                command=self.command,
                 description=f"stop the bot {self.bot_data.name}",
             ),
         ]
