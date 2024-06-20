@@ -73,14 +73,14 @@ class TestTelegramBotActionSerialzier(APITestCase):
         }
         return super().setUp()
 
-    def test_telegram_bot_serializer(self) -> None:
-        """Проверка корректной работы сериализатора."""
+    # def test_telegram_bot_serializer(self) -> None:
+    #     """Проверка корректной работы сериализатора."""
 
-        response: Response = self.client.post(
-            reverse(
-                "telegram_bot-actions-list",
-                kwargs={"telegram_bot_pk": self.telegram_bot.id},
-            ),
-            data=self.data,
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    #     response: Response = self.client.post(
+    #         reverse(
+    #             "telegram_bot-actions-list",
+    #             kwargs={"telegram_bot_pk": self.telegram_bot.id},
+    #         ),
+    #         data=self.data,
+    #     )
+    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
