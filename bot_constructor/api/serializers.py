@@ -176,7 +176,7 @@ class TelegramBotCreateActionSerializer(serializers.ModelSerializer):
     command_keyword = serializers.RegexField(regex=regexps.COMMAND_KEYWORD_REGEXP)
     position = serializers.IntegerField(min_value=1, max_value=constants.MAX_POSITIONS)
     files = TelegramFileSerializer(many=True, required=False)
-    next_action = TelegramBotActionsPKField(required=False)
+    next_action = TelegramBotActionsPKField(required=False, allow_null=True)
     data = serializers.JSONField(required=False)
     is_active = RequiredBooleanFiled(required=True)
 
