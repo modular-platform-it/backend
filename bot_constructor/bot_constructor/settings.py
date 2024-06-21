@@ -30,6 +30,13 @@ CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "https://127.0.0.1").sp
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
+CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SECURE = True
+
+SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = False
+
 IS_TESTING = sys.argv[1:2] == ["test"]
 
 INSTALLED_APPS = [
@@ -62,12 +69,12 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
 ]
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 ROOT_URLCONF = "bot_constructor.urls"
-SESSION_COOKIE_NAME = "X-CSRFToken"
+
 SPECTACULAR_SETTINGS = {
     "AUTHENTICATION_EXTENSIONS": [
         "api.drf_spectacular.drf_views",
@@ -114,7 +121,7 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),
-            "NAME": os.getenv("POSTGRES_DB", "postgresdb"),
+            "NAME": os.getenv("POSTGRES_DB", "postgres"),
             "USER": os.getenv("POSTGRES_USER", "postgres"),
             "PASSWORD": os.getenv("POSTGRES_PASSWORD", "456852"),
             "HOST": os.getenv("DB_HOST", "localhost"),
@@ -146,7 +153,7 @@ AUTHENTICATION_BACKENDS = [
 ACCOUNT_ADAPTER = "bot_constructor.allauth.adapters.SignupAdapter"
 
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_MAX_LENGTH = 64
+ACCOUNT_EMAIL_MAX_LENGTH = 256
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False

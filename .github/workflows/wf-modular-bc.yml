@@ -16,6 +16,7 @@ env:
   APP_DB_USER: ${{vars.BOT_CONSTRUCTOR_DB_NAME}}
   APP_DB_PWD: ${{vars.BOT_CONSTRUCTOR_DB_PWD}}
   APP_VOLUME: bot_constructor
+  BOT_SERVER_URL: ${{vars.BOT_SERVER_URL}}
 jobs:
   variables:
     name: Pass env variables to rwf
@@ -29,6 +30,7 @@ jobs:
       app_db_user: ${{env.APP_DB_USER}}
       app_db_pwd: ${{env.APP_DB_PWD}}
       app_volume: ${{env.APP_VOLUME}}
+      bot_server_url: ${{env.BOT_SERVER_URL}}
     steps:
       - name: Echo - fake step
         if: false
@@ -53,6 +55,7 @@ jobs:
       APP_DB_USER: ${{needs.variables.outputs.app_db_user}}
       APP_DB_PWD: ${{needs.variables.outputs.app_db_pwd}}
       APP_VOLUME: ${{needs.variables.outputs.app_volume}}
+      BOT_SERVER_URL: ${{needs.variables.outputs.bot_server_url}}
     secrets: inherit  # pragma: allowlist secret
 
   notify:
