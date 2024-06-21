@@ -24,12 +24,13 @@ async def get_list(api_key, api_url) -> ItemList:
     """Получить список из другого приложения по API и токену."""
     response = requests.get(
         api_url,
-        headers={"Token": f"{api_key}"},
+        headers={"X-Api-Key": f"{api_key}"},
     )
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)
-    items = [value["name"] for value in response.json()]
-    return ItemList(items=items)
+    print(response.json())
+    # items = [value["name"] for value in response.json()]
+    # return ItemList(items=items)
 
 
 async def get_item(api_key: str = "", api_url: str = "http://localhost:8000/") -> Item:
@@ -81,13 +82,15 @@ class GetListHandler:
         self.commands = [
             BotCommand(command=self.command, description=f"get list"),
         ]
+        print("sad")
 
         @self.router.message(Command(self.command[1:]))
         async def get_list_handler(msg: Message):
+            print("sad")
             item_list = await get_list(
                 api_key=self.bot_data.api_key, api_url=self.bot_data.api_url
             )
-            await msg.answer(f"Список из вашего приложения: {item_list.items}")
+            # await msg.answer(f"Список из вашего приложения: {item_list.items}")
 
 
 class StopHandler:
@@ -130,7 +133,7 @@ class Handlers:
             await msg.answer("Привет!")
 
 
-class GetItems:
+class GetItem:
     def __init__(self, bot_data, action, connection):
 
         self.bot_data = bot_data
