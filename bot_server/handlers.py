@@ -22,7 +22,7 @@ async def get_list(api_key, api_url) -> ItemList:
     """Получить список из другого приложения по API и токену."""
     response = requests.get(
         api_url,
-        headers={"Token": f"{api_key}"},
+        headers={"Authorization": f"Token {api_key}"},
     )
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)
@@ -31,7 +31,7 @@ async def get_list(api_key, api_url) -> ItemList:
 
 
 async def get_item(api_key: str = "", api_url: str = "http://localhost:8000/") -> Item:
-    """Получить список из другого приложения по API и токену."""
+    """Получить item из другого приложения по API и токену."""
     response = requests.get(
         api_url,
         headers={"X-Api-Key": f"{api_key}"},
@@ -44,14 +44,14 @@ async def get_item(api_key: str = "", api_url: str = "http://localhost:8000/") -
 async def post_item(
     api_key: str = "", api_url: str = "http://localhost:8000/", data: dict = {}
 ) -> Item:
-    """Получить список из другого приложения по API и токену."""
+    """Post-запрос в стороннее приложения по API и токену."""
     json_data = json.loads(data["data"])
     response = requests.post(
         url=api_url,
-        headers={"Token": f"{api_key}"},
+        headers={"Authorization": f"Token {api_key}"},
         json=json_data,
     )
-    if response.status_code != 200:
+    if response.status_code != 201:
         raise HTTPException(status_code=response.status_code, detail=response.text)
     return Item(item=response.json())
 
@@ -95,6 +95,7 @@ class StopHandler:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
+        self.message = self.action.message
         self.command = self.action.command_keyword
         self.commands = [
             BotCommand(
@@ -105,7 +106,7 @@ class StopHandler:
 
         @self.router.message(Command(self.command[1:]))
         async def stop_handler(msg: Message):
-            await msg.answer("До новых встреч!")
+            await msg.answer(self.message)
 
 
 class Handlers:
