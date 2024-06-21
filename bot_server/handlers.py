@@ -15,6 +15,8 @@ from aiogram.types import (
     Message,
 )
 from fastapi import HTTPException
+from log import py_logger
+from models import Base, TelegramBotAction
 from models_api import Item, ItemList
 
 

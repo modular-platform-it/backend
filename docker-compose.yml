@@ -23,8 +23,8 @@ services:
     ports: [8000:8000]
     depends_on: [db]
     networks: [my_network]
-  gateway:
-    build: ./gateway/
+  nginx:
+    build: ./infra/nginx_local_start/
     env_file: .env
     ports: [8001:80]
     depends_on: [bot_constructor]
