@@ -70,6 +70,7 @@ class TestTelegramBotActionSerialzier(APITestCase):
             "message": "test",
             "files": [],
             "position": 2,
+            "is_active": True,
         }
         return super().setUp()
 

@@ -20,8 +20,6 @@ from api.exceptions import BotIsRunningException
 from api.filters import TelegramBotFilter
 from api.serializers import (
     HeaderSerializer,
-    TelegramBotActionHttpRequestSerializer,
-    TelegramBotActionMessageSerializer,
     TelegramBotActionSerializer,
     TelegramBotCreateActionSerializer,
     TelegramBotCreateSerializer,
