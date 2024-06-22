@@ -55,6 +55,10 @@ http:
       service: pgadmin
 
   middlewares:
+    www-remover:
+      redirectRegex:
+        regex: ^https://www\.(.*)
+        replacement: https://$1
     auth:
       basicAuth:
         usersFile: /external/usersfile
