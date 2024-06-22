@@ -134,7 +134,7 @@ class TestTelegramBotActionView(APITestCase):
     #         reverse(self.url_list, kwargs={"telegram_bot_pk": self.telegram_bot.id}),
     #         data={
     #             "name": telegram_action.name,
-    #             "telegram_bot": telegram_action.telegram_bot.id,
+    #             # "telegram_bot": telegram_action.telegram_bot.id,
     #             "message": telegram_action.message,
     #             "position": telegram_action.position,
     #             "is_active": telegram_action.is_active,
