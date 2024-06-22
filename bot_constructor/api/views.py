@@ -273,15 +273,15 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         check_bot_started(self.get_object())
-        return super().update(request, args, kwargs)
+        return super().update(request, *args, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
         check_bot_started(self.get_object())
-        return super().partial_update(request, args, kwargs)
+        return super().partial_update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         check_bot_started(self.get_object())
-        return super().destroy(request, args, kwargs)
+        return super().destroy(request, *args, **kwargs)
 
     @action(
         methods=["POST"],
