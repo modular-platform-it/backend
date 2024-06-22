@@ -3,6 +3,8 @@ from datetime import datetime as dt
 from typing import Any, Type
 
 import requests
+from django.db.models import Case, Value, When
+
 from api.drf_spectacular.drf_serializers import (
     DummyActionSerializer,
     DummyBotSerializer,
@@ -257,6 +259,17 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
     ordering = ("-created_at",)
     lookup_field = "pk"
     permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        if self.action == 'list':
+            is_started = {TelegramBot.BotState.RUNNING, TelegramBot.BotState.ERROR}
+            return queryset.annotate(is_started=Case(
+                When(bot_state__in=is_started, then=Value(True)), default=Value(False))
+            )
+        return queryset
+
 
     def get_serializer_class(
         self,
