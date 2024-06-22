@@ -12,40 +12,30 @@ http:
         - web
         - websecure
       rule: Host(`xwick.ru`)
-      tls:
-        certResolver: letsencrypt
       service: frontend
 
     to-botconstructor:
       entryPoints:
         - websecure
       rule: Host(`api.xwick.ru`)
-      tls:
-        certResolver: letsencrypt
       service: botconstructor
 
     to-devconstructor:
       entryPoints:
         - websecure
       rule: Host(`dev.xwick.ru`)
-      tls:
-        certResolver: letsencrypt
       service: devconstructor
 
     to-botserver:
       entryPoints:
         - websecure
       rule: Host(`bsrv.xwick.ru`)
-      tls:
-        certResolver: letsencrypt
       service: botserver
 
     to-testingapp:
       entryPoints:
         - websecure
       rule: Host(`tapp.xwick.ru`)
-      tls:
-        certResolver: letsencrypt
       service: testingapp
 
     to-traefik:
@@ -54,8 +44,6 @@ http:
       rule: Host(`traefik.xwick.ru`)
       middlewares:
         - auth
-      tls:
-        certResolver: letsencrypt
       service: traefik
 
     to-pgadmin:
@@ -64,14 +52,22 @@ http:
       rule: Host(`pgadmin.xwick.ru`)
       middlewares:
         - auth
-      tls:
-        certResolver: letsencrypt
       service: pgadmin
 
   middlewares:
     auth:
       basicAuth:
         usersFile: /external/usersfile
+    secureHeaders:
+      headers:
+        sslRedirect: true
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 31536000
+        frameDeny: true
+        browserXssFilter: true
+        contentTypeNosniff: true
 
   services:
     frontend:

@@ -11,6 +11,20 @@ entryPoints:
           to: websecure
   websecure:
     address: :443
+    http:
+      middlewares:
+        - secureHeaders@file
+      tls:
+        certResolver: letsencrypt
+        domains:
+          - main: xwick.ru
+            sans:
+              - api.xwick.ru
+              - dev.xwick.ru
+              - bsrv.xwick.ru
+              - traefik.xwick.ru
+              - tapp.xwick.ru
+              - pgadmin.xwick.ru
 
 api:
   dashboard: true

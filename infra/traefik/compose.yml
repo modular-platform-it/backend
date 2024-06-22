@@ -3,11 +3,14 @@ version: '3'
 services:
   proxy-server:
     image: traefik:v2.11.2
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     ports:
       - 80:80
       - 443:443
       - 8081:8081
-    restart: unless-stopped
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
