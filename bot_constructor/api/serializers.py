@@ -11,6 +11,19 @@ from apps.bot_management.models import (
 from rest_framework import serializers, validators
 
 
+class DefaultChoiceField(serializers.ChoiceField):
+
+    def __init__(self, default, **kwargs):
+        kwargs["default"] = default
+        kwargs["allow_blank"] = True
+        super().__init__(**kwargs)
+
+    def to_internal_value(self, data):
+        if data == "":
+            data = self.default
+        return super().to_internal_value(data)
+
+
 class RequiredBooleanFiled(serializers.BooleanField):
     default_empty_html = serializers.empty
 
@@ -71,6 +84,7 @@ class TelegramBotSerializer(TelegramBotShortSerializer):
         model = TelegramBot
         fields = (
             "name",
+            "telegram_token",
             "description",
             "bot_state",
             "api_key",
@@ -179,6 +193,10 @@ class TelegramBotCreateActionSerializer(serializers.ModelSerializer):
     next_action = TelegramBotActionsPKField(required=False, allow_null=True)
     data = serializers.JSONField(required=False)
     is_active = RequiredBooleanFiled(required=True)
+    action_type = DefaultChoiceField(
+        choices=TelegramBotAction.ActionType,
+        default=TelegramBotAction.ActionType.Handlers,
+    )
 
     def create(self, validated_data: dict[str, Any]):
         """
