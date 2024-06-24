@@ -122,6 +122,7 @@ class Handlers:
         self.router = Router()
         self.action = action
         self.command = self.action.command_keyword
+        self.message = self.action.message
         self.commands = [
             BotCommand(
                 command=self.action.command_keyword,
@@ -131,7 +132,7 @@ class Handlers:
 
         @self.router.message(Command(self.command[1:]))
         async def start_handler(msg: Message):
-            await msg.answer("Привет!")
+            await msg.answer(self.message)
 
 
 class GetItem:
@@ -371,6 +372,7 @@ class PostItem:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
+
         self.command = self.action.command_keyword
         self.description = self.action.description or self.command
         self.commands = [BotCommand(command=self.command, description=self.description)]
