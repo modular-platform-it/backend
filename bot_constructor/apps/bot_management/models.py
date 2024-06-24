@@ -1,6 +1,7 @@
 from apps.bot_management import constants, regexps
 from django.core import validators
 from django.db import models
+from django.db.models.functions import Upper
 from django.utils import timezone
 
 
@@ -55,6 +56,7 @@ class TelegramBot(models.Model):
         ordering = ("-created_at",)
         verbose_name = "Телеграм бот"
         verbose_name_plural = "Телеграм боты"
+        constraints = [models.UniqueConstraint(Upper("name"), name="unique_name")]
 
     def __str__(self) -> str:
         """Строковое отображение объекта модели телеграм бота в виде его имени."""
@@ -76,6 +78,7 @@ class TelegramBot(models.Model):
                 action_type="Handlers",
                 position=1,
                 is_active=True,
+                description="Что-то описано",
             )
 
     @property
@@ -102,7 +105,17 @@ class TelegramBotAction(models.Model):
         GetListHandler = "GetListHandler", "Получение Списка"
         StopHandler = "StopHandler", "Остановка"
         Handlers = "Handlers", "Старт"
-        SendMassage = "SendMassage", "Получение обьекта"
+        RandomWordLearnListHandler = (
+            "RandomWordLearnListHandler",
+            "Словарик слов с переводом",
+        )
+        GetItem = "GetItem", "Получение объекта"
+        RandomListHandler = (
+            "RandomListHandler",
+            "Список объектов и получение рандомного n Объектов",
+        )
+        GetJoke = "GetJoke", "Получить шутку"
+        PostItem = "PostItem", "Отправить запрос"
 
     class APIMethodType(models.TextChoices):
         GET = "GET", "Get запрос"
@@ -144,7 +157,7 @@ class TelegramBotAction(models.Model):
         verbose_name="Текст сообщения",
         max_length=constants.MESSAGE_LENGTH,
         blank=True,
-        null=True,
+        default="",
     )
     api_url = models.URLField(
         verbose_name="Адрес API", max_length=constants.API_URL_LENGTH, blank=True

@@ -1,1 +1,1 @@
-uvicorn api:app --reload --port 8000
+uvicorn api:app --reload --proxy-headers --host 0.0.0.0 --port 8080

@@ -25,12 +25,17 @@ class BaseTelegramBot:
                 .filter(TelegramBotAction.telegram_bot_id == bot_data.id)
                 .all()
             )
-
         for action in self.actions:
-            handler = getattr(handlers, action.action_type)(bot_data=self.bot_data)
-            router = handler.router
-            self.commands.append(handler.command)
-            self.dispatcher.include_router(router)
+            try:
+                handler = getattr(handlers, action.action_type)(
+                    bot_data=self.bot_data, action=action, connection=connection
+                )
+                router = handler.router
+
+                self.commands += handler.commands
+                self.dispatcher.include_router(router)
+            except:
+                py_logger.error(f"{action.action_type} такой команды нет")
         py_logger.info(f"Бот создан {self.bot_data.id}")
 
     async def start(self):

@@ -1,13 +1,5 @@
-version: '3'
+version: "3.3"
 services:
-  nginx:
-    image: nginxdemos/hello:0.4
-    volumes:
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-    networks:
-      - traefik
-
   postgres:
     image: postgres:16.1-alpine
     env_file: stack.env

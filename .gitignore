@@ -175,3 +175,5 @@ static/
 infra/bot_constructor/manual-launch.yml
 
 .DS_Store
+.idea/
+idea/

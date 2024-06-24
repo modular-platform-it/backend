@@ -4,14 +4,14 @@ import os
 from contextlib import asynccontextmanager
 
 import sentry_sdk
+from dotenv import load_dotenv
+from fastapi import FastAPI, Response
+from pydantic import BaseModel
+
 from bots import BaseTelegramBot
 from db import Connection
-from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, HTTPException, Response
 from log import py_logger
 from models import TelegramBot
-from models_api import EditBot
-from pydantic import BaseModel
 
 # import concurrent.futures # для MacOS
 
@@ -62,11 +62,7 @@ class Bot(BaseModel):
 
 @app.get("/check/")
 async def check_app():
-    # print("_________all_tasks_________")
-    # for t in asyncio.all_tasks():
-    #     print(t, "\n")
-    # print("_____________")
-    return Response("All ok")
+    return Response("Все отлично")
 
 
 @app.get("/{bot_id}/start/")
@@ -77,7 +73,7 @@ async def start_bot(bot_id: int):
 
         for task in tasks:
             if task.get_name() == f"start_{bot_id}":
-                return Response("Already started.")
+                return Response("Бот уже запущен.")
 
         active_bots.pop(bot_id)
 
@@ -90,10 +86,10 @@ async def start_bot(bot_id: int):
 
         active_bots[bot_id] = bot
         py_logger.info(f"Бот запущен {bot_id}")
-        return Response("Bot started")
+        return Response("Бот запущен")
     else:
         py_logger.info(f"Бота нет {bot_id}")
-        return Response("бот {bot_id} не существует")
+        return Response(f"Бот {bot_id} не существует")
 
 
 @app.get("/{bot_id}/stop/")
@@ -104,12 +100,12 @@ async def stop_bot(bot_id: int):
         if task.get_name() == f"start_{bot_id}":
             break
     else:
-        return HTTPException(status_code=404, detail="Bot not started")
+        return Response("Бот не запущен", status_code=200)
 
     asyncio.get_event_loop().create_task(bot.stop(), name=f"stop_{bot_id}")
 
     py_logger.info(f"Бот запущен {bot_id}")
-    return "Bot stopped"
+    return Response("Бот остановлен", status_code=200)
 
 
 if __name__ == "__main__":
