@@ -80,8 +80,9 @@ class GetListHandler:
         self.router = Router()
         self.action = action
         self.command = self.action.command_keyword
+        self.description = self.action.description or self.command
         self.commands = [
-            BotCommand(command=self.command, description=f"get list"),
+            BotCommand(command=self.command, description=self.description),
         ]
 
         @self.router.message(Command(self.command[1:]))
@@ -121,6 +122,7 @@ class Handlers:
         self.router = Router()
         self.action = action
         self.command = self.action.command_keyword
+        self.message = self.action.message
         self.commands = [
             BotCommand(
                 command=self.action.command_keyword,
@@ -130,7 +132,7 @@ class Handlers:
 
         @self.router.message(Command(self.command[1:]))
         async def start_handler(msg: Message):
-            await msg.answer("Привет!")
+            await msg.answer(self.message)
 
 
 class GetItem:
@@ -140,7 +142,7 @@ class GetItem:
         self.router = Router()
         self.action = action
         self.command = self.action.command_keyword
-        self.description = self.action.description
+        self.description = self.action.description or self.command
         self.commands = [BotCommand(command=self.command, description=self.description)]
         self.keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
@@ -327,7 +329,7 @@ class GetJoke:
         self.router = Router()
         self.action = action
         self.command = self.action.command_keyword
-        self.description = self.action.description
+        self.description = self.action.description or self.command
         self.commands = [BotCommand(command=self.command, description=self.description)]
         self.keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
@@ -370,8 +372,9 @@ class PostItem:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
+
         self.command = self.action.command_keyword
-        self.description = self.action.description
+        self.description = self.action.description or self.command
         self.commands = [BotCommand(command=self.command, description=self.description)]
 
         class PostState(StatesGroup):
@@ -381,7 +384,7 @@ class PostItem:
         async def start_post_item(msg: Message, state: FSMContext):
             await state.set_state(PostState.data)
             await msg.answer(
-                'Введите json, пример: {"name":"asdasdas","telegram_token":"sadsadasdas"}'
+                'Введите json, например: {"name":"asdasdas","telegram_token":"sadsadasdas"}'
             )
 
         @self.router.message(PostState.data)
