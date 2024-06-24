@@ -23,7 +23,7 @@ from models_api import Item, ItemList
 async def get_list(api_key, api_url) -> ItemList:
     """Получить список из другого приложения по API и токену."""
     response = requests.get(
-        api_url,
+        url=api_url,
         headers={"Authorization": f"Token {api_key}"},
 
     )
@@ -37,7 +37,7 @@ async def get_item(api_key: str = "", api_url: str = "http://localhost:8000/") -
     """Получить item из другого приложения по API и токену."""
     response = requests.get(
         url=api_url,
-        headers={"X-Api-Key": f"{api_key}"},
+        headers={"Authorization": f"Token {api_key}"},
     )
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)
@@ -175,7 +175,7 @@ class GetItem:
             data = await state.get_data()
             item = await get_item(
                 api_key=self.action.api_key,
-                api_url=f"{self.action.api_url}{data["id"]}/",
+                api_url=f"{self.action.api_url}{data['id']}/",
             )
             gen = serialize_json_to_lines(item.item)
             await state.clear()
@@ -187,7 +187,7 @@ class GetItem:
             data = await state.get_data()
             item = await get_item(
                 api_key=self.action.api_key,
-                api_url=f"{self.action.api_url}search?name={data["name"]}&contains=true/",
+                api_url=f"{self.action.api_url}search?name={data['name']}&contains=true/",
             )
             gen = serialize_json_to_lines(item.item)
             await state.clear()
