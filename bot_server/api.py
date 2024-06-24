@@ -4,14 +4,13 @@ import os
 from contextlib import asynccontextmanager
 
 import sentry_sdk
-from dotenv import load_dotenv
-from fastapi import FastAPI, Response
-from pydantic import BaseModel
-
 from bots import BaseTelegramBot
 from db import Connection
+from dotenv import load_dotenv
+from fastapi import FastAPI, Response
 from log import py_logger
 from models import TelegramBot
+from pydantic import BaseModel
 
 # import concurrent.futures # для MacOS
 

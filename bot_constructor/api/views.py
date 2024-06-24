@@ -3,6 +3,8 @@ from datetime import datetime as dt
 from typing import Any, Type
 
 import requests
+from django.db.models import Case, Value, When
+
 from api.drf_spectacular.drf_serializers import (
     DummyActionSerializer,
     DummyBotSerializer,
@@ -256,6 +258,17 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
     lookup_field = "pk"
     permission_classes = (AllowAny,)
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        if self.action == 'list':
+            is_started = {TelegramBot.BotState.RUNNING, TelegramBot.BotState.ERROR}
+            return queryset.annotate(is_started=Case(
+                When(bot_state__in=is_started, then=Value(True)), default=Value(False))
+            )
+        return queryset
+
+
     def get_serializer_class(
         self,
     ) -> (
@@ -273,15 +286,15 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         check_bot_started(self.get_object())
-        return super().update(request, args, kwargs)
+        return super().update(request, *args, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
         check_bot_started(self.get_object())
-        return super().partial_update(request, args, kwargs)
+        return super().partial_update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         check_bot_started(self.get_object())
-        return super().destroy(request, args, kwargs)
+        return super().destroy(request, *args, **kwargs)
 
     @action(
         methods=["POST"],
