@@ -3,6 +3,8 @@ from datetime import datetime as dt
 from typing import Any, Type
 
 import requests
+from django.db.models import Case, Value, When
+
 from api.drf_spectacular.drf_serializers import (
     DummyActionSerializer,
     DummyBotSerializer,
@@ -20,9 +22,8 @@ from api.exceptions import BotIsRunningException
 from api.filters import TelegramBotFilter
 from api.serializers import (
     HeaderSerializer,
-    TelegramBotActionHttpRequestSerializer,
-    TelegramBotActionMessageSerializer,
     TelegramBotActionSerializer,
+    TelegramBotCreateActionSerializer,
     TelegramBotCreateSerializer,
     TelegramBotSerializer,
     TelegramBotShortSerializer,
@@ -39,7 +40,7 @@ from apps.bot_management.models import (
 )
 from django.core.exceptions import ValidationError
 from django.http import Http404
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404 as _get_object_or_404
 from django.utils import timezone
 from django_filters import rest_framework as df_filters
 from dotenv import load_dotenv
@@ -58,6 +59,13 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 load_dotenv()
+
+
+def get_object_or_404(queryset, *filter_args, **filter_kwargs):
+    try:
+        return _get_object_or_404(queryset, *filter_args, **filter_kwargs)
+    except (TypeError, ValueError, ValidationError):
+        raise Http404
 
 
 def check_bot_started(telegram_bot) -> None:
@@ -235,32 +243,31 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
     search_fields = (
         "^name",
         "is_started",
-        "bot_status",
+        "bot_state",
         "created_at",
         "started_at",
     )
     ordering_fields = (
         "name",
         "is_started",
-        "bot_status",
+        "bot_state",
         "created_at",
         "started_at",
     )
-    ordering = ("-created_at",)
+    ordering = ("bot_state",)
     lookup_field = "pk"
     permission_classes = (AllowAny,)
 
-    def get_start_checked_object(self):
-        obj = self.get_object()
-        check_bot_started(obj)
-        return obj
+    def get_queryset(self):
+        queryset = super().get_queryset()
 
-    def initial(self, request, *args, **kwargs):
-        super().initial(request, args, kwargs)
+        if self.action == 'list':
+            is_started = {TelegramBot.BotState.RUNNING, TelegramBot.BotState.ERROR}
+            return queryset.annotate(is_started=Case(
+                When(bot_state__in=is_started, then=Value(True)), default=Value(False))
+            )
+        return queryset
 
-        checking_actions = {"update", "partial_update", "destroy"}
-        if self.action in checking_actions:
-            self.get_object = self.get_start_checked_object()
 
     def get_serializer_class(
         self,
@@ -268,13 +275,26 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
         Type[TelegramBotShortSerializer]
         | Type[TelegramBotSerializer | TelegramBotCreateSerializer]
     ):
-        if self.action == "list":
-            return TelegramBotShortSerializer
-        if self.action == "retrieve":
-            return TelegramBotSerializer
-        if self.action == "check_telegram_token":
-            return TokenSerializer
+        match self.action:
+            case "list":
+                return TelegramBotShortSerializer
+            case "retrieve":
+                return TelegramBotSerializer
+            case "check_telegram_token":
+                return TokenSerializer
         return TelegramBotCreateSerializer
+
+    def update(self, request, *args, **kwargs):
+        check_bot_started(self.get_object())
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        check_bot_started(self.get_object())
+        return super().partial_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        check_bot_started(self.get_object())
+        return super().destroy(request, *args, **kwargs)
 
     @action(
         methods=["POST"],
@@ -349,10 +369,7 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             return Response(
                 data={"detail": "Бот успешно остановлен"}, status=status.HTTP_200_OK
             )
-        return Response(
-            data={"detail": "Бот не запущен"}, status=status.HTTP_200_OK
-        )
-
+        return Response(data={"detail": "Бот не запущен"}, status=status.HTTP_200_OK)
 
         return Response(
             {"detail": "Бот уже остановлен."},
@@ -469,32 +486,24 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
     lookup_field = "pk"
     permission_classes = (AllowAny,)
 
+    _bot = None
+
+    def get_bot(self):
+        if self._bot is None:
+            self._bot = get_object_or_404(
+                TelegramBot, pk=self.kwargs["telegram_bot_pk"]
+            )
+        return self._bot
+
     def get_queryset(self):
-        return TelegramBotAction.objects.filter(
-            telegram_bot=self.kwargs["telegram_bot_pk"]
-        ).prefetch_related("files")
-
-    def list(self, request: Request, telegram_bot_pk: int) -> Response:
-        queryset = TelegramBotAction.objects.filter(telegram_bot_id=telegram_bot_pk)
-        serializer = TelegramBotActionSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def retrieve(self, request: Request, pk: int, telegram_bot_pk: int) -> Response:
-        queryset = TelegramBotAction.objects.filter(pk=pk, telegram_bot=telegram_bot_pk)
-        telegram_action = get_object_or_404(queryset, pk=pk)
-        serializer = TelegramBotActionSerializer(telegram_action)
-        return Response(serializer.data)
+        return self.get_bot().actions.all().prefetch_related("files")
 
     def get_serializer_class(self):
-        # action_type = self.request.data.get("action_type")
-        # if action_type == TelegramBotAction.ActionType.HTTP_REQUEST:
-        #     return TelegramBotActionHttpRequestSerializer
-        # elif action_type in (
-        #     TelegramBotAction.ActionType.MESSAGE,
-        #     TelegramBotAction.ActionType.QUERY,
-        # ):
-        #     return TelegramBotActionMessageSerializer
-        return super().get_serializer_class()
+        match self.action:
+            case "create" | "update" | "partial_update":
+                return TelegramBotCreateActionSerializer
+            case _:
+                return self.serializer_class
 
     def get_serializer_context(self) -> dict[str, Any]:
         context = super(TelegramBotActionViewSet, self).get_serializer_context()
@@ -502,7 +511,23 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
             context.update({"files": self.request.FILES.getlist("files")})
         return context
 
+    def update(self, request, *args, **kwargs):
+        check_bot_started(self.get_bot())
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        check_bot_started(self.get_bot())
+        return super().partial_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        check_bot_started(self.get_bot())
+        return super().destroy(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(telegram_bot=self.get_bot())
+
     def create(self, request: Request, *args, **kwargs) -> Response:
+        check_bot_started(self.get_bot())
         file_serializer = TelegramFileSerializer(data=request.FILES, many=True)
         file_serializer.is_valid(raise_exception=True)
         serializer = self.get_serializer(data=request.data)
@@ -512,18 +537,6 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
-
-    def update(self, request, *args, **kwargs):
-        check_bot_started(self.kwargs["telegram_bot_pk"])
-        return super().update(request, *args, **kwargs)
-
-    def partial_update(self, request, *args, **kwargs):
-        check_bot_started(self.kwargs["telegram_bot_pk"])
-        return super().partial_update(request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        check_bot_started(self.kwargs["telegram_bot_pk"])
-        return super().destroy(request, *args, **kwargs)
 
 
 @extend_schema(tags=["Файлы"])

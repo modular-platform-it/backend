@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import login, logout
 from django.shortcuts import redirect
-
-# from drf_spectacular.extensions import OpenApiAuthenticationExtension
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -15,18 +13,6 @@ from .drf_serializers import (
     LoginSerializer,
     LogoutSerializer,
 )
-
-# class SessionScheme(OpenApiAuthenticationExtension):
-#     target_class = "rest_framework.authentication.SessionAuthentication"
-#     name = "apiKey"
-#     priority = -1
-
-#     def get_security_definition(self, auto_schema):
-#         return {
-#             "type": "X-CSRFToken",
-#             "in": "cookie",
-#             "name": settings.SESSION_COOKIE_NAME,
-#         }
 
 
 @permission_classes([AllowAny])
@@ -115,19 +101,7 @@ def swagger_logout(request):
         elif request.method == "POST":
             logout(request)
             return redirect("/v1/users/login/")
-            # return HttpResponseRedirect('/v1/users/login/')
-            # return Response(
-            #     data={'redirect_url': '/v1/users/login/'},
-            #     status=302,
-            #     headers={'Content-Type': 'application/json'}
-            # )
     else:
         return Response(
             {"detail": "Сначала авторизуйтесь."}, status=status.HTTP_400_BAD_REQUEST
         )
-        # return Response(
-        #     {"detail": "Вы уверены, что хотите выйти?"}, status=status.HTTP_200_OK
-        # )
-
-        # else:
-        #     return Response({"detail": "Вы вышли."}, status=status.HTTP_302_FOUND)

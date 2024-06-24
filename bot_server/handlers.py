@@ -15,16 +15,15 @@ from aiogram.types import (
     Message,
 )
 from fastapi import HTTPException
-from log import py_logger
-from models import Base, TelegramBotAction
 from models_api import Item, ItemList
 
 
 async def get_list(api_key, api_url) -> ItemList:
     """Получить список из другого приложения по API и токену."""
     response = requests.get(
-        url=api_url,
-        headers={"X-Api-Key": f"{api_key}"},
+        api_url,
+        headers={"Authorization": f"Token {api_key}"},
+
     )
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)
@@ -33,7 +32,7 @@ async def get_list(api_key, api_url) -> ItemList:
 
 
 async def get_item(api_key: str = "", api_url: str = "http://localhost:8000/") -> Item:
-    """Получить список из другого приложения по API и токену."""
+    """Получить item из другого приложения по API и токену."""
     response = requests.get(
         url=api_url,
         headers={"X-Api-Key": f"{api_key}"},
@@ -46,14 +45,15 @@ async def get_item(api_key: str = "", api_url: str = "http://localhost:8000/") -
 async def post_item(
     api_key: str = "", api_url: str = "http://localhost:8000/", data: dict = {}
 ) -> Item:
-    """Получить список из другого приложения по API и токену."""
+    """Post-запрос в стороннее приложения по API и токену."""
     json_data = json.loads(data["data"])
     response = requests.post(
         url=api_url,
-        headers={"X-Api-Key": f"{api_key}"},
+        headers={"Authorization": f"Token {api_key}"},
+
         json=json_data,
     )
-    if response.status_code != 200:
+    if response.status_code != 201:
         raise HTTPException(status_code=response.status_code, detail=response.text)
     return Item(item=response.json())
 
@@ -97,6 +97,7 @@ class StopHandler:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
+        self.message = self.action.message
         self.command = self.action.command_keyword
         self.commands = [
             BotCommand(
@@ -107,7 +108,7 @@ class StopHandler:
 
         @self.router.message(Command(self.command[1:]))
         async def stop_handler(msg: Message):
-            await msg.answer("До новых встреч!")
+            await msg.answer(self.message)
 
 
 class Handlers:
@@ -176,7 +177,7 @@ class GetItem:
             )
             gen = serialize_json_to_lines(item.item)
             await state.clear()
-            await msg.answer(f"Нужный вам обьект: {gen}")
+            await msg.answer(f"Нужный вам объект: {gen}")
 
         @self.router.message(IDState.name)
         async def get_item_handler(msg: Message, state: FSMContext):
@@ -188,7 +189,7 @@ class GetItem:
             )
             gen = serialize_json_to_lines(item.item)
             await state.clear()
-            await msg.answer(f"Нужный вам обьект: {gen}")
+            await msg.answer(f"Нужный вам объект: {gen}")
 
 
 class RandomWordLearnListHandler:
@@ -250,16 +251,16 @@ class RandomWordLearnListHandler:
 
 class RandomListHandler:
     def __init__(self, bot_data, action, connection):
-        """Список обьеков и получение рендомного n Обьектов"""
+        """Список объектов и получение рандомного n Обьектов"""
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
         self.connection = connection
         self.commands = [
-            BotCommand(command="/add_word", description=f"Добавить новое обьект"),
+            BotCommand(command="/add_word", description=f"Добавить новое объект"),
             BotCommand(
                 command="/get_words_list",
-                description=f"Получить случайных обьект",
+                description=f"Получить случайных объект",
             ),
             BotCommand(
                 command="/change_length_list",
@@ -275,10 +276,10 @@ class RandomListHandler:
 
         @self.router.message(Command("change_length_list"))
         async def change_lengh(msg: Message, state: FSMContext):
-            """Изменение длины списка обьектов"""
+            """Изменение длины списка объектов"""
             await state.set_state(WordState.length_list)
             await msg.answer(
-                f"Сейчас количество = {self.requirement_count_word}\nВведите необходимое количество обьктов для выдачи при команде get_words_list"
+                f"Сейчас количество = {self.requirement_count_word}\nВведите необходимое количество объектов для выдачи при команде get_words_list"
             )
 
         @self.router.message(WordState.length_list)
@@ -290,9 +291,9 @@ class RandomListHandler:
 
         @self.router.message(Command("add_item"))
         async def start_add_item(msg: Message, state: FSMContext):
-            """Добавление нового Обьекта"""
+            """Добавление нового Объекта"""
             await state.set_state(WordState.item)
-            await msg.answer("Введите что добавить нужно")
+            await msg.answer("Введите, что добавить нужно")
 
         @self.router.message(WordState.item)
         async def get_new_item(msg: Message, state: FSMContext):
@@ -301,11 +302,11 @@ class RandomListHandler:
             self.words.append(data)
             self.action.data = self.words
             await state.clear()
-            await msg.answer("Обьект добавлен")
+            await msg.answer("Объект добавлен")
 
         @self.router.message(Command("get_item_list"))
         async def get_word_list_handler(msg: Message):
-            """Получение списка из n Обьектов"""
+            """Получение списка из n Объектов"""
             text = ""
             if self.requirement_count_word < len(self.words):
                 for item in range(len(self.words)):

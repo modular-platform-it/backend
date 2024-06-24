@@ -7,6 +7,7 @@ from django.utils import timezone
 
 class TelegramBot(models.Model):
     """Модель телеграм бота."""
+    _is_started = None
 
     class BotState(models.TextChoices):
         DRAFT = "DRAFT", "Черновик"
@@ -88,10 +89,17 @@ class TelegramBot(models.Model):
         Возвращает True если бот запущен,
         возвращает False, если бот остановлен.
         """
-        return (
-            self.bot_state == self.BotState.RUNNING
-            or self.bot_state == self.BotState.ERROR
-        )
+        if self._is_started is None:
+            self._is_started = (
+                    self.bot_state == self.BotState.RUNNING
+                    or self.bot_state == self.BotState.ERROR
+            )
+
+        return self._is_started
+
+    @is_started.setter
+    def is_started(self, attr):
+        self._is_started = attr
 
 
 class TelegramBotAction(models.Model):
@@ -106,14 +114,13 @@ class TelegramBotAction(models.Model):
             "RandomWordLearnListHandler",
             "Словарик слов с переводом",
         )
-        GetItem = "GetItem", "Получение обьекта"
+        GetItem = "GetItem", "Получение объекта"
         RandomListHandler = (
             "RandomListHandler",
-            "Список обьеков и получение рендомного n Обьектов",
+            "Список объектов и получение рандомного n Объектов",
         )
         GetJoke = "GetJoke", "Получить шутку"
         PostItem = "PostItem", "Отправить запрос"
-
 
     class APIMethodType(models.TextChoices):
         GET = "GET", "Get запрос"
