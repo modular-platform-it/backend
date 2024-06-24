@@ -85,7 +85,7 @@ class GetListHandler:
         @self.router.message(Command(self.command[1:]))
         async def get_list_handler(msg: Message):
             item_list = await get_list(
-                api_key=self.bot_data.api_key, api_url=self.bot_data.api_url
+                api_key=self.action.api_key, api_url=self.action.api_url
             )
             await msg.answer(f"Список из вашего приложения: {item_list.items}")
 
@@ -131,7 +131,7 @@ class Handlers:
             await msg.answer("Привет!")
 
 
-class GetItems:
+class GetItem:
     def __init__(self, bot_data, action, connection):
 
         self.bot_data = bot_data
@@ -172,8 +172,8 @@ class GetItems:
             await state.update_data(id=int(msg.text))
             data = await state.get_data()
             item = await get_item(
-                api_key=self.bot_data.api_key,
-                api_url=f"{self.action.api_url}/{data['id']}/",
+                api_key=self.action.api_key,
+                api_url=f"{self.action.api_url}{data["id"]}/",
             )
             gen = serialize_json_to_lines(item.item)
             await state.clear()
@@ -184,8 +184,8 @@ class GetItems:
             await state.update_data(name=msg.text)
             data = await state.get_data()
             item = await get_item(
-                api_key=self.bot_data.api_key,
-                api_url=f"{self.action.api_url}/search?name={data['name']}&contains=true/",
+                api_key=self.action.api_key,
+                api_url=f"{self.action.api_url}search?name={data["name"]}&contains=true/",
             )
             gen = serialize_json_to_lines(item.item)
             await state.clear()
