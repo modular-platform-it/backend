@@ -23,20 +23,19 @@ from models_api import Item, ItemList
 async def get_list(api_key, api_url) -> ItemList:
     """Получить список из другого приложения по API и токену."""
     response = requests.get(
-        api_url,
+        url=api_url,
         headers={"X-Api-Key": f"{api_key}"},
     )
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)
-    print(response.json())
-    # items = [value["name"] for value in response.json()]
-    # return ItemList(items=items)
+    items = [value["name"] for value in response.json()]
+    return ItemList(items=items)
 
 
 async def get_item(api_key: str = "", api_url: str = "http://localhost:8000/") -> Item:
     """Получить список из другого приложения по API и токену."""
     response = requests.get(
-        api_url,
+        url=api_url,
         headers={"X-Api-Key": f"{api_key}"},
     )
     if response.status_code != 200:
@@ -51,7 +50,7 @@ async def post_item(
     json_data = json.loads(data["data"])
     response = requests.post(
         url=api_url,
-        headers={"Token": f"{api_key}"},
+        headers={"X-Api-Key": f"{api_key}"},
         json=json_data,
     )
     if response.status_code != 200:
@@ -82,15 +81,13 @@ class GetListHandler:
         self.commands = [
             BotCommand(command=self.command, description=f"get list"),
         ]
-        print("sad")
 
         @self.router.message(Command(self.command[1:]))
         async def get_list_handler(msg: Message):
-            print("sad")
             item_list = await get_list(
-                api_key=self.bot_data.api_key, api_url=self.bot_data.api_url
+                api_key=self.action.api_key, api_url=self.action.api_url
             )
-            # await msg.answer(f"Список из вашего приложения: {item_list.items}")
+            await msg.answer(f"Список из вашего приложения: {item_list.items}")
 
 
 class StopHandler:
@@ -174,8 +171,8 @@ class GetItem:
             await state.update_data(id=int(msg.text))
             data = await state.get_data()
             item = await get_item(
-                api_key=self.bot_data.api_key,
-                api_url=f"{self.action.api_url}/{data["id"]}/",
+                api_key=self.action.api_key,
+                api_url=f"{self.action.api_url}{data["id"]}/",
             )
             gen = serialize_json_to_lines(item.item)
             await state.clear()
@@ -186,8 +183,8 @@ class GetItem:
             await state.update_data(name=msg.text)
             data = await state.get_data()
             item = await get_item(
-                api_key=self.bot_data.api_key,
-                api_url=f"{self.action.api_url}/search?name={data["name"]}&contains=true/",
+                api_key=self.action.api_key,
+                api_url=f"{self.action.api_url}search?name={data["name"]}&contains=true/",
             )
             gen = serialize_json_to_lines(item.item)
             await state.clear()
@@ -390,6 +387,6 @@ class PostItem:
             data = await state.get_data()
             await state.clear()
             item = await post_item(
-                api_key=self.bot_data.api_key, api_url=self.bot_data.api_url, data=data
+                api_key=self.action.api_key, api_url=self.action.api_url, data=data
             )
             await msg.answer(f"Ответ:\n{item.items}")
