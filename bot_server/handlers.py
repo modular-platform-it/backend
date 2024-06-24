@@ -382,7 +382,7 @@ class PostItem:
         async def start_post_item(msg: Message, state: FSMContext):
             await state.set_state(PostState.data)
             await msg.answer(
-                'Введите json, пример: {"name":"asdasdas","telegram_token":"sadsadasdas"}'
+                'Введите json, например: {"name":"asdasdas","telegram_token":"sadsadasdas"}'
             )
 
         @self.router.message(PostState.data)
