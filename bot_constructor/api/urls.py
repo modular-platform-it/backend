@@ -1,4 +1,4 @@
-from allauth.account.views import LoginView, LogoutView
+# from allauth.account.views import LoginView, LogoutView
 from api.views import (
     HeaderViewSet,
     TelegramBotActionFileViewSet,
@@ -40,6 +40,8 @@ headers_router_v1.register(
 )
 
 urlpatterns = [
+    path("", include("djoser.urls")),
+    path("auth/", include("djoser.urls.authtoken")),
     path("users/login/", swagger_login, name="login"),
     path("users/logout/", swagger_logout, name="logout"),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
