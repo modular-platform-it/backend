@@ -15,8 +15,6 @@ from aiogram.types import (
     Message,
 )
 from fastapi import HTTPException
-from log import py_logger
-from models import Base, TelegramBotAction
 from models_api import Item, ItemList
 
 
@@ -25,11 +23,10 @@ async def get_list(api_key, api_url) -> ItemList:
     response = requests.get(
         url=api_url,
         headers={"Authorization": f"Token {api_key}"},
-
     )
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)
-    items = [value["name"] for value in response.json()]
+    items = [str(value) for value in response.json()]
     return ItemList(items=items)
 
 
@@ -52,7 +49,6 @@ async def post_item(
     response = requests.post(
         url=api_url,
         headers={"Authorization": f"Token {api_key}"},
-
         json=json_data,
     )
     if response.status_code != 201:
@@ -79,6 +75,7 @@ class GetListHandler:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
+        self.message = self.action.message
         self.command = self.action.command_keyword
         self.commands = [
             BotCommand(command=self.command, description=f"get list"),
@@ -89,7 +86,8 @@ class GetListHandler:
             item_list = await get_list(
                 api_key=self.action.api_key, api_url=self.action.api_url
             )
-            await msg.answer(f"Список из вашего приложения: {item_list.items}")
+            json_text = json.dumps(item_list.items, ensure_ascii=False, indent=4)
+            await msg.answer(f"Список из вашего приложения:\n{json_text}")
 
 
 class StopHandler:
@@ -120,6 +118,7 @@ class Handlers:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
+        self.message = self.action.message
         self.command = self.action.command_keyword
         self.commands = [
             BotCommand(
@@ -130,7 +129,7 @@ class Handlers:
 
         @self.router.message(Command(self.command[1:]))
         async def start_handler(msg: Message):
-            await msg.answer("Привет!")
+            await msg.answer(self.message)
 
 
 class GetItem:
@@ -177,9 +176,9 @@ class GetItem:
                 api_key=self.action.api_key,
                 api_url=f"{self.action.api_url}{data['id']}/",
             )
-            gen = serialize_json_to_lines(item.item)
+            json_text = json.dumps(item.item, ensure_ascii=False, indent=4)
             await state.clear()
-            await msg.answer(f"Нужный вам объект: {gen}")
+            await msg.answer(f"Нужный вам объект:\n{json_text}")
 
         @self.router.message(IDState.name)
         async def get_item_handler(msg: Message, state: FSMContext):
