@@ -1,4 +1,3 @@
-# from allauth.account.views import LoginView, LogoutView
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework_nested import routers
