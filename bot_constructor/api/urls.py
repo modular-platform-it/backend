@@ -1,4 +1,7 @@
-# from allauth.account.views import LoginView, LogoutView
+from django.urls import include, path
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from rest_framework_nested import routers
+
 from api.views import (
     HeaderViewSet,
     TelegramBotActionFileViewSet,
@@ -6,9 +9,6 @@ from api.views import (
     TelegramBotViewSet,
     VariableViewSet,
 )
-from django.urls import include, path
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-from rest_framework_nested import routers
 
 from .drf_spectacular.drf_views import swagger_login, swagger_logout
 
