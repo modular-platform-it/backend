@@ -7,6 +7,7 @@ from django.utils import timezone
 
 class TelegramBot(models.Model):
     """Модель телеграм бота."""
+
     _is_started = None
 
     class BotState(models.TextChoices):
@@ -91,8 +92,8 @@ class TelegramBot(models.Model):
         """
         if self._is_started is None:
             self._is_started = (
-                    self.bot_state == self.BotState.RUNNING
-                    or self.bot_state == self.BotState.ERROR
+                self.bot_state == self.BotState.RUNNING
+                or self.bot_state == self.BotState.ERROR
             )
 
         return self._is_started

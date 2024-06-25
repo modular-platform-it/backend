@@ -25,7 +25,6 @@ async def get_list(api_key, api_url) -> ItemList:
     response = requests.get(
         url=api_url,
         headers={"Authorization": f"Token {api_key}"},
-
     )
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)
@@ -52,7 +51,6 @@ async def post_item(
     response = requests.post(
         url=api_url,
         headers={"Authorization": f"Token {api_key}"},
-
         json=json_data,
     )
     if response.status_code != 201:
