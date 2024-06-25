@@ -191,6 +191,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 DJOSER = {
     "LOGIN_FIELD": "email",
+    "ALLOW_REGISTRATION": False,
     "PERMISSIONS": {
         "user_list": ["rest_framework.permissions.AllowAny"],
         "user": ["djoser.permissions.CurrentUserOrAdminOrReadOnly"],
