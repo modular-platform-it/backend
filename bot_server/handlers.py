@@ -395,4 +395,4 @@ class PostItem:
             item = await post_item(
                 api_key=self.action.api_key, api_url=self.action.api_url, data=data
             )
-            await msg.answer(f"Ответ:\n{item.items}")
+            await msg.answer(f"Ответ:\n{item.item}")
