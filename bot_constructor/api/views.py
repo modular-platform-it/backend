@@ -3,6 +3,8 @@ from datetime import datetime as dt
 from typing import Any, Type
 
 import requests
+from djoser.views import TokenDestroyView
+
 from api.drf_spectacular.drf_serializers import (
     DummyActionSerializer,
     DummyBotSerializer,
@@ -77,6 +79,10 @@ def check_bot_started(telegram_bot) -> None:
 
     if isinstance(telegram_bot, TelegramBot) and telegram_bot.is_started:
         raise BotIsRunningException
+
+
+class CustomTokenDestroyView(TokenDestroyView):
+    serializer_class = None
 
 
 @extend_schema(tags=["Телеграм боты"])
@@ -371,11 +377,6 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
                 data={"detail": "Бот успешно остановлен"}, status=status.HTTP_200_OK
             )
         return Response(data={"detail": "Бот не запущен"}, status=status.HTTP_200_OK)
-
-        return Response(
-            {"detail": "Бот уже остановлен."},
-            status=status.HTTP_200_OK,
-        )
 
 
 @extend_schema(tags=["Действия"])
