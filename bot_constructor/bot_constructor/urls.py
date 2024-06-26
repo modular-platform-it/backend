@@ -10,7 +10,6 @@ URLList = typing.List[URL]
 
 urlpatterns: URLList = [
     path("v1/", include("api.urls")),
-    path("accounts/", include("allauth.urls")),
     path("admin/", admin.site.urls),
 ]
 

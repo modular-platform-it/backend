@@ -84,7 +84,6 @@ class TelegramBotSerializer(TelegramBotShortSerializer):
         model = TelegramBot
         fields = (
             "name",
-            "telegram_token",
             "description",
             "bot_state",
             "api_key",

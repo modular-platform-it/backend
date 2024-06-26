@@ -1,11 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Any
 
-from api.serializers import (
-    TelegramBotCreateSerializer,
-    TelegramBotSerializer,
-    TelegramBotShortSerializer,
-)
 from apps.bot_management.models import TelegramBot, TelegramBotFile
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -14,6 +9,12 @@ from factory_data.factories import TelegramBotFactory  # type: ignore
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import APITestCase
+
+from api.serializers import (
+    TelegramBotCreateSerializer,
+    TelegramBotSerializer,
+    TelegramBotShortSerializer,
+)
 
 User = get_user_model()
 

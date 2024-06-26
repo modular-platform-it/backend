@@ -17,14 +17,16 @@ services:
     ports: [8080:8080]
     depends_on: [db]
     networks: [my_network]
+
   bot_constructor:
     build: ./bot_constructor/
     env_file: .env
     ports: [8000:8000]
     depends_on: [db]
     networks: [my_network]
-  gateway:
-    build: ./gateway/
+
+  nginx:
+    build: ./infra/nginx_local_start/
     env_file: .env
     ports: [8001:80]
     depends_on: [bot_constructor]
