@@ -7,6 +7,7 @@ from api.views import (
     TelegramBotActionFileViewSet,
     TelegramBotActionViewSet,
     TelegramBotViewSet,
+    TokenDestroyView,
     VariableViewSet,
 )
 
@@ -40,10 +41,7 @@ headers_router_v1.register(
 )
 
 urlpatterns = [
-    path("", include("djoser.urls")),
-    path("auth/", include("djoser.urls.authtoken")),
-    path("users/login/", swagger_login, name="login"),
-    path("users/logout/", swagger_logout, name="logout"),
+    path("auth/token/logout/", TokenDestroyView.as_view()),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "schema/swagger/",
@@ -55,4 +53,6 @@ urlpatterns = [
     path("", include(files_router_v1.urls)),
     path("", include(variables_router_v1.urls)),
     path("", include(headers_router_v1.urls)),
+    path("", include("djoser.urls")),
+    path("auth/", include("djoser.urls.authtoken")),
 ]
