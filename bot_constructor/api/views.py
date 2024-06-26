@@ -3,6 +3,32 @@ from datetime import datetime as dt
 from typing import Any, Type
 
 import requests
+from api.drf_spectacular.drf_serializers import (
+    DummyActionSerializer,
+    DummyBotSerializer,
+    DummyFileSerializer,
+    DummyHeaderSerializer,
+    DummyStartStopBotSerializer,
+    DummyTokenErrorSerializer,
+    DummyTokenSerializer,
+    DummyVariableSerializer,
+    ForbiddenSerializer,
+    MethodNotAlowedSerializer,
+    NotFoundSerializer,
+)
+from api.exceptions import BotIsRunningException
+from api.filters import TelegramBotFilter
+from api.serializers import (
+    HeaderSerializer,
+    TelegramBotActionSerializer,
+    TelegramBotCreateActionSerializer,
+    TelegramBotCreateSerializer,
+    TelegramBotSerializer,
+    TelegramBotShortSerializer,
+    TelegramFileSerializer,
+    TokenSerializer,
+    VariableSerializer,
+)
 from apps.bot_management.models import (
     Header,
     TelegramBot,
@@ -30,33 +56,6 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
-
-from api.drf_spectacular.drf_serializers import (
-    DummyActionSerializer,
-    DummyBotSerializer,
-    DummyFileSerializer,
-    DummyHeaderSerializer,
-    DummyStartStopBotSerializer,
-    DummyTokenErrorSerializer,
-    DummyTokenSerializer,
-    DummyVariableSerializer,
-    ForbiddenSerializer,
-    MethodNotAlowedSerializer,
-    NotFoundSerializer,
-)
-from api.exceptions import BotIsRunningException
-from api.filters import TelegramBotFilter
-from api.serializers import (
-    HeaderSerializer,
-    TelegramBotActionSerializer,
-    TelegramBotCreateActionSerializer,
-    TelegramBotCreateSerializer,
-    TelegramBotSerializer,
-    TelegramBotShortSerializer,
-    TelegramFileSerializer,
-    TokenSerializer,
-    VariableSerializer,
-)
 
 load_dotenv()
 
@@ -523,7 +522,11 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         check_bot_started(self.get_bot())
-        return super().destroy(request, *args, **kwargs)
+        instance = self.get_object()
+        instance.delete()
+        return Response(
+            {"detail": "Действие удалено"}, status=status.HTTP_204_NO_CONTENT
+        )
 
     def perform_create(self, serializer):
         serializer.save(telegram_bot=self.get_bot())
