@@ -1039,7 +1039,7 @@ class HeaderViewSet(viewsets.ModelViewSet):
 class TokenDestroyView(views.APIView):
     """Use this endpoint to logout user (remove user authentication token)."""
 
-    serializer_class = Serializer
+    serializer_class = None
     permission_classes = settings.PERMISSIONS.token_destroy
 
     def post(self, request):
