@@ -186,5 +186,8 @@ DJOSER = {
         "user_list": ["rest_framework.permissions.AllowAny"],
         "user": ["djoser.permissions.CurrentUserOrAdminOrReadOnly"],
     },
+    "SERIALIZERS": {
+        "token": "api.serializers.CustomTokenSerializer",
+    },
     "HIDE_USERS": True,
 }

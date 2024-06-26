@@ -3,8 +3,6 @@ from datetime import datetime as dt
 from typing import Any, Type
 
 import requests
-from djoser.views import TokenDestroyView
-
 from api.drf_spectacular.drf_serializers import (
     DummyActionSerializer,
     DummyBotSerializer,
@@ -38,6 +36,7 @@ from apps.bot_management.models import (
     TelegramBotFile,
     Variable,
 )
+
 from django.core.exceptions import ValidationError
 from django.db.models import Case, Value, When
 from django.http import Http404
@@ -45,19 +44,23 @@ from django.shortcuts import get_object_or_404 as _get_object_or_404
 from django.utils import timezone
 from django_filters import rest_framework as df_filters
 from dotenv import load_dotenv
+from djoser.conf import settings
+from djoser.views import TokenDestroyView
+from djoser import utils
 from drf_spectacular.utils import (
     OpenApiParameter,
     OpenApiResponse,
     extend_schema,
     extend_schema_view,
 )
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, views
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
+
 
 load_dotenv()
 
@@ -1031,3 +1034,17 @@ class HeaderViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         check_bot_started(self.kwargs.get("telegram_bot_pk"))
         return super().destroy(request, *args, **kwargs)
+
+
+class TokenDestroyView(views.APIView):
+    """Use this endpoint to logout user (remove user authentication token)."""
+
+    serializer_class = Serializer
+    permission_classes = settings.PERMISSIONS.token_destroy
+
+    def post(self, request):
+        utils.logout_user(request)
+        return Response(
+            {"detail": "User logged out successfully"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
