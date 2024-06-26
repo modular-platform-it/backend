@@ -15,8 +15,6 @@ from aiogram.types import (
     Message,
 )
 from fastapi import HTTPException
-from log import py_logger
-from models import Base, TelegramBotAction
 from models_api import Item, ItemList
 
 
@@ -28,7 +26,7 @@ async def get_list(api_key, api_url) -> ItemList:
     )
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)
-    items = [value["name"] for value in response.json()]
+    items = [str(value) for value in response.json()]
     return ItemList(items=items)
 
 
@@ -47,7 +45,7 @@ async def post_item(
     api_key: str = "", api_url: str = "http://localhost:8000/", data: dict = {}
 ) -> Item:
     """Post-запрос в стороннее приложения по API и токену."""
-    json_data = json.loads(data["data"])
+    json_data = json.loads(data["datas"])
     response = requests.post(
         url=api_url,
         headers={"Authorization": f"Token {api_key}"},
@@ -77,6 +75,7 @@ class GetListHandler:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
+        self.message = self.action.message
         self.command = self.action.command_keyword
         self.description = self.action.description or self.command
         self.commands = [
@@ -88,7 +87,8 @@ class GetListHandler:
             item_list = await get_list(
                 api_key=self.action.api_key, api_url=self.action.api_url
             )
-            await msg.answer(f"Список из вашего приложения: {item_list.items}")
+            json_text = json.dumps(item_list.items, ensure_ascii=False, indent=4)
+            await msg.answer(f"Список из вашего приложения:\n{json_text}")
 
 
 class StopHandler:
@@ -119,6 +119,7 @@ class Handlers:
         self.bot_data = bot_data
         self.router = Router()
         self.action = action
+        self.message = self.action.message
         self.command = self.action.command_keyword
         self.message = self.action.message
         self.commands = [
@@ -177,9 +178,9 @@ class GetItem:
                 api_key=self.action.api_key,
                 api_url=f"{self.action.api_url}{data['id']}/",
             )
-            gen = serialize_json_to_lines(item.item)
+            json_text = json.dumps(item.item, ensure_ascii=False, indent=4)
             await state.clear()
-            await msg.answer(f"Нужный вам объект: {gen}")
+            await msg.answer(f"Нужный вам объект:\n{json_text}")
 
         @self.router.message(IDState.name)
         async def get_item_handler(msg: Message, state: FSMContext):
@@ -187,7 +188,7 @@ class GetItem:
             data = await state.get_data()
             item = await get_item(
                 api_key=self.action.api_key,
-                api_url=f"{self.action.api_url}search?name={data['name']}&contains=true/",
+                api_url=f"{self.action.api_url}?name={data['name']}",
             )
             gen = serialize_json_to_lines(item.item)
             await state.clear()
@@ -376,21 +377,22 @@ class PostItem:
         self.commands = [BotCommand(command=self.command, description=self.description)]
 
         class PostState(StatesGroup):
-            data = State()
+            datas = State()
 
         @self.router.message(Command(self.command[1:]))
         async def start_post_item(msg: Message, state: FSMContext):
-            await state.set_state(PostState.data)
+            await state.set_state(PostState.datas)
             await msg.answer(
-                'Введите json, например: {"name":"asdasdas","telegram_token":"sadsadasdas"}'
+                'Введите json, например:\n{"name":"asdasdas","telegram_token":"sadsadasdas"}'
             )
 
-        @self.router.message(PostState.data)
+        @self.router.message(PostState.datas)
         async def post_data_item_(msg: Message, state: FSMContext):
-            await state.update_data(data=msg.text)
+            await state.update_data(datas=msg.text)
             data = await state.get_data()
             await state.clear()
+            print(msg.text, self.action.api_key, self.action.api_url)
             item = await post_item(
                 api_key=self.action.api_key, api_url=self.action.api_url, data=data
             )
-            await msg.answer(f"Ответ:\n{item.items}")
+            await msg.answer(f"Ответ:\n{item.item}")

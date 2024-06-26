@@ -1,8 +1,7 @@
-from django.urls import include, path
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-from rest_framework_nested import routers
+from djoser.views import TokenCreateView
 
 from api.views import (
+    CustomTokenDestroyView,
     HeaderViewSet,
     TelegramBotActionFileViewSet,
     TelegramBotActionViewSet,
@@ -10,8 +9,9 @@ from api.views import (
     TokenDestroyView,
     VariableViewSet,
 )
-
-from .drf_spectacular.drf_views import swagger_login, swagger_logout
+from django.urls import include, path
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from rest_framework_nested import routers
 
 router_v1 = routers.DefaultRouter()
 router_v1.register("bots", TelegramBotViewSet)
@@ -42,6 +42,7 @@ headers_router_v1.register(
 
 urlpatterns = [
     path("auth/token/logout/", TokenDestroyView.as_view()),
+    path("auth/token/login/?$", TokenCreateView.as_view(), name="login"),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "schema/swagger/",

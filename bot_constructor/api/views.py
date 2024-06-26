@@ -3,30 +3,6 @@ from datetime import datetime as dt
 from typing import Any, Type
 
 import requests
-from django.core.exceptions import ValidationError
-from django.db.models import Case, Value, When
-from django.http import Http404
-from django.shortcuts import get_object_or_404 as _get_object_or_404
-from django.utils import timezone
-from django_filters import rest_framework as df_filters
-from djoser import utils
-from djoser.conf import settings
-from dotenv import load_dotenv
-from drf_spectacular.utils import (
-    OpenApiParameter,
-    OpenApiResponse,
-    extend_schema,
-    extend_schema_view,
-)
-from rest_framework import status, views, viewsets
-from rest_framework.decorators import action
-from rest_framework.filters import OrderingFilter
-from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework.serializers import Serializer
-
 from api.drf_spectacular.drf_serializers import (
     DummyActionSerializer,
     DummyBotSerializer,
@@ -61,6 +37,31 @@ from apps.bot_management.models import (
     Variable,
 )
 
+from django.core.exceptions import ValidationError
+from django.db.models import Case, Value, When
+from django.http import Http404
+from django.shortcuts import get_object_or_404 as _get_object_or_404
+from django.utils import timezone
+from django_filters import rest_framework as df_filters
+from dotenv import load_dotenv
+from djoser.conf import settings
+from djoser.views import TokenDestroyView
+from djoser import utils
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    OpenApiResponse,
+    extend_schema,
+    extend_schema_view,
+)
+from rest_framework import status, viewsets, views
+from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.request import Request
+from rest_framework.response import Response
+
+
 load_dotenv()
 
 
@@ -81,6 +82,10 @@ def check_bot_started(telegram_bot) -> None:
 
     if isinstance(telegram_bot, TelegramBot) and telegram_bot.is_started:
         raise BotIsRunningException
+
+
+class CustomTokenDestroyView(TokenDestroyView):
+    serializer_class = None
 
 
 @extend_schema(tags=["Телеграм боты"])
@@ -376,11 +381,6 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
             )
         return Response(data={"detail": "Бот не запущен"}, status=status.HTTP_200_OK)
 
-        return Response(
-            {"detail": "Бот уже остановлен."},
-            status=status.HTTP_200_OK,
-        )
-
 
 @extend_schema(tags=["Действия"])
 @extend_schema_view(
@@ -526,7 +526,11 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         check_bot_started(self.get_bot())
-        return super().destroy(request, *args, **kwargs)
+        instance = self.get_object()
+        instance.delete()
+        return Response(
+            {"detail": "Действие удалено"}, status=status.HTTP_204_NO_CONTENT
+        )
 
     def perform_create(self, serializer):
         serializer.save(telegram_bot=self.get_bot())
