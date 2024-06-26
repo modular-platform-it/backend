@@ -25,7 +25,6 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.serializers import Serializer
 
 from api.drf_spectacular.drf_serializers import (
     DummyActionSerializer,
@@ -1035,7 +1034,7 @@ class HeaderViewSet(viewsets.ModelViewSet):
 class TokenDestroyView(views.APIView):
     """Use this endpoint to logout user (remove user authentication token)."""
 
-    serializer_class = Serializer
+    serializer_class = None
     permission_classes = settings.PERMISSIONS.token_destroy
 
     def post(self, request):
