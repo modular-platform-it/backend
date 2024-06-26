@@ -1,4 +1,7 @@
+from djoser.views import TokenCreateView
+
 from api.views import (
+    CustomTokenDestroyView,
     HeaderViewSet,
     TelegramBotActionFileViewSet,
     TelegramBotActionViewSet,
@@ -38,7 +41,8 @@ headers_router_v1.register(
 
 urlpatterns = [
     path("", include("djoser.urls")),
-    path("auth/", include("djoser.urls.authtoken")),
+    path("auth/token/login/?$", TokenCreateView.as_view(), name="login"),
+    path("auth/token/logout/?$", CustomTokenDestroyView.as_view(), name="logout"),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "schema/swagger/",
