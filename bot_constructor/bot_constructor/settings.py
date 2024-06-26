@@ -77,6 +77,7 @@ REST_FRAMEWORK = {
 
 ROOT_URLCONF = "bot_constructor.urls"
 
+
 SPECTACULAR_SETTINGS = {
     "AUTHENTICATION_EXTENSIONS": [
         "api.drf_spectacular.drf_views",
@@ -185,6 +186,9 @@ DJOSER = {
     "PERMISSIONS": {
         "user_list": ["rest_framework.permissions.AllowAny"],
         "user": ["djoser.permissions.CurrentUserOrAdminOrReadOnly"],
+    },
+    "SERIALIZERS": {
+        "token": "api.serializers.CustomTokenSerializer",
     },
     "HIDE_USERS": True,
 }

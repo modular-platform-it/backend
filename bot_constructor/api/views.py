@@ -8,6 +8,7 @@ from api.drf_spectacular.drf_serializers import (
     DummyBotSerializer,
     DummyFileSerializer,
     DummyHeaderSerializer,
+    DummyNotAuthorized,
     DummyStartStopBotSerializer,
     DummyTokenErrorSerializer,
     DummyTokenSerializer,
@@ -19,6 +20,7 @@ from api.drf_spectacular.drf_serializers import (
 from api.exceptions import BotIsRunningException
 from api.filters import TelegramBotFilter
 from api.serializers import (
+    CustomTokenSerializer,
     HeaderSerializer,
     TelegramBotActionSerializer,
     TelegramBotCreateActionSerializer,
@@ -42,6 +44,9 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404 as _get_object_or_404
 from django.utils import timezone
 from django_filters import rest_framework as df_filters
+from djoser import utils
+from djoser.conf import settings
+from djoser.views import TokenCreateView, TokenDestroyView
 from dotenv import load_dotenv
 from drf_spectacular.utils import (
     OpenApiParameter,
@@ -49,7 +54,7 @@ from drf_spectacular.utils import (
     extend_schema,
     extend_schema_view,
 )
-from rest_framework import status, viewsets
+from rest_framework import status, views, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -77,6 +82,10 @@ def check_bot_started(telegram_bot) -> None:
 
     if isinstance(telegram_bot, TelegramBot) and telegram_bot.is_started:
         raise BotIsRunningException
+
+
+class CustomTokenDestroyView(TokenDestroyView):
+    serializer_class = None
 
 
 @extend_schema(tags=["Телеграм боты"])
@@ -371,11 +380,6 @@ class TelegramBotViewSet(viewsets.ModelViewSet):
                 data={"detail": "Бот успешно остановлен"}, status=status.HTTP_200_OK
             )
         return Response(data={"detail": "Бот не запущен"}, status=status.HTTP_200_OK)
-
-        return Response(
-            {"detail": "Бот уже остановлен."},
-            status=status.HTTP_200_OK,
-        )
 
 
 @extend_schema(tags=["Действия"])
@@ -1030,3 +1034,47 @@ class HeaderViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         check_bot_started(self.kwargs.get("telegram_bot_pk"))
         return super().destroy(request, *args, **kwargs)
+
+
+@extend_schema(
+    responses={
+        204: OpenApiResponse(description="Вы вышли"),
+        401: OpenApiResponse(
+            description="Недопустимый токен.", response=DummyNotAuthorized
+        ),
+    },
+    tags=["Авторизация"],
+    description="Выход пользователя из системы",
+    summary="Выход пользователя из системы",
+    methods=["POST"],
+)
+class TokenDestroyView(views.APIView):
+    """Use this endpoint to logout user (remove user authentication token)."""
+
+    serializer_class = None
+    permission_classes = settings.PERMISSIONS.token_destroy
+
+    def post(self, request):
+        utils.logout_user(request)
+        return Response(
+            {"detail": "Вы вышли"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
+
+@extend_schema(
+    responses={
+        200: OpenApiResponse(
+            description="Успешный вход", response=CustomTokenSerializer
+        ),
+        400: OpenApiResponse(
+            description="Указанные вами адрес электронной почты и/или пароль неверны"
+        ),
+    },
+    tags=["Авторизация"],
+    description="Вход пользователя в систему",
+    summary="Авторизация пользователя",
+    methods=["POST"],
+)
+class CustomTokenCreateView(TokenCreateView):
+    pass

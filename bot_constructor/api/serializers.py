@@ -8,7 +8,11 @@ from apps.bot_management.models import (
     TelegramBotFile,
     Variable,
 )
+from django.contrib.auth import get_user_model
+from djoser.conf import settings
 from rest_framework import serializers, validators
+
+User = get_user_model()
 
 
 class DefaultChoiceField(serializers.ChoiceField):
@@ -347,3 +351,15 @@ class TelegramBotActionMessageSerializer(TelegramBotActionBaseSerializer):
                 )
             TelegramBotFile.objects.bulk_create(telegram_files)
         return action_instance
+
+
+class CustomTokenSerializer(serializers.ModelSerializer):
+    auth_token = serializers.CharField(source="key")
+    email = serializers.SerializerMethodField()
+
+    class Meta:
+        model = settings.TOKEN_MODEL
+        fields = ("auth_token", "email")
+
+    def get_email(self, obj) -> str:
+        return obj.user.email

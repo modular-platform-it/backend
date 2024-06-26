@@ -1,34 +1,5 @@
 # type: ignore
-# from django.contrib.auth import authenticate
 from rest_framework import serializers
-
-# class LoginSerializer(serializers.Serializer):
-#     """Сериализатор для отображения ендпоинта логина"""
-
-#     email = serializers.CharField()
-#     password = serializers.CharField()
-
-#     def create(self, validated_data):
-#         email = validated_data.get("email")
-#         password = validated_data.get("password")
-#         user = authenticate(email=email, password=password)
-#         if user is not None:
-#             return user
-#         else:
-#             raise serializers.ValidationError(
-#                 "Указанные вами адрес электронной почты и/или пароль неверны, "
-#                 "или такого пользователя не существует."
-#             )
-
-
-# class LoginResponseSerializer(serializers.Serializer):
-#     """Сериализатор ответа при логине"""
-
-#     email = serializers.CharField()
-
-
-# class LogoutSerializer(serializers.Serializer):
-#     """Сериализатор для отображения ендпоинта логаута"""
 
 
 class NotFoundSerializer(serializers.Serializer):
