@@ -30,6 +30,7 @@ from api.serializers import (
     TelegramFileSerializer,
     TokenSerializer,
     VariableSerializer,
+    CustomTokenDestroySerializer,
 )
 from apps.bot_management.models import (
     Header,
@@ -1051,14 +1052,14 @@ class HeaderViewSet(viewsets.ModelViewSet):
 class TokenDestroyView(views.APIView):
     """Use this endpoint to logout user (remove user authentication token)."""
 
-    serializer_class = None
+    serializer_class = CustomTokenDestroySerializer
     permission_classes = settings.PERMISSIONS.token_destroy
 
     def post(self, request):
         utils.logout_user(request)
         return Response(
-            {"detail": "Вы вышли"},
-            status=status.HTTP_204_NO_CONTENT,
+            {"detail": "Вышли из системы"},
+            status=status.HTTP_200_OK,
         )
 
 

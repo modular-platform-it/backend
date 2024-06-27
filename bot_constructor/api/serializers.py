@@ -1,6 +1,7 @@
 from typing import IO, Any
 
 from apps.bot_management import constants, regexps
+
 from apps.bot_management.models import (
     Header,
     TelegramBot,
@@ -13,7 +14,6 @@ from djoser.conf import settings
 from rest_framework import serializers, validators
 
 User = get_user_model()
-
 
 class DefaultChoiceField(serializers.ChoiceField):
 
@@ -88,6 +88,7 @@ class TelegramBotSerializer(TelegramBotShortSerializer):
         model = TelegramBot
         fields = (
             "name",
+            "telegram_token",
             "description",
             "bot_state",
             "api_key",
@@ -363,3 +364,10 @@ class CustomTokenSerializer(serializers.ModelSerializer):
 
     def get_email(self, obj) -> str:
         return obj.user.email
+
+
+class CustomTokenDestroySerializer(serializers.Serializer):
+    detail = serializers.SerializerMethodField()
+
+    def get_detail(self, obj):
+        return {'detail': 'Вышли из системы'}
