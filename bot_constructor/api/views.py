@@ -20,6 +20,7 @@ from api.drf_spectacular.drf_serializers import (
 from api.exceptions import BotIsRunningException
 from api.filters import TelegramBotFilter
 from api.serializers import (
+    CustomTokenDestroySerializer,
     CustomTokenSerializer,
     HeaderSerializer,
     TelegramBotActionSerializer,
@@ -30,7 +31,6 @@ from api.serializers import (
     TelegramFileSerializer,
     TokenSerializer,
     VariableSerializer,
-    CustomTokenDestroySerializer,
 )
 from apps.bot_management.models import (
     Header,
@@ -527,11 +527,7 @@ class TelegramBotActionViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         check_bot_started(self.get_bot())
-        instance = self.get_object()
-        instance.delete()
-        return Response(
-            {"detail": "Действие удалено"}, status=status.HTTP_204_NO_CONTENT
-        )
+        return super().destroy(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         serializer.save(telegram_bot=self.get_bot())
@@ -1039,7 +1035,7 @@ class HeaderViewSet(viewsets.ModelViewSet):
 
 @extend_schema(
     responses={
-        204: OpenApiResponse(description="Вы вышли"),
+        200: OpenApiResponse(description="Вы вышли"),
         401: OpenApiResponse(
             description="Недопустимый токен.", response=DummyNotAuthorized
         ),
