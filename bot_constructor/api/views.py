@@ -1060,7 +1060,7 @@ class TokenDestroyView(views.APIView):
         return Response(
             {"detail": "Вышли из системы"},
             status=status.HTTP_200_OK,
-          }
+        )
 
 
 @extend_schema(
