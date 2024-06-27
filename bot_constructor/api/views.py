@@ -8,6 +8,7 @@ from api.drf_spectacular.drf_serializers import (
     DummyBotSerializer,
     DummyFileSerializer,
     DummyHeaderSerializer,
+    DummyNotAuthorized,
     DummyStartStopBotSerializer,
     DummyTokenErrorSerializer,
     DummyTokenSerializer,
@@ -19,6 +20,7 @@ from api.drf_spectacular.drf_serializers import (
 from api.exceptions import BotIsRunningException
 from api.filters import TelegramBotFilter
 from api.serializers import (
+    CustomTokenSerializer,
     HeaderSerializer,
     TelegramBotActionSerializer,
     TelegramBotCreateActionSerializer,
@@ -37,31 +39,29 @@ from apps.bot_management.models import (
     TelegramBotFile,
     Variable,
 )
-
 from django.core.exceptions import ValidationError
 from django.db.models import Case, Value, When
 from django.http import Http404
 from django.shortcuts import get_object_or_404 as _get_object_or_404
 from django.utils import timezone
 from django_filters import rest_framework as df_filters
-from dotenv import load_dotenv
-from djoser.conf import settings
-from djoser.views import TokenDestroyView
 from djoser import utils
+from djoser.conf import settings
+from djoser.views import TokenCreateView, TokenDestroyView
+from dotenv import load_dotenv
 from drf_spectacular.utils import (
     OpenApiParameter,
     OpenApiResponse,
     extend_schema,
     extend_schema_view,
 )
-from rest_framework import status, viewsets, views
+from rest_framework import status, views, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
-
 
 load_dotenv()
 
@@ -1037,6 +1037,18 @@ class HeaderViewSet(viewsets.ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
 
+@extend_schema(
+    responses={
+        204: OpenApiResponse(description="Вы вышли"),
+        401: OpenApiResponse(
+            description="Недопустимый токен.", response=DummyNotAuthorized
+        ),
+    },
+    tags=["Авторизация"],
+    description="Выход пользователя из системы",
+    summary="Выход пользователя из системы",
+    methods=["POST"],
+)
 class TokenDestroyView(views.APIView):
     """Use this endpoint to logout user (remove user authentication token)."""
 
@@ -1048,4 +1060,22 @@ class TokenDestroyView(views.APIView):
         return Response(
             {"detail": "Вышли из системы"},
             status=status.HTTP_200_OK,
-        )
+          }
+
+
+@extend_schema(
+    responses={
+        200: OpenApiResponse(
+            description="Успешный вход", response=CustomTokenSerializer
+        ),
+        400: OpenApiResponse(
+            description="Указанные вами адрес электронной почты и/или пароль неверны"
+        ),
+    },
+    tags=["Авторизация"],
+    description="Вход пользователя в систему",
+    summary="Авторизация пользователя",
+    methods=["POST"],
+)
+class CustomTokenCreateView(TokenCreateView):
+    pass

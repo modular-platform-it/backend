@@ -1,12 +1,17 @@
 from typing import IO, Any
 
-from django.contrib.auth import authenticate, get_user_model
+from apps.bot_management import constants, regexps
+
+from apps.bot_management.models import (
+    Header,
+    TelegramBot,
+    TelegramBotAction,
+    TelegramBotFile,
+    Variable,
+)
+from django.contrib.auth import get_user_model
 from djoser.conf import settings
 from rest_framework import serializers, validators
-
-from apps.bot_management import constants, regexps
-from apps.bot_management.models import (Header, TelegramBot, TelegramBotAction,
-                                        TelegramBotFile, Variable)
 
 User = get_user_model()
 
