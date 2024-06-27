@@ -15,6 +15,7 @@ from rest_framework import serializers, validators
 
 User = get_user_model()
 
+
 class DefaultChoiceField(serializers.ChoiceField):
 
     def __init__(self, default, **kwargs):
@@ -370,4 +371,4 @@ class CustomTokenDestroySerializer(serializers.Serializer):
     detail = serializers.SerializerMethodField()
 
     def get_detail(self, obj):
-        return {'detail': 'Вышли из системы'}
+        return {"detail": "Вышли из системы"}
