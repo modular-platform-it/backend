@@ -12,8 +12,8 @@ entryPoints:
   websecure:
     address: :443
     http:
-      middlewares:
-        - secureHeaders@file
+      # middlewares:
+      #   - secureHeaders@file
       tls:
         certResolver: letsencrypt
         domains:
