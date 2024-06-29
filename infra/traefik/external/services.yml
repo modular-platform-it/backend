@@ -18,14 +18,14 @@ http:
       entryPoints:
         - websecure
       rule: Host(`api.xwick.ru`)
-      middlewares:
-        - stripUndefined
       service: botconstructor
 
     to-devconstructor:
       entryPoints:
         - websecure
       rule: Host(`dev.xwick.ru`) || (Host(`xwick.ru`) && PathPrefix(`/undefined`))
+      middlewares:
+        - stripUndefined
       service: devconstructor
 
     to-botserver:
